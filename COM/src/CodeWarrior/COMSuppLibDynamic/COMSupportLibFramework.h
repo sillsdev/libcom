@@ -1,0 +1,1 @@
+/* *  Copyright © 2002 Metrowerks Corporation.  All Rights Reserved. * *  Questions and comments to: *       <mailto:support@metrowerks.com> *       <http://www.metrowerks.com/> */#ifndef MYFRAMEWORK_H#define MYFRAMEWORK_H#ifdef __cplusplusextern "C" {#endifvoid SayHello(void);#ifdef __cplusplus}#endif#endif
