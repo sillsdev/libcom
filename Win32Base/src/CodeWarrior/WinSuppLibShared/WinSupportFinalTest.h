@@ -14,4 +14,6 @@
 
 #undef	_DEBUG
 
+#define	TESTING 1
+
 #define	MAC

@@ -6,10 +6,38 @@ Responsibility: Graeme Costin
 Reviewed:	Date		Reviewer
 			never
 
+	$Id$
+
 C++ file to provide substitutions and kludges when compiling FieldWorks for MacOS.
 
 Requires WinSupport.h and WinSupportInternals.h.
 
+Changed wildcard match function to ignore case. Added GetLastError and modified APIs
+that can set error codes. Fixed bug in wildcard match function for question mark.
+	2002-11-08, GDLC
+Added FindNextFile and modified FindFirstFile to handle empty pattern
+	2002-11-01, GDLC
+Added conditional for Mach-O compilation.
+	2002-09-19, GDLC
+Added p2cstrncpy() and used it in two places.
+ 	2002-09-03, GDLC
+Added use of BUNDLE_INFO structure.
+	2002-08-27, GDLC
+Moved #pragma export directives from WinSupport.h.  Added .app folder name to the
+pathname returned by GetModuleFileName(). Added GetBundleInfo().
+	2002-08-21, GDLC
+Deleted struct AppOrLibDetails (no longer needed because of using CFBundle APIs);
+added PathNameFromDirID() and used it in GetModuleFileName()
+	2002-08-09, GDLC
+Mutated ResFileDetails into AppOrLibDetails
+	2002-07-15, GDLC
+Commented out FormatMessage()
+	2002-06-25, GDLC
+Improved implementation of GetTickCount()
+	2002-06-25, GDLC
+Used conditional compilation to define timeUTC and machLoc as a public globals in the
+Testing target (in debug and release targets they are on local stack).
+	2002-06-21, GDLC
 Made timeUTC a global static variable for testing purposes.
 	2002-06-14, GDLC
 Fixed GetSystemTimeAsFileTime().
@@ -30,33 +58,55 @@ Written by copying parts of the Windows.cp written for CodeGen.
 
 #include "WinSupport.h"
 
-#include "WinSupportInternals.h"
-
 #include <String.h>
 #include <assert.h>
 #include <cstdlib>
 #include <cctype>
 #include <UTCUtils.h>
-#include <OSUtils.h>
+#include <CarbonEvents.h>
+
+#if !__MACH__
+#include <CFBundle.h>
+#endif
 
 #include <LString.h>
 
-#if TESTING
-//	To facilitate testing of GetSystemTimeAsFileTime(), the UTC obtained from MacOS is
-//	put in this globally accessible variable so that the test program can store it as
-//	well as the value converted to a Windows FILETIME structure.
-UTCDateTime		timeUTC;
-#endif
+#include "WinSupportInternals.h"
 
 //	LockResource(), LoadResource(), SizeofResource() and FindClose()
 //	are defined later in this file.
+
+// ---------------------------------------------------------------------------
+//		¥ GetLastError
+// ---------------------------------------------------------------------------
+//	Returns the error code set by whatever was the last Windows API to set an
+//	error code.
+
+static DWORD	LastErrorCode;
+
+#pragma export on
+DWORD GetLastError(VOID)
+{
+	return LastErrorCode;
+}
+#pragma export off
 
 // ---------------------------------------------------------------------------
 //		¥ GetSystemTimeAsFileTime
 // ---------------------------------------------------------------------------
 //	Returns the system time as a 64-bit signed integer being the number of
 //	100-nanosecond periods since 12:00AM on January 1, 1601.
+//
+#if TESTING
+//	To facilitate testing of GetSystemTimeAsFileTime(), the UTC obtained from MacOS is
+//	put in this globally accessible variable so that the test program can output it as
+//	well as the value converted to a Windows FILETIME structure.
+#pragma export on
+UTCDateTime		timeUTC;
+#pragma export off
+#endif
 
+#pragma export on
 void GetSystemTimeAsFileTime(LPFILETIME lpSystemTimeAsFileTime)
 {
 
@@ -70,6 +120,7 @@ void GetSystemTimeAsFileTime(LPFILETIME lpSystemTimeAsFileTime)
 
 	UTCMacToWin(timeUTC, lpSystemTimeAsFileTime);
 }
+#pragma export off
 
 void UTCMacToWin(const UTCDateTime &tMac, LPFILETIME tWin)
 {
@@ -98,8 +149,8 @@ void UTCMacToWin(const UTCDateTime &tMac, LPFILETIME tWin)
 	time64 = time64 + (9561628800 * 10000000);
 
 	//	Send the result to the FILETIME structure
-	tWin->dwHighDateTime = (time64 & 0xFFFFFFFF00000000) >> 32;
-	tWin->dwLowDateTime = time64 & 0xFFFFFFFF;
+	tWin->dwHighDateTime = static_cast <unsigned long> ((time64 & 0xFFFFFFFF00000000) >> 32);
+	tWin->dwLowDateTime = static_cast <unsigned long> (time64 & 0xFFFFFFFF);
 }
 
 // ---------------------------------------------------------------------------
@@ -113,12 +164,28 @@ void UTCMacToWin(const UTCDateTime &tMac, LPFILETIME tWin)
 //
 //	TODO: Find out whether WinFieldWorks needs the daylight saving information.
 
+#if TESTING
+//	To facilitate testing of GetTimeZoneInformation(), the MachineLocation obtained
+//	from MacOS is put in this globally accessible variable so that the test program
+//	can output it as well as the value converted to a Windows TIME_ZONE_INFORMATION
+//	structure.
+#pragma export on
+MachineLocation		machLoc;
+#pragma export off
+#endif
+
+#pragma export on
 DWORD GetTimeZoneInformation( LPTIME_ZONE_INFORMATION lpTimeZoneInformation)
 {
-	MachineLocation		loc;
 
-	ReadLocation(&loc);
+#if	!TESTING
+	MachineLocation		machLoc;
+#endif
 
+	// Assume success; change later if necessary
+	LastErrorCode = ERROR_SUCCESS;
+
+	ReadLocation(&machLoc);
 	TIME_ZONE_INFORMATION	tZone;
 	//	Most fields of the Windows time zone information cannot be filled from
 	//	values read from the MacOS MachineLocation, so we set the lot to zero
@@ -128,117 +195,197 @@ DWORD GetTimeZoneInformation( LPTIME_ZONE_INFORMATION lpTimeZoneInformation)
 	//	gmtDelta
 	//	The signed integer is contained in the lower 3 bytes of the long.
 	//	The sign needs to be extended through the upper byte; this is done
-	//	by shifting left and then shifting right - arithmetic shift right
+	//	by shifting left and then shifting right since arithmetic shift right
 	//	extends the sign bit.
 	//
 	//	The MacOS gmtDelta is in seconds; the Windows bias is in minutes.
 	//
 	//	The MacOS gmtDelta is added to GMT to get local time; the Windows
 	//	Bias is added to local time to get UTC - hence the sign change.
-	tZone.Bias = - ((((loc.u.gmtDelta & 0xFFFFFF) << 8) >>8) / 60);
-	
+	tZone.Bias = - ((((machLoc.u.gmtDelta & 0xFFFFFF) << 8) >>8) / 60);
+
 	*lpTimeZoneInformation = tZone;
+
 	//	This is the return value for no daylight saving on WinNT, 2000, XP.
 	//	We don't have the information to deal with daylight saving items.
 	return TIME_ZONE_ID_UNKNOWN;
 }
+#pragma export off
 
 // ---------------------------------------------------------------------------
 //		¥ GetTickCount
 // ---------------------------------------------------------------------------
 //	This function returns the number of milliseconds since the system was booted.
+//	Windows expects the number of milliseconds in a 32-bit unsigned integer; this
+//	cannot hold a tick count greater than 49.7 days approx. When the tick count
+//	exceeds this amount Windows wraps it around to zero.
 
+#if TESTING
+//	To facilitate testing of GetTickCount(), the EventTime obtained from MacOS is
+//	put in this globally accessible variable so that the test program can output
+//	it as well as the value converted to a Windows DWORD.
+#pragma export on
+EventTime		secsFP;
+#pragma export off
+#endif
+
+#pragma export on
 DWORD GetTickCount(void)
 {
-	union {
-		struct {
-			UInt32	high;
-			UInt32	low;
-		} split;
-		UInt64	joined;
-	};
-	split.low = ::TickCount();
-	split.high = 0;
-	
-	return static_cast <DWORD> (joined * 100 / 6);
+
+#if	!TESTING
+	EventTime		secsFP;
+#endif
+
+	EventTime		tc;
+	secsFP = ::GetCurrentEventTime();
+	tc = secsFP * 1000;
+	if (tc < 0x100000000) return static_cast <DWORD> (tc);
+	else return 0;
 }
+#pragma export off
 
-DWORD FormatMessage(
-    /*IN*/ DWORD	dwFlags,
-    /*IN*/ LPCVOID	lpSource,
-    /*IN*/ DWORD	dwMessageId,
-    /*IN*/ DWORD	dwLanguageId,
-    /*OUT*/ LPSTR	lpBuffer,
-    /*IN*/ DWORD	nSize,
-    /*IN*/ va_list	*Arguments
-    );
-
-//	Facility for obtaining the file the application was launched from
-
-ResFileDetails::ResFileDetails()
-{
-	refNum = CurResFile();
-
-	FCBPBRec pb;
-	pb.ioNamePtr = spec.name;
-	pb.ioFCBIndx = 0;
-	pb.ioRefNum = refNum;
-	PBGetFCBInfoSync(&pb);
-	spec.parID = pb.ioFCBParID;
-	spec.vRefNum = pb.ioFCBVRefNum;
-}
-
-static ResFileDetails portApp; // Hopefully, this gets initialised before any other res files are opened
+//	FormatMessage() is currently used only in Debug.cpp of FieldWorks, and this
+//	file is so system-dependent that it is being re-written for MacFieldWorks.
+//	Thus we can use MacOS debug output facilities instead and do not need to
+//	implement FormatMessage().
+//#pragma export on
+//DWORD FormatMessage(
+//	/*IN*/ DWORD	dwFlags,
+//	/*IN*/ LPCVOID	lpSource,
+//	/*IN*/ DWORD	dwMessageId,
+//	/*IN*/ DWORD	dwLanguageId,
+//	/*OUT*/ LPSTR	lpBuffer,
+//	/*IN*/ DWORD	nSize,
+//	/*IN*/ va_list	*Arguments
+//	);
+//#pragma export off
 
 // ---------------------------------------------------------------------------
 //		¥ GetModuleFileName
 // ---------------------------------------------------------------------------
-//	This function returns the full pathname of the application's file.
-//	If hModule is NULL the path for the application's file is returned;
-//	otherwise the pathname for the resource file hModule is returned.
-//	It is likely that for MacFieldWorks these two cases will be the same.
+//	This function returns the full pathname of the module's bundle.
+//	If hModule is NULL the path for the application's bundle is returned;
+//	otherwise the pathname for the bundle hModule is returned.
+//
+//	It appears that WinFieldWorks uses this Windows API merely to get the name of
+//	the module to use in error reports. Thus it needs the name of the application
+//	or other module as the user will see it.
+//
+//	TODO: Check whether WinFieldWorks or any other Windows app that we port with
+//	WinSupportLib has other reasons for calling GetModuleFileName().
+//
 //	TODO: This function can be extended if it is ever necessary.
+
+static	bool		haveBundleInfo;
+static	BUNDLE_PTR	bundleInfoPtr;
+
+#pragma export on
 DWORD	GetModuleFileName(
     HMODULE hModule,
     LPSTR lpFilename,
     DWORD nSize)
 {
-	short		vRefNum;		// volume ref number
-	long		parID;			// parent directory ID
-	Str63		name;			// file name
-	OSErr		err;			// error code
-	
-	if (hModule == NULL) {
-		// Get details of application's file
-		vRefNum = portApp.spec.vRefNum;
-		parID = portApp.spec.parID;
-		unsigned char *p = &portApp.spec.name[0];
-		unsigned char *q = &name[0];
-		short i = -1;	//	First byte copied is the length byte.
-		for (;i < portApp.spec.name[0]; i++) *q++ = *p++;
-	} else {
-		// Get details of the specified resource file
-		FCBPBRec pb;
-		pb.ioNamePtr = name;
-		pb.ioFCBIndx = 0;
-		pb.ioRefNum = hModule;
-		err = PBGetFCBInfoSync(&pb);
-		assert(err == noErr);	//	If hModule is not a valid file reference number
-								//	then hModule has been mishandled somewhere else,
-								//	probably in ModuleEntry where these ref numbers
-								//	are obtained from MacOS as the app or module
-								//	starts up.
-		parID = pb.ioFCBParID;
-		vRefNum = pb.ioFCBVRefNum;
-	}
-	
-	LStr255		fullPath("\p");	// Initialize full pathname
-	LStr255		dirName;		// Directory name
+	// Assume success; change later if necessary
+	LastErrorCode = ERROR_SUCCESS;
 
- 	CInfoPBRec	pb;
+	//TODO: Remove this assert when we have implemented the case of non-NULL hModule
+	//	So far there is no reason to implement it. GDLC 2002-08-27
+	assert(hModule == NULL);
+
+	if (hModule == NULL) {
+		// Get details of application's bundle if not already obtained
+		if (!GetBundleInfo())
+		{
+			LastErrorCode = ERROR_MOD_NOT_FOUND;
+			return 0;
+		}
+
+		p2cstrncpy(bundleInfoPtr->appPathName, lpFilename, nSize);
+		return strlen(lpFilename);
+	} else {
+		// Get details of the specified module (Application or Framework) bundle
+		//TODO: Implement this when we have an app that actually has a FrameWork
+		LastErrorCode = ERROR_CALL_NOT_IMPLEMENTED;
+		return 0;
+	}
+}
+#pragma export off
+
+// If the bundle info has not yet been obtained, gets it using the CFBundle APIs.
+bool	GetBundleInfo(void)
+{
+	if (!haveBundleInfo)
+	{
+		bundleInfoPtr = new BUNDLE_INFO;
+		
+		//Get info about application bundle
+		CFBundleRef	appBundle = CFBundleGetMainBundle();
+		if (appBundle == NULL) goto CannotFindData;
+		CFURLRef appBundleURL = CFBundleCopyBundleURL(appBundle);
+		if (appBundleURL == NULL) goto CannotFindData;
+		
+		CFURLRef appBundleAbsURL = CFURLCopyAbsoluteURL(appBundleURL);
+		CFRelease(appBundleURL);
+
+		bool gotAppFSRef = CFURLGetFSRef( appBundleAbsURL, &bundleInfoPtr->appFSRef);
+		CFRelease(appBundleAbsURL);
+		if (!gotAppFSRef) goto CannotFindData;
+
+		FSGetCatalogInfo(&bundleInfoPtr->appFSRef, kFSCatInfoNone, NULL, NULL, &bundleInfoPtr->appFSSpec, NULL);
+		
+		// Extract pathname of application folder
+		if (!PathNameFromDirID(	bundleInfoPtr->appFSSpec.vRefNum,
+								bundleInfoPtr->appFSSpec.parID,
+								bundleInfoPtr->appPathName)) goto CannotFindData;
+		if ((bundleInfoPtr->appPathName[0] + bundleInfoPtr->appFSSpec.name[0]) > 255) goto CannotFindData;
+		bundleInfoPtr->appPathName = bundleInfoPtr->appPathName + bundleInfoPtr->appFSSpec.name;
+
+		// Get info about resource file or Resources folder, as appropriate
+		CFURLRef resBundleURL = CFBundleCopyResourcesDirectoryURL(appBundle);
+		if (resBundleURL == NULL) goto CannotFindData;
+		CFURLRef resBundleAbsURL = CFURLCopyAbsoluteURL(resBundleURL);
+		CFRelease(resBundleURL);
+		//	The following call of CFURLGetFSREF willnot succeed if the Resources folder does not exist
+		//TODO: What should be done if it doesn't exist? Extract the app's resource fork refNum?
+		bool gotResFSRef = CFURLGetFSRef( resBundleAbsURL, &bundleInfoPtr->resFSRef);
+		CFRelease(resBundleAbsURL);
+		if (gotResFSRef) {
+			FSGetCatalogInfo(&bundleInfoPtr->resFSRef, kFSCatInfoNone, NULL, NULL, &bundleInfoPtr->resFSSpec, NULL);
+			// Extract pathname of Resources folder
+			if (!PathNameFromDirID(	bundleInfoPtr->resFSSpec.vRefNum,
+								bundleInfoPtr->resFSSpec.parID,
+								bundleInfoPtr->resPathName)) goto CannotFindData;
+			if ((bundleInfoPtr->resPathName[0] + bundleInfoPtr->resFSSpec.name[0]) > 255) goto CannotFindData;
+			bundleInfoPtr->resPathName = bundleInfoPtr->resPathName + bundleInfoPtr->resFSSpec.name;
+		}
+		
+		haveBundleInfo = true;
+	}
+	return true;
+
+// Error exit when Bundle info cannot be obtained
+CannotFindData:
+	LastErrorCode = ERROR_MOD_NOT_FOUND;
+	return false;
+}
+
+// Find pathName from dirID. Puts the path as a Pascal string into pathName
+// and returns length of path, unless truncation of path has occurred in which case
+// zero is returned.
+int		PathNameFromDirID(	short	vRef,
+							long	dirID,
+							Str255	pathName)
+{
+ 	CInfoPBRec		pb;
+	
+	LStr255		path("\p");	// Initialize full pathname
+	LStr255		dirName;		// Directory name
+	OSErr		err;			// error code
+
 	pb.dirInfo.ioNamePtr = &dirName[0];
-    pb.dirInfo.ioVRefNum = vRefNum;	// Indicate target volume
-    pb.dirInfo.ioDrParID = parID;	// Initialize parent directory ID
+    pb.dirInfo.ioVRefNum = vRef;	// Indicate target volume
+    pb.dirInfo.ioDrParID = dirID;	// Initialize parent directory ID
     pb.dirInfo.ioFDirIndex = -1;	// Indicate info about a directory
 
     // Get name of each parent directory, up to root directory.
@@ -247,80 +394,143 @@ DWORD	GetModuleFileName(
 		err = PBGetCatInfoSync(&pb);
 
 		dirName = dirName + "\p:";
-		fullPath = dirName + fullPath;
+		if ((path[0] + dirName[0]) > 255) return 0;
+		path = dirName + path;
 	} while (pb.dirInfo.ioDrDirID != fsRtDirID);
-
-	//	Append file name
-	fullPath = fullPath + name;
-
-	// Return full pathname as C string
-	short			n = fullPath[0];	// No. of chars returned
-	short			i;
-	unsigned char	*p = &fullPath[1];
-	char			*q = lpFilename;
 	
-	for (i=0; i<fullPath[0]; i++) {
-		*q++ = *p++;
-		if (i == (nSize-2)) {
-			n = i + 1;
-			break;
-		}
-	}
-	*q = '\0';	// NUL terminate the C string
-	return n;
+	// Return full pathname
+	BlockMoveData(path, pathName, static_cast <long> (path[0]+1));
+	return path[0];
 }
 
 // ---------------------------------------------------------------------------
 //		¥ GetModuleHandle
 // ---------------------------------------------------------------------------
-//	This function returns the refNum of the application's resource fork.
-//	The only parameter implemented is NULL; the rest of the Windows' behaviour
-//	is not needed yet.
-//	TODO: This function can be extended if it is ever necessary.
+//	This function returns a pointer to the BUNDLE_INFO structure of the
+//	application's main bundle.
+//
+//	If it doesn't succeed it returns NULL.
+//
+//	It appears that WinFieldWorks uses this Windows API only to get a handle to
+//	the module to use later in obtaining resources for the module.
+//	On MacOS X, 9 and 8 this can be a CFURLRef to the application's bundle.
+//
+//	This initial implementation handles only the case of lpModuleName==NULL
+//
+//	TODO: Extend this implementation as soon as there is a need for handling
+//	a non-NULL lpModuleName.
+//
+//	TODO: Check whether WinFieldWorks or any other Windows app that we port
+//	with WinSupportLib has other reasons for calling GetModuleFileName().
+//
+//	TODO: Be ready to implement GetLastError() if a ported Windows app is
+//	found that uses it!
+#pragma export on
 HMODULE GetModuleHandle(LPCSTR lpModuleName)
 {
-	assert(lpModuleName == NULL);
-	return portApp.refNum;
-}
+	// Assume success; change later if necessary
+	LastErrorCode = ERROR_SUCCESS;
 
-// ---------------------------------------------------------------------------
-//		¥ OutputDebugString
-// ---------------------------------------------------------------------------
-VOID OutputDebugString(LPCSTR lpOutputString)
-{
+	assert(lpModuleName == NULL);
+
+	// Get details of application's bundle if not already obtained
+	if (!GetBundleInfo())
+	{
+		LastErrorCode = ERROR_MOD_NOT_FOUND;
+		return NULL;
+	}
+
+	return bundleInfoPtr;
 }
+#pragma export off
+
+#ifdef	_DEBUG
+// ---------------------------------------------------------------------------
+//		¥ OutputDebugStringMac
+// ---------------------------------------------------------------------------
+//	This implementation for the Windows API OutputDebugString() is not used in
+//	the Final target, only in the Debug and Test targets, in which it sends
+//	the string to the debugger - if CodeWarrior is set to log debug strings it
+//	will display this string in the Log window, otherwise it will send the
+//	string to the low level debugger (eg MacsBug).
+//	WARNING: If you don't have CodeWarrior logging these strings and also don't
+//	have a low level debugger installed your system will crash!
+#pragma export on
+VOID OutputDebugStringMac(LPCSTR lpOutputString)
+{
+	LStr255		strg(lpOutputString);
+	::DebugStr(strg);
+}
+#pragma export off
+#endif
 
 // ---------------------------------------------------------------------------
 //		¥ FindResource
 // ---------------------------------------------------------------------------
 //	TODO: Extend this for other types of resources if necessary.
+#pragma export on
 HRSRC	FindResource(void*, int rid, const char* type)
 {
+	// Assume success; change later if necessary
+	LastErrorCode = ERROR_SUCCESS;
+
 	if (std::strcmp( type, "TEMPLATE") == 0)
 	{
 		HRSRC	hrTmpl;
 
-		if (!(hrTmpl = GetResource('TEXT', rid))) return NULL;
+		if (!(hrTmpl = GetResource('TEXT', static_cast <SInt16> (rid)))) goto ResourceNotFound;
 		return hrTmpl;
 	}
-	else return NULL;	// Other resource types not yet kludged!
-}
-					 
-// Directory scan kludges
+	if (std::strcmp( type, "TEXT") == 0)
+	{
+		HRSRC	hrTmpl;
 
+		if (!(hrTmpl = GetResource('TEXT', static_cast <SInt16> (rid)))) goto ResourceNotFound;
+		return hrTmpl;
+	}
+	return NULL;	// Other resource types not yet kludged!
+
+ResourceNotFound:
+	//	What error code does Windows use for this situation?
+	//	Can't find a suitable one in WINERROR.H!
+	LastErrorCode = ERROR_FILE_NOT_FOUND;
+	return NULL;
+}
+#pragma export off
+					 
 // ---------------------------------------------------------------------------
 //		¥ FindFirstFile
+//
+//	Finds the first file that matches the file pathname pattern supplied. The path
+//	portion of the pattern indicates which drive and directory to start searching.
+//	The file name portion of the pattern may contain wildcards (* and ?). The file
+//	name portion may be empty, in which case the first file is obtained (an empty
+//	file name portion functions as *).
+//
+//	Upon success, FindFirstFile returns a handle to some internal search information.
+//	Subsequent calls to FindNextFile with this handle as parameter will find the
+//	remaining files that match the pattern.
+//
+//	When no more files are to be searched for, the application should call FindClose
+//	with the search handle as parameter so that the search information can be
+//	disposed of.
 // ---------------------------------------------------------------------------
+#pragma export on
 HANDLE	FindFirstFile(
     LPCSTR lpFileName,
     LPWIN32_FIND_DATA lpFindFileData
     )
 {
+	// Assume success; change later if necessary
+	LastErrorCode = ERROR_SUCCESS;
+	
+	// Create MAC_FIND_FILE_PARAMS structure
 	MAC_FIND_FILE_PARAMS	**hProgress =
 					(MAC_FIND_FILE_PARAMS**)NewHandle(sizeof(MAC_FIND_FILE_PARAMS));
-
 	
-	int				n = strlen(lpFileName);	// Length of supplied pathname
+	// Length of supplied pathname including file name
+	int				n = static_cast <int> (strlen(lpFileName));
+
 	unsigned char	pathName[MAX_PATH];		// Buffer for Pascal string pathname
 //	PascalString<255>	pathName(lpFileName);		// Buffer for Pascal string pathname
 	bool			wildcard = false;		// True if pattern is a wildcard
@@ -328,34 +538,91 @@ HANDLE	FindFirstFile(
 	unsigned char	*p;						// Pointers for C->Pascal string copying
 	const char		*q;
 
-	// Get pattern into progress
+	// Is there a wildcard for the search? Look only after the last path separator.
 	const char* split = strrchr(lpFileName, PATH_SEPARATOR);
 	if (!split) split = lpFileName;
-	else if (*split == ':') split++;
-	p = &(**hProgress).pattern[0];
-	*p++ = min(lpFileName + n - split, sizeof((**hProgress).pattern) - 1);
-	BlockMoveData(split, p, (**hProgress).pattern[0]);
-//	(**hProgress).pattern = split;
-	
-	// Test for wildcard
-	const char * ast = strchr(split, '*');	// Point to asterisk if any
-	if (strlen(split) && 					// empty wildcard not acceptable
-		(ast || strchr(split, '?')) &&		// must have an '*' or a '?'
-		(ast ? !strchr(ast, '*') : true)	// not more than one '*'
-		) wildcard = true;
 
+	// Test last part for explicit wildcard
+	const char * ast = strchr(split, '*');	// Point to asterisk if any
+	if ((ast || strchr(split, '?')) &&		// Must have an '*' or a '?'
+		(ast ? (strrchr(split, '*') == ast) : true)	// Not more than one '*'
+		)
+		wildcard = true;
+	
 	// Get pathname into Pascal string buffer
 	p = pathName;
-	*p++ = min(n, sizeof(pathName) - 1);
+	int	nPath = static_cast <int> (min((split - lpFileName), (sizeof(pathName) - 1)));
+	*p++ = static_cast <unsigned char> (nPath);
 	q = lpFileName;
 	BlockMoveData(q, p, n);
-	
+
 	// Find volRefNum and dirID of parent directory
 	FSSpec			f;
-	FSMakeFSSpec(0, 0, pathName, &f);
-	(**hProgress).volRefNum = f.vRefNum;
-	(**hProgress).dirID = f.parID;
 
+	err = FSMakeFSSpec(0, 0, pathName, &f);
+	if (err == fnfErr)
+	{
+		// Need to check whether we acually have the volume name
+		XVolumeParam		v;
+		Str31				vName;
+		v.ioVolIndex = 0;
+		v.ioVRefNum = f.vRefNum;
+		v.ioNamePtr = vName;
+		if ((PBXGetVolInfoSync(&v) != noErr) || pstricmp(vName, f.name))
+		{
+			LastErrorCode = ERROR_BAD_PATHNAME;
+			return INVALID_HANDLE_VALUE;
+		}
+		f.parID = fsRtParID;
+	} else if (err != noErr)
+	{
+		LastErrorCode = ERROR_BAD_PATHNAME;
+		return INVALID_HANDLE_VALUE;
+	}
+	(**hProgress).volRefNum = f.vRefNum;
+
+	// Find dirID of direcory to be scanned
+	(**hProgress).dirID = DirectoryIDFromName(f.vRefNum, f.parID, f.name);
+
+	// Get pattern into hProgress
+	if (*split == ':') split++;
+	p = &(**hProgress).pattern[0];
+	int nPatt = static_cast <int> (
+		min((strlen(split)), (sizeof( (**hProgress).pattern) - 1))
+		);
+	*p++ = static_cast <unsigned char> (nPatt);
+	BlockMoveData(split, p, nPatt);
+
+	if (!wildcard)
+	{
+		//Explicit filename or implicit * ?
+		CInfoPBRec		pbd;
+		Str31			feName;
+		BlockMoveData(&(**hProgress).pattern[0], &feName[0], (**hProgress).pattern[0] + 1);
+
+		pbd.hFileInfo.ioNamePtr = feName;
+		pbd.hFileInfo.ioVRefNum = f.vRefNum;
+		pbd.hFileInfo.ioDirID = (**hProgress).dirID;
+		pbd.hFileInfo.ioFDirIndex = 0;
+		err = PBGetCatInfoSync(&pbd);
+		if (err) goto NoneFound;
+		if (pbd.hFileInfo.ioFlAttrib & ioDirMask)
+		{
+			// implicit *
+			(**hProgress).dirID = pbd.dirInfo.ioDrDirID;
+			p = &(**hProgress).pattern[0];
+			*p++ = 1; *p = '*';
+			wildcard = true;
+		} else
+		{
+			// explicit file name
+//			wildcard = false;		Already initialsed to false!
+		}
+	}
+	
+	// Remember wildcard or not for FindNext()
+	(**hProgress).wildcard = wildcard;
+	
 	// Scan for first file
 	CInfoPBRec pb;
 	(**hProgress).index = 1;
@@ -381,21 +648,70 @@ HANDLE	FindFirstFile(
 	}
 
 	// Retrieve data for first match
+	// Attributes (only directory and hidden are dealt with yet)
+	lpFindFileData->dwFileAttributes = 0;
+	if (pb.hFileInfo.ioFlFndrInfo.fdFlags & kIsInvisible)
+		lpFindFileData->dwFileAttributes |= FILE_ATTRIBUTE_HIDDEN;
+	if (pb.hFileInfo.ioFlAttrib & ioDirMask)
+		lpFindFileData->dwFileAttributes |= FILE_ATTRIBUTE_DIRECTORY;
+	if (lpFindFileData->dwFileAttributes == 0)
+		lpFindFileData->dwFileAttributes = FILE_ATTRIBUTE_NORMAL;
+	//TODO: Are the file times really necessary?
+
+	// File size
+	
+	// File Name
 	BlockMoveData(&pb.hFileInfo.ioNamePtr[1], lpFindFileData->cFileName,
 		pb.hFileInfo.ioNamePtr[0]);
-	lpFindFileData->cFileName[pb.hFileInfo.ioNamePtr[0]] = '\0';
+	lpFindFileData->cFileName[pb.hFileInfo.ioNamePtr[0]] = '\0'; // NUL terminate
+
+	// MacOS file information
 	lpFindFileData->dwFileType = pb.hFileInfo.ioFlFndrInfo.fdType;
 	lpFindFileData->dwCreatorType = pb.hFileInfo.ioFlFndrInfo.fdCreator;
 	lpFindFileData->wFinderFlags = pb.hFileInfo.ioFlFndrInfo.fdFlags;
 	return (HANDLE)hProgress;
+
 NoneFound:
 	lpFindFileData->cFileName[0] = '\0';	// Empty file name
-	return INVALID_HANDLE_VALUE;
+	if (err == noErr) return (HANDLE)hProgress;
+	else
+	{
+		LastErrorCode = ERROR_NO_MORE_FILES;
+		return INVALID_HANDLE_VALUE;
+	}
+}
+#pragma export off
+
+// DirectoryIDFromName
+// This function obtains the name of a directory given its name and its
+// parent dirID.
+
+
+#define ClearObject(X)    std::memset(&X, 0, sizeof(X))
+
+SInt32 DirectoryIDFromName(
+	short			vRef,
+	long			parDirID,
+	StringPtr		dName)
+{
+ 	CInfoPBRec pb;
+
+	ClearObject(pb);
+
+	pb.dirInfo.ioCompletion = 0;
+	pb.dirInfo.ioNamePtr = dName;
+	pb.dirInfo.ioVRefNum = vRef;
+	pb.dirInfo.ioFDirIndex = 0;		// use ioNamePtr
+	pb.dirInfo.ioDrDirID = parDirID;
+
+	OSErr error = PBGetCatInfoSync(&pb);
+	return(pb.dirInfo.ioDrDirID);
 }
 
 // Wildcard testing function.
 // Compares the Pascal string fName with the Pascal pattern string wCard
 // and returns true if they match, otherwise false.
+// Ignores case during comparison using tolower().
 // Handles three types of pattern:
 //	*		any file name
 //	abc*	abc followed by any characters
@@ -425,7 +741,7 @@ bool	wildmatch(StringPtr fName, StringPtr wCard)
 				w--; n--;
 				continue;
 			}
-			if (*n-- != *w--) return (false);
+			if (std::tolower(*n--) != std::tolower(*w--)) return (false);
 		}
 	} else
 	{
@@ -439,24 +755,107 @@ bool	wildmatch(StringPtr fName, StringPtr wCard)
 				w++; n++;
 				continue;
 			}
-			if (*n++ != *w++) return (false);
+			if (std::tolower(*n++) != std::tolower(*w++)) return (false);
 		}
 	}
-	return false;
-}
-
-// ---------------------------------------------------------------------------
-//		¥ FindClose
-// ---------------------------------------------------------------------------
-BOOL	FindClose( /*IN OUT*/ HANDLE hFindFile )
-{
-	DisposeHandle(hFindFile);
 	return true;
 }
 
 // ---------------------------------------------------------------------------
-//		¥ SearchPath
+//		¥ FindNextFile
 // ---------------------------------------------------------------------------
+#pragma export on
+BOOL FindNextFile(
+    HANDLE hFindFile,
+    LPWIN32_FIND_DATA lpFindFileData
+    )
+{
+	OSErr					err;			// Mac system error return
+
+	// Assume success; change later if necessary
+	LastErrorCode = ERROR_SUCCESS;
+	
+	MAC_FIND_FILE_PARAMS	** hProgress = (MAC_FIND_FILE_PARAMS **) hFindFile;
+	
+	// Scan for next file
+	CInfoPBRec pb;
+	if ((**hProgress).wildcard)
+	{
+		Str31 fName;
+		do {
+			pb.hFileInfo.ioNamePtr = fName;
+			pb.hFileInfo.ioVRefNum = (**hProgress).volRefNum;
+			pb.hFileInfo.ioDirID = (**hProgress).dirID;
+			pb.hFileInfo.ioFDirIndex = (**hProgress).index++;
+			err = PBGetCatInfoSync(&pb);
+			if (err) goto NoneFound;
+		} while (!wildmatch(fName, (**hProgress).pattern));
+	} else
+	{
+		// Details of an explicitly named file would have been returned when
+		// FindFirstFile() set up the searching, so any subsequent calls to
+		// FindNextFile should return the None Found flag. That way an app which
+		// had not noticed that an explicit file name had already been supplied
+		// would be brought to a suitable conclusion.
+		goto NoneFound;
+	}
+
+	// Retrieve data for next match
+	// Attributes (only directory and hidden are dealt with yet)
+	lpFindFileData->dwFileAttributes = 0;
+	if (pb.hFileInfo.ioFlFndrInfo.fdFlags & kIsInvisible)
+		lpFindFileData->dwFileAttributes |= FILE_ATTRIBUTE_HIDDEN;
+	if (pb.hFileInfo.ioFlAttrib & ioDirMask)
+		lpFindFileData->dwFileAttributes |= FILE_ATTRIBUTE_DIRECTORY;
+	if (lpFindFileData->dwFileAttributes == 0)
+		lpFindFileData->dwFileAttributes = FILE_ATTRIBUTE_NORMAL;
+	//TODO: Are the file times really necessary?
+
+	// File size
+	
+	BlockMoveData(&pb.hFileInfo.ioNamePtr[1], lpFindFileData->cFileName,
+		pb.hFileInfo.ioNamePtr[0]);
+	lpFindFileData->cFileName[pb.hFileInfo.ioNamePtr[0]] = '\0';
+	lpFindFileData->dwFileType = pb.hFileInfo.ioFlFndrInfo.fdType;
+	lpFindFileData->dwCreatorType = pb.hFileInfo.ioFlFndrInfo.fdCreator;
+	lpFindFileData->wFinderFlags = pb.hFileInfo.ioFlFndrInfo.fdFlags;
+	return true;
+
+NoneFound:
+	lpFindFileData->cFileName[0] = '\0';	// Empty file name
+	LastErrorCode = ERROR_NO_MORE_FILES;
+	return false;
+}
+#pragma export off
+
+// ---------------------------------------------------------------------------
+//		¥ FindClose
+// ---------------------------------------------------------------------------
+#pragma export on
+BOOL	FindClose( /*IN OUT*/ HANDLE hFindFile )
+{
+	// Assume success; change later if necessary
+	LastErrorCode = ERROR_SUCCESS;
+
+	DisposeHandle(hFindFile);
+	return true;
+}
+#pragma export off
+
+// ---------------------------------------------------------------------------
+//		¥ SearchPath
+//
+//	Searches for a specified file on a specified path. If the file is found the
+//	full pathname of the file is copied into the buffer lpbuffer and the number
+//	of characters in the path is returned; except that if the buffer supplied
+//  (having nBufferLength) is too small to hold the full path the value returned
+//	is the size needed to hold the full path (and the application should call
+//	SearchPath again but with a large enough buffer).
+//
+//	If the specified file cannot be found on the specified path, the return value
+//	is zero.
+// ---------------------------------------------------------------------------
+#pragma export on
 DWORD	SearchPath(
 	LPCSTR lpPath,
 	LPCSTR lpFileName,
@@ -466,6 +865,9 @@ DWORD	SearchPath(
 	LPSTR *lpFilePart
 	)
 {
+	// Assume success; change later if necessary
+	LastErrorCode = ERROR_SUCCESS;
+
 	char		FFFPath[256];	// Assemble pathname to be passed to FindFirstFile()
 	strncpy(FFFPath, lpPath, sizeof(FFFPath)-1);
 	// The following line assumes that the Windows app doesn't mind colan separators
@@ -480,10 +882,10 @@ DWORD	SearchPath(
 	
     WIN32_FIND_DATA	findFileData;
 	HANDLE search = FindFirstFile(FFFPath, &findFileData);
-	if (search == INVALID_HANDLE_VALUE) return (0);
+	if (search == INVALID_HANDLE_VALUE) goto FileNotFound;
 	else
 	{
-		int total = strlen(FFFPath);
+		int total = static_cast <int> (strlen(FFFPath));
 		if (total < nBufferLength)
 		{
 			strcpy(lpBuffer, FFFPath);
@@ -491,11 +893,17 @@ DWORD	SearchPath(
 		}
 		FindClose(search);	// Discard the internal structure used by FindFirst/NextFile
 
-		return total;
+		return static_cast <DWORD> (total);
 	}
-}
 
-// String/Memory comparison
+FileNotFound:
+	LastErrorCode = ERROR_FILE_NOT_FOUND;
+	return (0);
+}
+#pragma export off
+
+// String/Memory comparisons
+#pragma export on
 int	_strnicmp(const char *p, const char *q, size_t n)
 {
 	while (n-- > 0)
@@ -517,3 +925,34 @@ int	_memicmp(const void *vp, const void *vq, size_t n)
 	
 	return _strnicmp(p, q, n);
 }
+#pragma export off
+
+// Copy a Pascal string to a limited-size C string
+void p2cstrncpy(const unsigned char* p, char* q, DWORD n)
+{
+	n = min(n, p[0]);
+	BlockMoveData(p + 1, q, static_cast <long> (n));
+	q[n] = 0;
+}
+
+// Compare two Pascal strings ignoring case
+int pstricmp(const unsigned char * p, const unsigned char * q)
+{
+	int pn = p[0];
+	int qn = q[0];
+
+	if (pn == 0 && qn == 0) return 0;
+	for (int i=1; i<= min(pn, qn); i++)
+	{
+		int pc = std::tolower(p[i]);
+		int qc = std::tolower(q[i]);
+		if (pc != qc) return (pc > qc);
+	}
+	if (pn > qn ) return 1;
+	else
+	{
+		if (pn < qn) return -1;
+		else return 0;
+	}
+}
+

@@ -1,6 +1,6 @@
-//	WinSupportFinal.h
+//	WinSupportDebug.h
 //
-//	Prefix file for final Carbon target of WinSupport library
+//	Prefix file for debugging Carbon target of WinSupport library
 //
 //	Removed _assert #define for CW 8
 //		2002-08-07, GDLC
@@ -12,6 +12,6 @@
 
 #include <MacHeadersCarbon.h>
 
-#undef	_DEBUG
+#define _DEBUG
 
 #define	MAC
