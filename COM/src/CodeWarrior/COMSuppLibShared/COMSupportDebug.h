@@ -1,0 +1,1 @@
+//	COMSupportDebug.h////	Prefix file for debug Carbon target of COMSupport library////	Removed _assert #define for CW 8//		2002-12-09, GDLC//	Written, Graeme Costin, 2001-08-21////	$Id$#include <MacHeadersCarbon.h>#define _DEBUG
