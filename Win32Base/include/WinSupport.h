@@ -19,6 +19,7 @@ Contains definitions copied and (sometimes modified) from the Windows headers:
 	BASETSD.H
 	WINBASE.H
 	MAPIWIN.H
+	WINNLS.H
 
 The copied portions are included here in sections named according to the above Windows
 headers. It is suggested that further bits copied from Windows headers be kept in
@@ -29,6 +30,11 @@ other things needed for a port to MacOS.
 
 Some of the implementation is provided in WinSupport.cpp.
 
+Removed inclusion of Carbon header files. Commentary tidied up a little.
+Moved MultiByteToWideChar and WideCharToMultiByte to here from COMSupport.h.
+	2003-06-23, NJHM, GDLC
+Unwanted unnamed portions of unions removed from LARGE_INTEGER and ULARGE_INTEGER
+	2003-06-19, NJHM
 Added S_FALSE
 	2003-04-24, GDLC
 Added CLASS_E_NOAGGREGATION, CLASS_E_CLASSNOTAVAILABLE
@@ -99,7 +105,15 @@ Added E_FAIL
 	2001-11-12, GDLC
 ----------------------------------------------------------------------------------------------*/
 
+#ifndef FILE_WINSUPPORT_SEEN
+#define FILE_WINSUPPORT_SEEN
+
+#ifndef __GNUC__
 #pragma once
+#endif
+
+#include <cstddef>		// For std::size_t
+#include <algorithm>	// For std::min
 
 // Copied, with adaptations, from the Windows header  WTYPES.H
 
@@ -164,9 +178,9 @@ typedef struct
 
 typedef long				HRESULT;
 
-//	The Windows types HANDLE and HRSRC are defined as MacOS Handles
-typedef Handle				HANDLE;
-typedef Handle				HRSRC;
+//	The Windows types HANDLE and HRSRC are defined as pointers to opaque structures
+typedef struct tagHANDLE*	HANDLE;
+typedef HANDLE				HRSRC;
 
 //	HMODULE is defined in Windows headers as a pointer to a void.
 //	For applications ported to MacOS and presented to the user packaged in a
@@ -244,14 +258,15 @@ typedef enum
 
 // Copied, with adaptations, from the Windows header  WINNT.H
 // Both of these unions are rather strange, having a named part
-// and an unnamed part that are identical!
+// and an unnamed part that are identical! Unnamed parts commented out June-19, 2003
+// because gcc compiler didn't like them.
 //Line 421
 typedef union
 {
-    struct {
-        DWORD LowPart;
-        LONG HighPart;
-    };
+//    struct {
+//        DWORD LowPart;
+//        LONG HighPart;
+//    };
     struct {
         DWORD LowPart;
         LONG HighPart;
@@ -263,10 +278,10 @@ typedef LARGE_INTEGER *PLARGE_INTEGER;
 
 typedef union
 {
-	struct {
-		DWORD	LowPart;
-		DWORD	HighPart;
-	};
+//	struct {
+//		DWORD	LowPart;
+//		DWORD	HighPart;
+//	};
 	struct {
 		DWORD	LowPart;
 		DWORD	HighPart;
@@ -316,7 +331,7 @@ typedef unsigned int		*PUINT;
 
 typedef BOOL				*LPBOOL;
 
-typedef struct
+typedef struct POINT
 	{
 		long x;
 		long y;
@@ -326,7 +341,7 @@ typedef struct POINT		*PPOINT;
 
 typedef struct POINT		*LPPOINT;
 
-typedef struct
+typedef struct RECT
     {
     long left;
     long top;
@@ -541,9 +556,9 @@ typedef	unsigned long		SIZE_T, *PSIZE_T;
 //	For further comments about LockResource(), LoadResource() and
 //	SizeOfResource(), see FindResource() [//Line 4675]
 
-//Line 1206					
-inline void*	LockResource(HRSRC hres)
-					{ HLock(hres); return *hres; }
+//Line 1206
+inline void*	LockResource(HRSRC hres);
+
 //Line 2178
 DWORD			GetLastError(VOID);
 
@@ -552,13 +567,11 @@ inline HGLOBAL	LoadResource(void*, HRSRC hres)
 					{ return hres; }
 
 //Line 2483
-inline long		SizeofResource(void*, HRSRC hres)
-					{ return GetHandleSize(hres); }
+inline long		SizeofResource(void*, HRSRC hres);
 
 //Line 2735
 BOOL WINAPI		FindClose(
-    /*IN OUT*/ HANDLE hFindFile
-    );
+    /*IN OUT*/ HANDLE hFindFile );
 
 //Line 3085
 void			GetSystemTimeAsFileTime(
@@ -617,11 +630,11 @@ typedef struct
 	DWORD		dwReserved1;
 	CHAR		cFileName[ MAX_PATH ];
 	CHAR		cAlternateFileName[ 14 ];
-#ifdef MAC
+/*
 	DWORD		dwFileType;
 	DWORD		dwCreatorType;
 	WORD		wFinderFlags;
-#endif
+*/
 } WIN32_FIND_DATA, *PWIN32_FIND_DATA, *LPWIN32_FIND_DATA;
 
 //Line 4438
@@ -764,13 +777,51 @@ inline int MAKEINTRESOURCE(int id) { return id; }
 
 //--end copy from MAPIWIN.H------------------------------------------------------------------
 
+//--------------------------------------------------------------------------------------------
+// Copied, with adaptations, from the Windows header  WINNLS.H
+
+//  Code Page Default Values.
+
+#define CP_ACP					0			// default to ANSI code page
+#define CP_OEMCP				1			// default to OEM  code page
+#define CP_MACCP				2			// default to MAC  code page
+#define CP_THREAD_ACP			3			// current thread's ANSI code page
+#define CP_SYMBOL				42			// SYMBOL translations
+
+#define CP_UTF7					65000		// UTF-7 translation
+#define CP_UTF8					65001		// UTF-8 translation
+
+// Line 966
+int MultiByteToWideChar(
+	UINT		CodePage,
+	DWORD		dwFlags,
+	LPCSTR		lpMultiByteStr,
+	int			cbMultiByte,
+	LPWSTR		lpWideCharStr,
+    int			cchWideChar);
+
+// Line 977
+int WideCharToMultiByte(
+	UINT		CodePage,
+	DWORD		dwFlags,
+	LPCWSTR		lpWideCharStr,
+	int			cchWideChar,
+	LPSTR		lpMultiByteStr,
+	int			cbMultiByte,
+	LPCSTR		lpDefaultChar,
+	LPBOOL		lpUsedDefaultChar);
+
+//--end copy from WINNLS.H--------------------------------------------------------------------
+
 // Kludges and other things needed for a port to MacOS.
 
 #define __cdecl
 #define __stdcall
 
-#define min(x, y) (x < y ? x : y)
+using std::min;
 
 // String/Memory comparison
 int _strnicmp(const char *p, const char *q, std::size_t n);
 int _memicmp(const void *, const void *, std::size_t);
+
+#endif //FILE_WINSUPPORT_SEEN

@@ -10,7 +10,6 @@ Reviewed:	Date		Reviewer
 
 Contains definitions copied and (sometimes modified) from the Windows headers:
 
-	WINNLS.H
 	GUIDDEF.H
 	RPCNDR.H
 	OBJBASE.H
@@ -23,6 +22,8 @@ The copied portions are included here in sections named according to the above W
 headers. It is suggested that further bits copied from Windows headers be kept in
 these sections to facilitate later reading and debugging of the code.
 
+Moved MultiByteToWideChar and WideCharToMultiByte to here from COMSupport.h.
+	2003-06-23, GDLC
 Fixed definition of first parameter to CoCreateInstance(). Minor adjustments to typedefs
 and #defines for GUIDs, IIDs, CLSIDs and their references. Removed unwanted "static"s.
 	2003-05-14, GDLC
@@ -61,45 +62,16 @@ Added BSTR & LPBSTR
 	2001-08-28, GDLC
 ----------------------------------------------------------------------------------------------*/
 
+#ifndef FILE_COMSUPPORT_SEEN
+#define FILE_COMSUPPORT_SEEN
+
+#ifndef __GNUC__
 #pragma once
+#endif
 
+//
 //	The header WinSupport.h should be included before this header.
-
-//--------------------------------------------------------------------------------------------
-// Copied, with adaptations, from the Windows header  WINNLS.H
-
-//  Code Page Default Values.
-
-#define CP_ACP					0			// default to ANSI code page
-#define CP_OEMCP				1			// default to OEM  code page
-#define CP_MACCP				2			// default to MAC  code page
-#define CP_THREAD_ACP			3			// current thread's ANSI code page
-#define CP_SYMBOL				42			// SYMBOL translations
-
-#define CP_UTF7					65000		// UTF-7 translation
-#define CP_UTF8					65001		// UTF-8 translation
-
-// Line 966
-int MultiByteToWideChar(
-	UINT		CodePage,
-	DWORD		dwFlags,
-	LPCSTR		lpMultiByteStr,
-	int			cbMultiByte,
-	LPWSTR		lpWideCharStr,
-    int			cchWideChar);
-
-// Line 977
-int WideCharToMultiByte(
-	UINT		CodePage,
-	DWORD		dwFlags,
-	LPCWSTR		lpWideCharStr,
-	int			cchWideChar,
-	LPSTR		lpMultiByteStr,
-	int			cbMultiByte,
-	LPCSTR		lpDefaultChar,
-	LPBOOL		lpUsedDefaultChar);
-
-//--end copy from WINNLS.H--------------------------------------------------------------------
+//
 
 //--------------------------------------------------------------------------------------------
 // Copied, with adaptations, from the Windows header GUIDDEF.H
@@ -111,7 +83,7 @@ typedef struct
     unsigned char	Data4[8];
 } GUID;
 
-#include <string.h>
+//#include <string.h>
 
 typedef GUID			*LPGUID;
 typedef const GUID 		*LPCGUID;
@@ -352,7 +324,7 @@ const IID IID_IClassFactory =
 typedef struct
     {                      
         LPOLESTR		pwcsName;
-		FSSpec			*pspec;
+//		FSSpec			*pspec;		// For apps ported from Windows this must not be present.
         DWORD			type;
         ULARGE_INTEGER	cbSize;
         FILETIME		mtime;
@@ -487,3 +459,5 @@ HRESULT CoCreateInstance(
 //	created as a static pointer to the class factory is initialised.
  
 void RegisterServer(const CLSID &Class, LPCLASSFACTORY Pointer);
+
+#endif //FILE_COMSUPPORT_SEEN
