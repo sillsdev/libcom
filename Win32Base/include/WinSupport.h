@@ -5,6 +5,8 @@ File: WinSupport.h
 Responsibility: Graeme Costin
 Reviewed:	Date		Reviewer
 			never
+
+	$Id$
 			
 Header file to provide substitutions and kludges when compiling FieldWorks for MacOS.
 Contains definitions copied and (sometimes modified) from the Windows headers:
@@ -27,6 +29,26 @@ other things needed for a port to MacOS.
 
 Some of the implementation is provided in WinSupport.cpp.
 
+Added GetLastError and some more error codes.
+	2002-11-08, GDLC
+Added ERROR_NO_MORE_FILES
+	2002-11-07, GDLC
+Added FILE_ATTRIBUTE #defines
+	2002-11-06, GDLC
+Added FindNextFile()
+	2002-10-31, GDLC
+Modified to compile with Apple Developer tools
+    2002-09-26, GDLC
+Used forward definition of _BUNDLE_INFO instead of void in HMODULE.
+	2002-09-03, GDLC
+Changed HMODULE to allow for the BUNDLE_INFO structure defined in WinSupportInternals.h
+	2002-08-27, GDLC
+Moved #pragma export directives to WinSupport.cpp
+	2002-08-21, GDLC
+Changed definition of HMODULE from file refNum to CFURLRef
+	2002-07-12, GDLC
+Removed FormatMessge()
+	2002-06-25, GDLC
 Reversed order of DWORDs in FILETIME.
 	2002-04-23, GDLC
 Added LPVOIC & LPCVOID. Reordered adaptations from WINBASE.H.
@@ -140,12 +162,12 @@ typedef long				HRESULT;
 typedef Handle				HANDLE;
 typedef Handle				HRSRC;
 
-// HMODULE is defined in Windows headers as a pointer to a void.
-// For MacFieldWorks it is reasonable to take HMODULE as the file reference
-// number of the resource fork of the application file or the shared library
-// file as appropriate.
-//typedef void				*HMODULE;
-typedef	short				HMODULE;
+//	HMODULE is defined in Windows headers as a pointer to a void.
+//	For applications ported to MacOS and presented to the user packaged in a
+//	CFBundle, it is reasonable to take HMODULE as a pointer to the BUNDLE_INFO
+//	structure held by a per-process static variable. The details of the BUNDLE_INFO
+//	structure are kept private to the WinSuppportLib.
+typedef struct BUNDLE_INFO	*HMODULE;
 
 typedef short				HINSTANCE;
 
@@ -217,6 +239,7 @@ typedef enum
 // Copied, with adaptations, from the Windows header  WINNT.H
 // Both of these unions are rather strange, having a named part
 // and an unnamed part that are identical!
+//Line 421
 typedef union
 {
     struct {
@@ -247,9 +270,27 @@ typedef union
 
 typedef ULARGE_INTEGER *PULARGE_INTEGER;
 
+//Line 4524
 #define TIME_ZONE_ID_UNKNOWN	0
 #define TIME_ZONE_ID_STANDARD	1
 #define TIME_ZONE_ID_DAYLIGHT	2
+
+//Line 4685
+#define FILE_ATTRIBUTE_READONLY					0x00000001
+#define FILE_ATTRIBUTE_HIDDEN					0x00000002
+#define FILE_ATTRIBUTE_SYSTEM					0x00000004
+
+#define FILE_ATTRIBUTE_DIRECTORY				0x00000010
+#define FILE_ATTRIBUTE_ARCHIVE					0x00000020
+//#define FILE_ATTRIBUTE_DEVICE					0x00000040
+#define FILE_ATTRIBUTE_NORMAL					0x00000080
+#define FILE_ATTRIBUTE_TEMPORARY				0x00000100
+//#define FILE_ATTRIBUTE_SPARSE_FILE			0x00000200
+//#define FILE_ATTRIBUTE_REPARSE_POINT			0x00000400
+#define FILE_ATTRIBUTE_COMPRESSED				0x00000800
+#define FILE_ATTRIBUTE_OFFLINE					0x00001000
+//#define FILE_ATTRIBUTE_NOT_CONTENT_INDEXED	0x00002000
+//#define FILE_ATTRIBUTE_ENCRYPTED				0x00004000
 
 //--end copy from WINNT.H--------------------------------------------------------------------
 
@@ -331,55 +372,80 @@ typedef void	(CALLBACK *PROC)();
 //
 // Define the facility codes
 //
-//#define FACILITY_WINDOWS                 8
-//#define FACILITY_URT                     19
-//#define FACILITY_STORAGE                 3
-//#define FACILITY_SSPI                    9
-//#define FACILITY_SCARD                   16
-//#define FACILITY_SETUPAPI                15
-//#define FACILITY_SECURITY                9
-//#define FACILITY_RPC                     1
-#define FACILITY_WIN32                   7
-//#define FACILITY_CONTROL                 10
-//#define FACILITY_NULL                    0
-//#define FACILITY_MSMQ                    14
-//#define FACILITY_MEDIASERVER             13
-//#define FACILITY_INTERNET                12
-#define FACILITY_ITF                     4
-//#define FACILITY_DISPATCH                2
-//#define FACILITY_COMPLUS                 17
-//#define FACILITY_CERT                    11
-//#define FACILITY_ACS                     20
-//#define FACILITY_AAF                     18
+//#define FACILITY_WINDOWS				8
+//#define FACILITY_URT					19
+//#define FACILITY_STORAGE				3
+//#define FACILITY_SSPI					9
+//#define FACILITY_SCARD				16
+//#define FACILITY_SETUPAPI				15
+//#define FACILITY_SECURITY				9
+//#define FACILITY_RPC					1
+#define FACILITY_WIN32					7
+//#define FACILITY_CONTROL				10
+//#define FACILITY_NULL					0
+//#define FACILITY_MSMQ					14
+//#define FACILITY_MEDIASERVER			13
+//#define FACILITY_INTERNET				12
+#define FACILITY_ITF					4
+//#define FACILITY_DISPATCH				2
+//#define FACILITY_COMPLUS				17
+//#define FACILITY_CERT					11
+//#define FACILITY_ACS					20
+//#define FACILITY_AAF					18
+
+#define ERROR_SUCCESS					0L
+
+//  The system cannot find the file specified.
+#define ERROR_FILE_NOT_FOUND			2L
+
+//	Invalid drive
+#define ERROR_INVALID_DRIVE				15L
+
+//	There are no more files
+#define ERROR_NO_MORE_FILES				18L
+
+//  This function is not supported on this system.
+#define ERROR_CALL_NOT_IMPLEMENTED		120L
+
+//	The specified module could not be found
+#define ERROR_MOD_NOT_FOUND				126L
+
+//  The specified path is invalid.
+#define ERROR_BAD_PATHNAME				161L
+
+#define _HRESULT_TYPEDEF_(_sc) ((HRESULT)_sc)
 
 // Generic test for success on any status value (non-negative numbers
 // indicate success).
-
 #define SUCCEEDED(Status) ((HRESULT)(Status) >= 0)
 
 // and the inverse
 
 #define FAILED(Status) ((HRESULT)(Status)<0)
 
-#define _HRESULT_TYPEDEF_(_sc) ((HRESULT)_sc)
-
-#define ERROR_SUCCESS					_HRESULT_TYPEDEF_(0L)
 #define S_OK							_HRESULT_TYPEDEF_(0x00000000L)
 
 //  Catastrophic failure
 #define E_UNEXPECTED					_HRESULT_TYPEDEF_(0x8000FFFFL)
+
 //  Ran out of memory
 #define E_OUTOFMEMORY					_HRESULT_TYPEDEF_(0x8007000EL)
+
 //  One or more arguments are invalid
 #define E_INVALIDARG					_HRESULT_TYPEDEF_(0x80070057L)
+
 //  Unspecified error
 #define E_FAIL							_HRESULT_TYPEDEF_(0x80004005L)
+
 //  Class not registered
 #define REGDB_E_CLASSNOTREG				_HRESULT_TYPEDEF_(0x80040154L)
+
 //  Invalid class string
 #define CO_E_CLASSSTRING				_HRESULT_TYPEDEF_(0x800401F3L)
+
 //  A disk error occurred during a write operation.
 #define STG_E_WRITEFAULT				_HRESULT_TYPEDEF_(0x8003001DL)
+
 //  A disk error occurred during a read operation.
 #define STG_E_READFAULT					_HRESULT_TYPEDEF_(0x8003001EL)
 
@@ -437,6 +503,8 @@ typedef	unsigned long		SIZE_T, *PSIZE_T;
 //Line 1206					
 inline void*	LockResource(HRSRC hres)
 					{ HLock(hres); return *hres; }
+//Line 2178
+DWORD			GetLastError(VOID);
 
 //Line 2475
 inline HGLOBAL	LoadResource(void*, HRSRC hres)
@@ -452,7 +520,8 @@ BOOL WINAPI		FindClose(
     );
 
 //Line 3085
-void GetSystemTimeAsFileTime(LPFILETIME lpSystemTimeAsFileTime);
+void			GetSystemTimeAsFileTime(
+				LPFILETIME lpSystemTimeAsFileTime);
 
 //Line 3124
 typedef struct
@@ -467,23 +536,32 @@ typedef struct
 } TIME_ZONE_INFORMATION, *PTIME_ZONE_INFORMATION, *LPTIME_ZONE_INFORMATION;
 
 //Line 3146
-DWORD GetTimeZoneInformation(
-    LPTIME_ZONE_INFORMATION lpTimeZoneInformation
-    );
+DWORD			GetTimeZoneInformation(
+				LPTIME_ZONE_INFORMATION lpTimeZoneInformation);
 
 //Line 3223
-DWORD GetTickCount(void);
+DWORD			GetTickCount(void);
 
 //Line 3248
-DWORD FormatMessage(
-    /*IN*/ DWORD	dwFlags,
-    /*IN*/ LPCVOID	lpSource,
-    /*IN*/ DWORD	dwMessageId,
-    /*IN*/ DWORD	dwLanguageId,
-    /*OUT*/ LPSTR	lpBuffer,
-    /*IN*/ DWORD	nSize,
-    /*IN*/ va_list	*Arguments
-    );
+//#pragma export on
+//DWORD FormatMessage(
+//	/*IN*/ DWORD	dwFlags,
+//	/*IN*/ LPCVOID	lpSource,
+//	/*IN*/ DWORD	dwMessageId,
+//	/*IN*/ DWORD	dwLanguageId,
+//	/*OUT*/ LPSTR	lpBuffer,
+//	/*IN*/ DWORD	nSize,
+//	/*IN*/ va_list	*Arguments
+//	);
+//#pragma export off
+//
+//#define FORMAT_MESSAGE_ALLOCATE_BUFFER 0x00000100
+//#define FORMAT_MESSAGE_IGNORE_INSERTS  0x00000200
+//#define FORMAT_MESSAGE_FROM_STRING     0x00000400
+//#define FORMAT_MESSAGE_FROM_HMODULE    0x00000800
+//#define FORMAT_MESSAGE_FROM_SYSTEM     0x00001000
+//#define FORMAT_MESSAGE_ARGUMENT_ARRAY  0x00002000
+//#define FORMAT_MESSAGE_MAX_WIDTH_MASK  0x000000FF
 
 //Line 4057
 typedef struct
@@ -508,11 +586,10 @@ typedef struct
 //Line 4438
 //	Only GetModuleFilename() is used by Windows FW code; and only 8-bit character
 //	filenames are relevant on MacOS. Despite its name it returns the full pathname.
-DWORD GetModuleFileName(
-    /*IN*/ HMODULE hModule,
-    /*OUT*/ LPSTR lpFilename,
-    /*IN*/ DWORD nSize
-    );
+DWORD			GetModuleFileName(
+				/*IN*/ HMODULE hModule,
+				/*OUT*/ LPSTR lpFilename,
+				/*IN*/ DWORD nSize);
 
 //Line 4468
 //	Only GetModuleHandle() is used by Windows FW code; and only 8-bit character
@@ -520,12 +597,22 @@ DWORD GetModuleFileName(
 //	which indicates the application's resource fork; other modules are probably
 //	not relevant on MacOS.
 //	TODO: Be on the lookout for relevance of other parameters and extend this if necessary.
-HMODULE GetModuleHandle(/*IN*/ LPCSTR lpModuleName);
+HMODULE			GetModuleHandle(/*IN*/ LPCSTR lpModuleName);
 
 //Line 4657
 //	Only OutputDebugString() is used by Windows FW code; and only 8-bit character
 //	output is relevant to MacOS debugging.
-VOID OutputDebugString(/*IN*/ LPCSTR lpOutputString);
+//	OutputDebugString() generates action only for the Debug and Test targets; the
+//	Final target has zero code for OutputDebugString().
+#ifdef	OutputDebugString
+#undef	OutputDebugString
+#endif
+#ifdef	_DEBUG
+#define			OutputDebugString(s) OutputDebugStringMac(s)
+VOID			OutputDebugStringMac(/*IN*/ LPCSTR lpOutputString);
+#else
+#define			OutputDebugString(s) ((void) 0)
+#endif
 
 // For this Mac port there is no need to have a handle to an info block
 // about the resource, so we make FindResource() not only locate the resource
@@ -533,50 +620,88 @@ VOID OutputDebugString(/*IN*/ LPCSTR lpOutputString);
 // will merely return the handle it is given, and HRSRC and HGLOBAL are
 // both merely Mac Handles.
 
-inline int MAKEINTRESOURCE(int id) { return id; }
-
 //Line 4675
-HRSRC	FindResource(void*, int rid, const char* type);
+HRSRC			FindResource(void*, int rid, const char* type);
 
 //Line 5864
-HANDLE FindFirstFile(
-	LPCSTR				lpFileName,
-	LPWIN32_FIND_DATA	lpFindFileData
-	);
+HANDLE			FindFirstFile(
+				LPCSTR				lpFileName,
+				LPWIN32_FIND_DATA	lpFindFileData);
+
+//Line 5881
+BOOL			FindNextFile(
+				HANDLE hFindFile,
+				LPWIN32_FIND_DATA lpFindFileData);
 
 //Line 5904
 // Copied from WINBASE.H and modified by removing the final 'A'
 // and WINBASEAPI and WINAPI
-DWORD SearchPath(
-    LPCSTR	lpPath,
-    LPCSTR	lpFileName,
-    LPCSTR	lpExtension,
-    DWORD	nBufferLength,
-    LPSTR	lpBuffer,
-    LPSTR	*lpFilePart
-    );
+DWORD			SearchPath(
+				LPCSTR	lpPath,
+				LPCSTR	lpFileName,
+				LPCSTR	lpExtension,
+				DWORD	nBufferLength,
+				LPSTR	lpBuffer,
+				LPSTR	*lpFilePart);
 
 //Line 7587
-inline BOOL IsBadCodePtr(FARPROC /*lpfn*/) { return false; };
+inline BOOL		IsBadCodePtr(FARPROC /*lpfn*/) { return false; };
 
 //Line 7825
-inline BOOL IsBadReadPtr(const void */*lp*/, UINT /*ucb*/) { return false; }
+inline BOOL		IsBadReadPtr(const void */*lp*/, UINT /*ucb*/) { return false; }
 
 //Line 7833
-inline BOOL IsBadWritePtr(LPVOID /*lp*/, UINT /*ucb*/) { return false; }
+inline BOOL		IsBadWritePtr(LPVOID /*lp*/, UINT /*ucb*/) { return false; }
 
 //Line 7864
 //	No good way of testing these conditions on MacOS
 //	Both IsBadStringPtrA and IsBadStringPtrW are used in FM code
-inline BOOL IsBadStringPtrA(LPCSTR /*lpsz*/, UINT_PTR /*ucchMax*/) { return false; }
-inline BOOL IsBadStringPtrW(LPCWSTR /*lpsz*/, UINT_PTR /*ucchMax*/) { return false; }
+inline BOOL		IsBadStringPtrA(LPCSTR /*lpsz*/, UINT_PTR /*ucchMax*/) { return false; }
+inline BOOL		IsBadStringPtrW(LPCWSTR /*lpsz*/, UINT_PTR /*ucchMax*/) { return false; }
 #ifdef UNICODE
-#define IsBadStringPtr  IsBadStringPtrW
+#define			IsBadStringPtr  IsBadStringPtrW
 #else
-#define IsBadStringPtr  IsBadStringPtrA
+#define			IsBadStringPtr  IsBadStringPtrA
 #endif // !UNICODE
 
 //--end copy from WINBASE.H------------------------------------------------------------------
+
+// Copied, with adaptations, from the Windows header  WINDEF.H
+
+//	Windows uses a #define:
+//	#define MAKEINTRESOURCE(i) (LPSTR)((ULONG_PTR)((WORD)(i)))
+//	For MacOS an inline function works well.
+inline int MAKEINTRESOURCE(int id) { return id; }
+
+/*
+ * Predefined Windows Resource Types
+ */
+#define RT_CURSOR           MAKEINTRESOURCE(1)
+#define RT_BITMAP           MAKEINTRESOURCE(2)
+#define RT_ICON             MAKEINTRESOURCE(3)
+#define RT_MENU             MAKEINTRESOURCE(4)
+#define RT_DIALOG           MAKEINTRESOURCE(5)
+#define RT_STRING           MAKEINTRESOURCE(6)
+#define RT_FONTDIR          MAKEINTRESOURCE(7)
+#define RT_FONT             MAKEINTRESOURCE(8)
+#define RT_ACCELERATOR      MAKEINTRESOURCE(9)
+#define RT_RCDATA           MAKEINTRESOURCE(10)
+#define RT_MESSAGETABLE     MAKEINTRESOURCE(11)
+
+#define DIFFERENCE          11
+#define RT_GROUP_CURSOR 	MAKEINTRESOURCE((ULONG_PTR)RT_CURSOR + DIFFERENCE)
+#define RT_GROUP_ICON   	MAKEINTRESOURCE((ULONG_PTR)RT_ICON + DIFFERENCE)
+#define RT_VERSION      	MAKEINTRESOURCE(16)
+#define RT_DLGINCLUDE   	MAKEINTRESOURCE(17)
+//#if(WINVER >= 0x0400)
+#define RT_PLUGPLAY     	MAKEINTRESOURCE(19)
+#define RT_VXD          	MAKEINTRESOURCE(20)
+#define RT_ANICURSOR    	MAKEINTRESOURCE(21)
+#define RT_ANIICON      	MAKEINTRESOURCE(22)
+//#endif /* WINVER >= 0x0400 */
+#define RT_HTML         	MAKEINTRESOURCE(23)
+
+//--end copy from WINDEF.H------------------------------------------------------------------
 
 // Copied, with adaptations, from the Windows header  MAPIWIN.H
 
