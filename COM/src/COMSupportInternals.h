@@ -48,7 +48,7 @@ class ComRegistry : public ComMap
 	
 		void Register(const CLSID &Class, LPCLASSFACTORY Pointer);
 
-		HRESULT GetFactoryPtr(const CLSID &Class, LPCLASSFACTORY* pIFactory) const;
+		HRESULT GetFactoryPtr(const CLSID& Class, LPCLASSFACTORY* pIFactory) const;
 
 		void Dump(std::ostream& out);
 };
