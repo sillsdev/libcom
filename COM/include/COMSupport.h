@@ -23,6 +23,17 @@ The copied portions are included here in sections named according to the above W
 headers. It is suggested that further bits copied from Windows headers be kept in
 these sections to facilitate later reading and debugging of the code.
 
+Fixed definition of first parameter to CoCreateInstance(). Minor adjustments to typedefs
+and #defines for GUIDs, IIDs, CLSIDs and their references. Removed unwanted "static"s.
+	2003-05-14, GDLC
+Added RegisterServer() for registering class factories in our ComRegistry.
+	2003-05-01, GDLC
+Added line numbers in Windows headers from which the excerpts are taken.
+Added CoGetClassObject().
+	2003-04-21, GDLC
+Started to modify to use CFPlugIn.h & CFPlugInCOM.h from Core Foundation (Carbon)
+but reverted to original approach.
+	2003-03-31, GDLC
 Changed definitions of enums & structs to suit C++ (this file is not intended for
 compilation as a C source)
 	2002-03-08, GDLC
@@ -68,6 +79,7 @@ Added BSTR & LPBSTR
 #define CP_UTF7					65000		// UTF-7 translation
 #define CP_UTF8					65001		// UTF-8 translation
 
+// Line 966
 int MultiByteToWideChar(
 	UINT		CodePage,
 	DWORD		dwFlags,
@@ -76,6 +88,7 @@ int MultiByteToWideChar(
 	LPWSTR		lpWideCharStr,
     int			cchWideChar);
 
+// Line 977
 int WideCharToMultiByte(
 	UINT		CodePage,
 	DWORD		dwFlags,
@@ -108,11 +121,10 @@ typedef	GUID			IID;
 #define REFIID			const IID &
 
 typedef	GUID			CLSID;
-#define REFGUID			const GUID &
-
 typedef	CLSID			*LPCLSID;
 #define REFCLSID		const IID &
 
+//Line 149
 // Faster (but makes code fatter) inline version...use sparingly
 __inline int InlineIsEqualGUID(REFGUID rguid1, REFGUID rguid2)
 {
@@ -123,17 +135,20 @@ __inline int InlineIsEqualGUID(REFGUID rguid1, REFGUID rguid2)
       ((unsigned long *) &rguid1)[3] == ((unsigned long *) &rguid2)[3]);
 }
 
+// Line 158
 // Slower (but keeps code size down) inline version...use mostly
 __inline int IsEqualGUID(REFGUID rguid1, REFGUID rguid2)
 {
     return !memcmp(&rguid1, &rguid2, sizeof(GUID));
 }
 
+// Line 191
 __inline int operator==(REFGUID guidOne, REFGUID guidOther)
 {
     return IsEqualGUID(guidOne,guidOther);
 }
 
+// Line 196
 __inline int operator!=(REFGUID guidOne, REFGUID guidOther)
 {
     return !(guidOne == guidOther);
@@ -170,7 +185,9 @@ __inline bool operator >= (REFGUID guidOne, REFGUID guidOther)
  * Special things for VC5 Com support
  ****************************************************************************/
 
+// Line 3148
 #define DECLSPEC_UUID(x)
+// Line 3152
 #define MIDL_INTERFACE(x)   struct
 
 #define EXTERN_GUID(itf,l1,s1,s2,c1,c2,c3,c4,c5,c6,c7,c8) EXTERN_C const IID itf
@@ -183,7 +200,7 @@ __inline bool operator >= (REFGUID guidOne, REFGUID guidOther)
 
 // Extract from commentary in OBJBASE.H:
 //	These are macros for declaring interfaces.  They exist so that
-//	a single definition of the interface is simulataneously a proper
+//	a single definition of the interface is simultaneously a proper
 //	declaration of the interface structures (C++ abstract classes)
 //	for both C and C++.
 //
@@ -196,12 +213,22 @@ __inline bool operator >= (REFGUID guidOne, REFGUID guidOther)
 // we need these macros because there are many uses of them in FieldWorks
 // source code.
 
-#define BEGIN_INTERFACE
+// Line 172
+#define interface struct
+#define STDMETHOD(method)       virtual HRESULT method
+#define STDMETHOD_(type,method) virtual type method
+#define STDMETHODV(method)       virtual HRESULT method
+#define STDMETHODV_(type,method) virtual type method
+#define PURE                    = 0
+#define THIS_
+#define THIS                    void
+#define DECLARE_INTERFACE(iface)    interface iface
+#define DECLARE_INTERFACE_(iface, baseiface)    interface iface : public baseiface
+
+#define BEGIN_INTERFACE virtual void a() {}
 #define END_INTERFACE
 
-#define STDMETHOD(method)       virtual HRESULT STDMETHODCALLTYPE method
-#define STDMETHOD_(type,method) virtual type STDMETHODCALLTYPE method
-
+// Line 282
 #define CLSCTX_INPROC           (CLSCTX_INPROC_SERVER|CLSCTX_INPROC_HANDLER)
 
 //	TODO: Are these restrictive definitions of CLSCTX_ALL and CLSCTX_SERVER
@@ -214,13 +241,19 @@ __inline bool operator >= (REFGUID guidOne, REFGUID guidOther)
 #define CLSCTX_ALL	(CLSCTX_INPROC_SERVER | CLSCTX_INPROC_HANDLER)
 #define CLSCTX_SERVER	(CLSCTX_INPROC_SERVER)
 
-HRESULT CoCreateGuid(GUID *pguid);
-
+// Line 617
 HRESULT CLSIDFromString(LPOLESTR lpsz, LPCLSID pclsid);
+// Line 618
 HRESULT StringFromCLSID(CLSID& rclsid, LPOLESTR* ppsz);
 
+// Line 627
+HRESULT CoCreateGuid(GUID *pguid);
+
+// Line 692
 void *	CoTaskMemAlloc(SIZE_T cb);
+// Line 693
 void *	CoTaskMemRealloc(LPVOID pv, SIZE_T cb);
+// Line 694
 void	CoTaskMemFree(LPVOID pv);
 
 //--end copy from OBJBASE.H-------------------------------------------------------------------
@@ -228,19 +261,31 @@ void	CoTaskMemFree(LPVOID pv);
 //--------------------------------------------------------------------------------------------
 //	Copied, with adaptations, from the ActiveX header OLEAUTO.H
 
+// Line 27
 #define WINOLEAUTAPI        STDAPI
+// Line 28
 #define WINOLEAUTAPI_(type) STDAPI_(type)
 
+// Line 64
 WINOLEAUTAPI_(BSTR) SysAllocString(const OLECHAR *);
+// Line 65
 WINOLEAUTAPI_(INT)  SysReAllocString(BSTR *, const OLECHAR *);
+// Line 66
 WINOLEAUTAPI_(BSTR) SysAllocStringLen(const OLECHAR *, UINT);
+// Line 67
 WINOLEAUTAPI_(INT)  SysReAllocStringLen(BSTR *, const OLECHAR *, UINT);
+// Line 68
 WINOLEAUTAPI_(void) SysFreeString(BSTR);
+
 // FieldWorks does not yet use this one:
+// Line 69
 //WINOLEAUTAPI_(UINT) SysStringLen(BSTR);
 
 // FieldWorks does not yet use this one:
+// Line 72
 //WINOLEAUTAPI_(UINT) SysStringByteLen(BSTR bstr);
+
+// Line 73
 WINOLEAUTAPI_(BSTR) SysAllocStringByteLen(LPCSTR psz, UINT len);
 
 //--end copy from OLEAUTO.H-------------------------------------------------------------------
@@ -248,6 +293,7 @@ WINOLEAUTAPI_(BSTR) SysAllocStringByteLen(LPCSTR psz, UINT len);
 //--------------------------------------------------------------------------------------------
 //	Copied, with adaptations, from the Windows header UNKNWN.H
 
+// Line 160
 MIDL_INTERFACE("00000000-0000-0000-C000-000000000046")
 IUnknown
 {
@@ -263,8 +309,16 @@ public:
 	END_INTERFACE
 };
 
+// Line 93
+// For CodeWarrior needs to be after IUnknown
 typedef	IUnknown*	LPUNKNOWN;
 
+//	{00000000-0000-0000-C000-000000000046}
+const IID IID_IUnknown =
+	{0x00000000, 0x0000, 0x0000,
+	{0xc0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x46}};
+
+// Line 471
 MIDL_INTERFACE("00000001-0000-0000-C000-000000000046")
 IClassFactory : public IUnknown
 {
@@ -276,17 +330,25 @@ public:
             /* [out] */ void**		ppvObject) = 0;
         
 		virtual HRESULT LockServer( 
-            /* [in] */ bool fLock) = 0;
+            /* [in] */ BOOL fLock) = 0;
 	END_INTERFACE
 };
 
+// Line 464
+// For CodeWarrior needs to be after IClassFactory
 typedef IClassFactory*	LPCLASSFACTORY;
+
+//	{00000001-0000-0000-C000-000000000046}
+const IID IID_IClassFactory =
+	{0x00000001, 0x0000, 0x0000,
+	{0xc0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x46}};
 
 //--end copy from UNKNWN.H--------------------------------------------------------------------
 
 //--------------------------------------------------------------------------------------------
 //	Copied, with adaptations, from the Windows header OBJIDL.H
 
+// Line 4314
 typedef struct
     {                      
         LPOLESTR		pwcsName;
@@ -303,6 +365,7 @@ typedef struct
         DWORD			reserved;
     } STATSTG;
     
+// Line 4346
 typedef enum
     {
     	STGTY_STORAGE	= 1,
@@ -311,6 +374,7 @@ typedef enum
 		STGTY_PROPERTY	= 4
     } STGTY;
 
+// Line 4354
 typedef enum
     {
     	STREAM_SEEK_SET	= 0,
@@ -318,6 +382,7 @@ typedef enum
 		STREAM_SEEK_END	= 2
     } STREAM_SEEK;
 
+// Line 4361
 typedef enum
     {
     	LOCK_WRITE		= 1,
@@ -325,23 +390,25 @@ typedef enum
 		LOCK_ONLYONCE	= 4
     } LOCKTYPE;
 
+// Line 4191
 MIDL_INTERFACE("0c733a30-2a1c-11ce-ade5-00aa0044773d")
 ISequentialStream : public IUnknown
 {
 public:
 	BEGIN_INTERFACE
-		virtual /* [local] */ HRESULT Read( 
-			/* [length_is][size_is][out] */ void *pv,
-			/* [in] */ ULONG cb,
-			/* [out] */ ULONG *pcbRead) = 0;
+		virtual /* [local] */	HRESULT	Read( 
+			/* [length_is][size_is][out] */	void *pv,
+			/* [in] */			ULONG	cb,
+			/* [out] */			ULONG	*pcbRead) = 0;
 
-		virtual /* [local] */ HRESULT Write( 
-			/* [size_is][in] */ const void *pv,
-			/* [in] */ ULONG cb,
-			/* [out] */ ULONG *pcbWritten) = 0;
+		virtual /* [local] */	HRESULT	Write( 
+			/* [size_is][in] */ const	void *pv,
+			/* [in] */			ULONG	cb,
+			/* [out] */			ULONG	*pcbWritten) = 0;
 	END_INTERFACE
 };
 
+// Line 4373
 MIDL_INTERFACE("0000000c-0000-0000-C000-000000000046")
 IStream : public ISequentialStream
 {
@@ -392,11 +459,31 @@ public:
 //	These items needed to be placed at the end of this header because they depend
 //	on UNKNWN.H.
 
-static HRESULT CoCreateInstance(
-	/*IN*/ CLSID		&rclsid,
+// Line 447
+HRESULT CoGetClassObject(
+	/*IN*/ REFCLSID		rclsid,
+	/*IN*/ DWORD		dwClsContext,
+	/*IN*/ LPVOID		pvReserved,
+	/*IN*/ REFIID		riid,
+	/*OUT*/ LPVOID*		ppv);
+
+// Line 567
+HRESULT CoCreateInstance(
+	/*IN*/ REFCLSID		rclsid,
 	/*IN*/ LPUNKNOWN	pUnkOuter,
 	/*IN*/ DWORD		dwClsContext,
 	/*IN*/ REFIID		riid,
 	/*OUT*/ LPVOID*		ppv);
 
 //--end copy from OBJBASE.H-------------------------------------------------------------------
+
+//------------------------------------------------------------------
+//
+//	Register Server
+//
+//	Components should call this function to register their class factory
+//	with the ComRegistry map. This should be done in the constructor of the
+//	server's class factory and the instance of the class factory should be
+//	created as a static pointer to the class factory is initialised.
+ 
+void RegisterServer(const CLSID &Class, LPCLASSFACTORY Pointer);
