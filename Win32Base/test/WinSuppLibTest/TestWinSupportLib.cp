@@ -317,7 +317,8 @@ void TestSearchPath()
 	// Console output
 	cout << "SearchPath(" << path << ", " << file << ", " << ext << ")" << endl;
 	nChars = SearchPath(path, file, ext, MAX_PATH, pathName, &filePart);
-	printf("%s, %s\n", pathName, filePart);
+	if (nChars > 0) printf("%s, %s\n", pathName, filePart);
+	else cout << "File not found on search path\n";
 }
 
 void SInt64ToHex_cout(const SInt64 &time)
