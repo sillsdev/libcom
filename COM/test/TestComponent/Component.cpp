@@ -1,23 +1,39 @@
 //
 // Component.cpp
-//	Copied from Rogerson's book CD-ROM and modified for CodeWarrior with COMSupportLib
 //
+//	Modified for compilation as a Mach-O dynamic library. Then some tidying up.
+//		2003-06-21, NJHM, GDLC
+//	Copied from Rogerson's book CD-ROM and modified for CodeWarrior with COMSupportLib
 
 #include "Component.h"
 
-// Trace function
+//	Trace function
 void trace(const char* msg)
 {
 	cout << msg << endl ;
 }
 
-#pragma export on
+//	Test message
+#if TARGET_RT_MAC_CFM
+char LoadStr[] = "Component shared library is now loaded\n\n";
+#else
+char LoadStr[] = "Component dynamic library is now loaded\n\n";
+#endif
+
 void ComponentLoaded()
 {
-	trace("Component shared library is now loaded\n\n");
+	trace(LoadStr);
 }
-#pragma export off
 
+//	The _init function that dlopen() calls on loading the module.
+//	No need to export this function because dlopen() finds it as needed
+//	and nothing else needs it.
+#ifdef TARGET_RT_MAC_MACHO
+extern "C" void _init()
+{
+	ComponentLoaded();
+}
+#endif
 
 ///////////////////////////////////////////////////////////
 //
@@ -41,7 +57,7 @@ const char g_szProgID[] = "InsideCOM.Chap07.1" ;
 //	Create the class factory and register a pointer to its IClassFactory
 //
 
-static CFactory *	classFactory = new CFactory;
+static CFactory	classFactory;
 
 
 ///////////////////////////////////////////////////////////
@@ -192,12 +208,12 @@ HRESULT __stdcall CFactory::LockServer(BOOL bLock)
 	return S_OK ;
 }
 
+//	TODO:
+//	The functions below are used for Windows DLLs; so far no need for MacOS
+//	equivalents of them has been found. Keep an eye out for possible needs.
 ///////////////////////////////////////////////////////////
 //
 // Exported functions
-//
-//	Not needed for MacOS because these exported functions are
-//	there to be called by the Windows system, not by applications.
 //
 
 //#pragma export on

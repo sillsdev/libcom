@@ -10,6 +10,8 @@ Reviewed:	Date		Reviewer
 
 Header for test program for COMSupportLib.
 
+Removed use of Carbon UInt8
+	2003-06-23, GDLC
 Added ComponentLoaded()
 	2003-05-15, GDLC
 Added prototype for trace()
@@ -43,4 +45,4 @@ void HexGUIDOut(const GUID &gd, std::ostream& stm = std::cout);
 
 void HexDWORDOut(const DWORD &dw, std::ostream& stm = std::cout);
 
-void HexByteOut(UInt8 b, std::ostream& stm = std::cout);
+void HexByteOut(unsigned char b, std::ostream& stm = std::cout);

@@ -9,7 +9,12 @@ Reviewed:	Date		Reviewer
 	$Id$
 
 	Support for COM in FieldWorks on MacOS.
-
+	
+Adapted for command line builds with gcc, removed Carbon dependencies and ported to Linux.
+Clean up ready for checking in.
+	2003-06-24, NJHM, GDLC
+Modified CLSIDFromString() to avoid use of wide character functions
+	2003-06-21, NJHM
 Fixed definition of first parameter to CoCreateInstance().
 	2003-05-14, GDLC
 Added RegisterServer() for registering class factories in our ComRegistry.
@@ -32,19 +37,18 @@ Removed general items to WinSupport.cpp
 	2001-07-17, GDLC
 ----------------------------------------------------------------------------------------------*/
 
+
 #include "WinSupport.h"
 #include "COMSupport.h"
 
 #include <assert.h>
 #include <cstdlib>
 #include <cstring>
-#include <cwctype>
-#include <ostream>
+#include <iostream>
+#include <cctype>
 
 #include "COMSupportInternals.h"
 
-// No use for pguid in CoCreateGuid
-#pragma warn_unusedarg off
 //------------------------------------------------------------------
 //	CoCreateGuid
 //
@@ -54,13 +58,12 @@ Removed general items to WinSupport.cpp
 //	unlikely that FieldWorks will need to create GUIDs on the fly.
 //------------------------------------------------------------------
 #pragma export on
-HRESULT CoCreateGuid(GUID * pguid)
+HRESULT CoCreateGuid(GUID * /*pguid*/)
 {
 	assert(false);
-	return NULL;
+	return 0;
 }
 #pragma export off
-#pragma warn_unusedarg reset
 
 //------------------------------------------------------------------
 //	CLSIDFromString
@@ -72,7 +75,8 @@ HRESULT CoCreateGuid(GUID * pguid)
 HRESULT CLSIDFromString(LPOLESTR lpsz, LPCLSID pclsid)
 {
 	wchar_t	*p = lpsz;
-	wchar_t	c;
+	wchar_t wc;
+	char	c;
 	int		i, j, cd;
 	union {
 		GUID	clsid;
@@ -84,32 +88,36 @@ HRESULT CLSIDFromString(LPOLESTR lpsz, LPCLSID pclsid)
 	if (!lpsz || !pclsid) return E_INVALIDARG;
 
 //	// Consume open brace and any preceding characters
-//	while ( (c=*p++) != L'{') if (c==L'\0') return CO_E_CLASSSTRING;
+//	while ( (wc=*p++) != L'{') if (wc==L'\0') return CO_E_CLASSSTRING;
 
 	// Convert data for each of the 16 bytes of the GUID
 	for (i=0; i<16; i++)
 	{
 		for (j=0, cd=0; j<2; j++)
 		{
-			if ( (c=*p++) == L'\0') return CO_E_CLASSSTRING;
-			if (std::iswxdigit(c))
+			wc = *p++;
+			c = char(wc);
+			if ( wc == L'\0') return CO_E_CLASSSTRING;
+			if ( wc != c ) return CO_E_CLASSSTRING;
+//			if (std::iswxdigit(c))
+			if (std::isxdigit(c))
 			{
 				cd <<= 4;
-				if (L'0' <= c && c <= L'9')
-					cd += c - L'0';
+				if ('0' <= c && c <= '9')
+					cd += c - '0';
 				else
-					cd += std::towupper(c) - ('A' - 10);
+//					cd += std::towupper(c) - ('A' - 10);
+					cd += std::toupper(c) - ('A' - 10);
     		}
 			else return CO_E_CLASSSTRING;
 		}
-		*q++ = static_cast<char> (cd);
+		*q++ = char(cd);
 		
 		if (i==3 || i==5 || i== 7 || i==9)
 		{
-			if ( (c=*p++) != L'-') return CO_E_CLASSSTRING;
+			if ( (wc=*p++) != L'-') return CO_E_CLASSSTRING;
 		}
 	}
-//	if ( (c=*p) != L'}') return CO_E_CLASSSTRING;
 	
 	*pclsid = clsid;
 	return ERROR_SUCCESS;
@@ -276,8 +284,6 @@ HRESULT ComRegistry::GetFactoryPtr (const CLSID &Class, LPCLASSFACTORY* pIFactor
 }
 #pragma export off
 
-// No use for dwClsContext, pvReserved or riid yet in CoGetClassObject
-#pragma warn_unusedarg off
 //------------------------------------------------------------------
 //	CoGetClassObject
 //
@@ -292,8 +298,8 @@ HRESULT ComRegistry::GetFactoryPtr (const CLSID &Class, LPCLASSFACTORY* pIFactor
 HRESULT CoGetClassObject(
 	/*IN*/ REFCLSID		rclsid,
 	/*IN*/ DWORD		dwClsContext,
-	/*IN*/ LPVOID		pvReserved,
-	/*IN*/ REFIID		riid,
+	/*IN*/ LPVOID		/*pvReserved*/,
+	/*IN*/ REFIID		/*riid*/,
 	/*OUT*/ LPVOID*		ppv)
 {
 	assert(dwClsContext == CLSCTX_INPROC);
@@ -305,10 +311,7 @@ HRESULT CoGetClassObject(
 	return hr;
 }
 #pragma export off
-#pragma warn_unusedarg reset
 
-// No use for dwClsContext yet in CoCreateInstance
-#pragma warn_unusedarg off
 //------------------------------------------------------------------
 //	CoCreateInstance
 //
@@ -321,7 +324,7 @@ HRESULT CoGetClassObject(
 HRESULT CoCreateInstance (
 	/*IN*/ REFCLSID		rclsid,
 	/*IN*/ LPUNKNOWN	pUnkOuter,
-	/*IN*/ DWORD		dwClsContext,
+	/*IN*/ DWORD		/*dwClsContext*/,
 	/*IN*/ REFIID		riid,
 	/*OUT*/ LPVOID*		ppv)
 {
@@ -345,7 +348,6 @@ HRESULT CoCreateInstance (
 	return hr;
 }
 #pragma export off
-#pragma warn_unusedarg reset
 
 //------------------------------------------------------------------
 //
@@ -392,7 +394,6 @@ void ComRegistry::Dump(std::ostream& out)
 //	Converts the Class Factory pointer Ptr to a hexadecimal
 //	NUL terminated representation in the 11 byte buffer buf.
 //------------------------------------------------------------------
-#pragma export on
 static void PtrToHex(LPCLASSFACTORY Ptr, char *buf)
 {
 	static	wchar_t hex_digits[] = L"0123456789ABCDEF";
@@ -412,5 +413,4 @@ static void PtrToHex(LPCLASSFACTORY Ptr, char *buf)
 	}
 	*p = '\0';
 }
-#pragma export off
 #endif	//	DEBUG

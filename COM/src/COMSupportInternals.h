@@ -7,6 +7,8 @@ Last reviewed: never
 
 	Internal details of support for COM in FieldWorks on MacOS.
 
+Commentary improved after loading of both shared and dynamic libraries was worked out.
+	2003-06-21, GDLC
 Moved internal implementation definitions to here from COMSupport.h
 	2001-07-19, GDLC
 Added GetMutableInstance() for private use
@@ -22,7 +24,9 @@ Added GetMutableInstance() for private use
 //	with the latest versions of the shared libraries.
 //
 //	The single instance of the COM registry is constructed in response to static items
-//	in the shared libraries.???CHECK THIS COMMENT!
+//	in the shared libraries. This works fine as long as the shared or dynamic libraries
+//	are actually loaded into the program's memory space; different APIs are needed for shared
+//	libraries on MacOS 9 compared to dynamic libraries on MacOS X.
 
 #include <map>
 

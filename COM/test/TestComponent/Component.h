@@ -5,7 +5,9 @@
 //	and modified for CodeWarrior with COMSupportLib
 //
 
-#include <iostream.h>
+#include <iostream>
+
+using namespace std;
 
 #include "windows.h"
 
@@ -15,6 +17,8 @@
 void trace(const char* msg);
 
 void ComponentLoaded(void);
+
+//extern "C" void _init();
 
 //////////////////////////////////////////////////////////
 //
