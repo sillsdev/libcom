@@ -1,6 +1,6 @@
 //	WinSupportDebug.h
 //
-//	Prefix file for debug Carbon target of WinSupport library
+//	Prefix file for testing Carbon target of WinSupport library
 //
 //	_MAC changed to MAC.
 //		2002-03-21, GDLC

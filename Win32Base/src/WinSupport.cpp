@@ -10,6 +10,8 @@ C++ file to provide substitutions and kludges when compiling FieldWorks for MacO
 
 Requires WinSupport.h and WinSupportInternals.h.
 
+Made timeUTC a global static variable for testing purposes.
+	2002-06-14, GDLC
 Fixed GetSystemTimeAsFileTime().
 	2002-04-30, GDLC
 Added GetTimeZoneInformation().
@@ -39,6 +41,13 @@ Written by copying parts of the Windows.cp written for CodeGen.
 
 #include <LString.h>
 
+#if TESTING
+//	To facilitate testing of GetSystemTimeAsFileTime(), the UTC obtained from MacOS is
+//	put in this globally accessible variable so that the test program can store it as
+//	well as the value converted to a Windows FILETIME structure.
+UTCDateTime		timeUTC;
+#endif
+
 //	LockResource(), LoadResource(), SizeofResource() and FindClose()
 //	are defined later in this file.
 
@@ -50,13 +59,16 @@ Written by copying parts of the Windows.cp written for CodeGen.
 
 void GetSystemTimeAsFileTime(LPFILETIME lpSystemTimeAsFileTime)
 {
-	UTCDateTime		time;
-	
+
+#if	!TESTING
+	UTCDateTime		timeUTC;
+#endif
+
 	//	Get no. of seconds (top 48 bits) since midnight January 1, 1904
 	//	This is unsigned.
-	::GetUTCDateTime(&time, kUTCDefaultOptions);
+	::GetUTCDateTime(&timeUTC, kUTCDefaultOptions);
 
-	UTCMacToWin(time, lpSystemTimeAsFileTime);
+	UTCMacToWin(timeUTC, lpSystemTimeAsFileTime);
 }
 
 void UTCMacToWin(const UTCDateTime &tMac, LPFILETIME tWin)
