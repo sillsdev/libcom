@@ -29,6 +29,12 @@ other things needed for a port to MacOS.
 
 Some of the implementation is provided in WinSupport.cpp.
 
+Added S_FALSE
+	2003-04-24, GDLC
+Added CLASS_E_NOAGGREGATION, CLASS_E_CLASSNOTAVAILABLE
+	2003-04-21, GDLC
+Added E_NOINTERFACE
+	2003-04-16, GDLC
 Added GetLastError and some more error codes.
 	2002-11-08, GDLC
 Added ERROR_NO_MORE_FILES
@@ -393,59 +399,94 @@ typedef void	(CALLBACK *PROC)();
 //#define FACILITY_ACS					20
 //#define FACILITY_AAF					18
 
+// Line 76
 #define ERROR_SUCCESS					0L
 
+// Line 97
 //  The system cannot find the file specified.
 #define ERROR_FILE_NOT_FOUND			2L
 
+// Line 214
 //	Invalid drive
 #define ERROR_INVALID_DRIVE				15L
 
+// Line 241
 //	There are no more files
 #define ERROR_NO_MORE_FILES				18L
 
+// Line 875
 //  This function is not supported on this system.
 #define ERROR_CALL_NOT_IMPLEMENTED		120L
 
+// Line 929
 //	The specified module could not be found
 #define ERROR_MOD_NOT_FOUND				126L
 
+// Line 1245
 //  The specified path is invalid.
 #define ERROR_BAD_PATHNAME				161L
 
-#define _HRESULT_TYPEDEF_(_sc) ((HRESULT)_sc)
-
+// Line 13991
 // Generic test for success on any status value (non-negative numbers
 // indicate success).
 #define SUCCEEDED(Status) ((HRESULT)(Status) >= 0)
 
 // and the inverse
 
+// Line 13997
 #define FAILED(Status) ((HRESULT)(Status)<0)
 
-#define S_OK							_HRESULT_TYPEDEF_(0x00000000L)
+// Line 14081
+#define _HRESULT_TYPEDEF_(_sc) ((HRESULT)_sc)
 
+// Line 14105
 //  Catastrophic failure
 #define E_UNEXPECTED					_HRESULT_TYPEDEF_(0x8000FFFFL)
 
+// Line 14124
 //  Ran out of memory
 #define E_OUTOFMEMORY					_HRESULT_TYPEDEF_(0x8007000EL)
 
+// Line 14133
 //  One or more arguments are invalid
 #define E_INVALIDARG					_HRESULT_TYPEDEF_(0x80070057L)
 
+// Line 14142
+//  No such interface supported
+#define E_NOINTERFACE					_HRESULT_TYPEDEF_(0x80004002L)
+
+// Line 14178
 //  Unspecified error
 #define E_FAIL							_HRESULT_TYPEDEF_(0x80004005L)
 
+// Line 14564
+#define S_OK							_HRESULT_TYPEDEF_(0x00000000L)
+
+// Line 14565
+#define S_FALSE							_HRESULT_TYPEDEF_(0x00000001L)
+
+// Line 14892
+//  Class does not support aggregation (or class object is remote)
+#define CLASS_E_NOAGGREGATION			_HRESULT_TYPEDEF_(0x80040110L)
+
+// Line 14903
+//  ClassFactory cannot supply requested class
+//
+#define CLASS_E_CLASSNOTAVAILABLE		_HRESULT_TYPEDEF_(0x80040111L)
+
+// Line 14980
 //  Class not registered
 #define REGDB_E_CLASSNOTREG				_HRESULT_TYPEDEF_(0x80040154L)
 
+// Line 15503
 //  Invalid class string
 #define CO_E_CLASSSTRING				_HRESULT_TYPEDEF_(0x800401F3L)
 
+// Line 16889
 //  A disk error occurred during a write operation.
 #define STG_E_WRITEFAULT				_HRESULT_TYPEDEF_(0x8003001DL)
 
+// Line 16898
 //  A disk error occurred during a read operation.
 #define STG_E_READFAULT					_HRESULT_TYPEDEF_(0x8003001EL)
 
@@ -587,9 +628,9 @@ typedef struct
 //	Only GetModuleFilename() is used by Windows FW code; and only 8-bit character
 //	filenames are relevant on MacOS. Despite its name it returns the full pathname.
 DWORD			GetModuleFileName(
-				/*IN*/ HMODULE hModule,
-				/*OUT*/ LPSTR lpFilename,
-				/*IN*/ DWORD nSize);
+				/*IN*/	HMODULE	hModule,
+				/*OUT*/	LPSTR	lpFilename,
+				/*IN*/	DWORD	nSize);
 
 //Line 4468
 //	Only GetModuleHandle() is used by Windows FW code; and only 8-bit character
