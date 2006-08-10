@@ -26,6 +26,7 @@ struct GUID
 };
 
 typedef const GUID& REFGUID;
+typedef const GUID* LPGUID;
 
 inline bool operator == (const GUID& guid1, const GUID& guid2)
 {
@@ -34,8 +35,10 @@ inline bool operator == (const GUID& guid1, const GUID& guid2)
 
 typedef GUID IID;
 typedef REFGUID REFIID;
+typedef LPGUID LPIID;
 typedef GUID CLSID;
 typedef REFGUID REFCLSID;
+typedef LPGUID LPCLSID;
 
 extern GUID IID_NULL;
 
@@ -60,6 +63,11 @@ enum CLSCTX
 #define CLSCTX_INPROC (CLSCTX_INPROC_SERVER|CLSCTX_INPROC_HANDLER)
 #define CLSCTX_SERVER (CLSCTX_INPROC_SERVER|CLSCTX_LOCAL_SERVER)
 #define CLSCTX_ALL    (CLSCTX_INPROC|CLSCTX_SERVER)
+
+HRESULT StringFromCLSID(REFCLSID rclsid, LPOLESTR* lplpsz);
+HRESULT CLSIDFromString(const LPOLESTR lpsz, LPCLSID pclsid);
+HRESULT StringFromIID(REFIID rclsid, LPOLESTR* lplpsz);
+HRESULT IIDFromString(const LPOLESTR lpsz, LPIID lpiid);
 
 BSTR SysAllocStringLen(const OLECHAR* pch, unsigned int cch);
 BSTR SysAllocString(const OLECHAR *sz); // Zero-terminated

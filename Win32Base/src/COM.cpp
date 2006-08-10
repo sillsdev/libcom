@@ -25,6 +25,30 @@ GUID::GUID(const char* text)
 
 GUID IID_NULL;
 
+HRESULT StringFromCLSID(REFCLSID rclsid, LPOLESTR* lplpsz)
+{
+	// ToDo
+	return S_OK;
+}
+
+HRESULT CLSIDFromString(const LPOLESTR lpsz, LPCLSID pclsid)
+{
+	// ToDo
+	return S_OK;
+}
+
+HRESULT StringFromIID(REFIID rclsid, LPOLESTR* lplpsz)
+{
+	// ToDo
+	return S_OK;
+}
+
+HRESULT IIDFromString(const LPOLESTR lpsz, LPIID lpiid)
+{
+	// ToDo
+	return S_OK;
+}
+
 BSTR SysAllocStringLen(const OLECHAR* pch, unsigned int cch)
 {
 	OLECHAR* buf = new OLECHAR[cch + 3]; // Space for length, data, terminator
