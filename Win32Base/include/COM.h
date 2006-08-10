@@ -64,10 +64,18 @@ enum CLSCTX
 #define CLSCTX_SERVER (CLSCTX_INPROC_SERVER|CLSCTX_LOCAL_SERVER)
 #define CLSCTX_ALL    (CLSCTX_INPROC|CLSCTX_SERVER)
 
+int StringFromGUID2(REFGUID rguid, LPOLESTR lpsz, int cchMax);
+
 HRESULT StringFromCLSID(REFCLSID rclsid, LPOLESTR* lplpsz);
 HRESULT CLSIDFromString(const LPOLESTR lpsz, LPCLSID pclsid);
 HRESULT StringFromIID(REFIID rclsid, LPOLESTR* lplpsz);
 HRESULT IIDFromString(const LPOLESTR lpsz, LPIID lpiid);
+HRESULT ProgIDFromCLSID(REFCLSID clsid, LPOLESTR* lplpszProgID);
+HRESULT CLSIDFromProgID(LPCOLESTR lpszProgID, LPCLSID lpclsid);
+
+void* CoTaskMemAlloc(size_t cb);
+void* CoTaskMemRealloc(void* pv, size_t cb);
+void  CoTaskMemFree(void* pv);
 
 BSTR SysAllocStringLen(const OLECHAR* pch, unsigned int cch);
 BSTR SysAllocString(const OLECHAR *sz); // Zero-terminated

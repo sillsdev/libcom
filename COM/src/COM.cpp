@@ -26,6 +26,12 @@ GUID::GUID(const char* text)
 
 GUID IID_NULL;
 
+int StringFromGUID2(REFGUID rguid, LPOLESTR lpsz, int cchMax)
+{
+	// ToDo
+	return 0; // Bytes used, including null terminator
+}
+
 HRESULT StringFromCLSID(REFCLSID rclsid, LPOLESTR* lplpsz)
 {
 	// ToDo
@@ -48,6 +54,33 @@ HRESULT IIDFromString(const LPOLESTR lpsz, LPIID lpiid)
 {
 	// ToDo
 	return S_OK;
+}
+
+HRESULT ProgIDFromCLSID(REFCLSID clsid, LPOLESTR* lplpszProgID)
+{
+	// ToDo
+	return S_OK;
+}
+
+HRESULT CLSIDFromProgID(LPCOLESTR lpszProgID, LPCLSID lpclsid)
+{
+	// ToDo
+	return S_OK;
+}
+
+void* CoTaskMemAlloc(size_t cb)
+{
+	return malloc(cb);
+}
+
+void* CoTaskMemRealloc(void* pv, size_t cb)
+{
+	realloc(pv, cb);
+}
+
+void  CoTaskMemFree(void* pv)
+{
+	free(pv);
 }
 
 BSTR SysAllocStringLen(const OLECHAR* pch, unsigned int cch)
