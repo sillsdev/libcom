@@ -22,6 +22,8 @@ public:
 
 typedef IUnknown* IUnknownPtr;
 
+#define IID_IUnknown __uuidof(IUnknown)
+
 class IClassFactory : public IUnknown {};
 class IDataObject : public IUnknown {};
 class IDispatch : public IUnknown {};
@@ -35,6 +37,20 @@ class IRecordInfo;		// Forward declaration
 
 class IEnumFORMATETC : public IUnknown {};
 class IShellFolder : public IUnknown {};
+
+#define IID_IClassFactory __uuidof(IClassFactory)
+#define IID_IDataObject __uuidof(IDataObject)
+#define IID_IDispatch __uuidof(IDispatch)
+#define IID_IStorage __uuidof(IStorage)
+
+#define IID_IRpcStubBuffer __uuidof(IRpcStubBuffer)
+#define IID_IRpcChannelBuffer __uuidof(IRpcChannelBuffer)
+#define IID_IEnumSTATDATA __uuidof(IEnumSTATDATA)
+#define IID_IAdviseSink __uuidof(IAdviseSink)
+#define IID_IRecordInfo __uuidof(IRecordInfo)
+
+#define IID_IEnumFORMATETC __uuidof(IEnumFORMATETC)
+#define IID_IShellFolder __uuidof(IShellFolder)
 
 class IErrorInfo : public IUnknown
 {
@@ -56,6 +72,8 @@ public:
 
 };
 
+#define IID_IErrorInfo __uuidof(IErrorInfo)
+
 class ICreateErrorInfo : public IUnknown
 {
 public:
@@ -76,6 +94,8 @@ public:
 		
 };
 
+#define IID_ICreateErrorInfo __uuidof(ICreateErrorInfo)
+
 class ISupportErrorInfo : public IUnknown
 {
 public:
@@ -83,6 +103,8 @@ public:
 		/* [in] */ REFIID riid) = 0;
 	
 };
+
+#define IID_ISupportErrorInfo __uuidof(ISupportErrorInfo)
 
 STDAPI SetErrorInfo(ULONG dwReserved, IErrorInfo* perrinfo);
 STDAPI GetErrorInfo(ULONG dwReserved, IErrorInfo** pperrinfo);
@@ -147,6 +169,8 @@ public:
 	
 };
 
+#define IID_ISequentialStream __uuidof(ISequentialStream)
+
 class IStream : public ISequentialStream
 {
 public:
@@ -187,6 +211,8 @@ public:
 		/* [out] */ IStream **ppstm) = 0;
 	
 };
+
+#define IID_IStream __uuidof(IStream)
 
 typedef IStream* LPSTREAM;
 
@@ -261,6 +287,8 @@ public:
 		/* [out] */ DWORD *pDwAttr) = 0;
 };
 
+#define IID_IPicture __uuidof(IPicture)
+
 typedef IPicture *LPPICTURE;
 
 enum
@@ -281,17 +309,25 @@ class IAccessible : public IUnknown
 {
 };
 
+#define IID_IAccessible __uuidof(IAccessible)
+
 class IServiceProvider : public IUnknown
 {
 };
+
+#define IID_IServiceProvider __uuidof(IServiceProvider)
 
 class IEnumVARIANT : public IUnknown
 {
 };
 
+#define IID_IEnumVARIANT __uuidof(IEnumVARIANT)
+
 class ITypeInfo : public IUnknown
 {
 };
+
+#define IID_ITypeInfo __uuidof(ITypeInfo)
 
 // Variants
 
