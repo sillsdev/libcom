@@ -12,10 +12,7 @@
 #include "COM.h"
 #include "DateTime.h"
 
-#define DECLARE_INTERFACE(NAME) \
-	extern GUID __uuidof(NAME); interface NAME
-
-DECLARE_INTERFACE(IUnknown)
+class IUnknown
 {
 public:
 	virtual ULONG   STDMETHODCALLTYPE AddRef() = 0;
@@ -25,21 +22,21 @@ public:
 
 typedef IUnknown* IUnknownPtr;
 
-DECLARE_INTERFACE(IClassFactory) : public IUnknown {};
-DECLARE_INTERFACE(IDataObject) : public IUnknown {};
-DECLARE_INTERFACE(IDispatch) : public IUnknown {};
-DECLARE_INTERFACE(IStorage) : public IUnknown {};
+class IClassFactory : public IUnknown {};
+class IDataObject : public IUnknown {};
+class IDispatch : public IUnknown {};
+class IStorage : public IUnknown {};
 
-DECLARE_INTERFACE(IRpcStubBuffer);	// Forward declaration
-DECLARE_INTERFACE(IRpcChannelBuffer);	// Forward declaration
-DECLARE_INTERFACE(IEnumSTATDATA);		// Forward declaration
-DECLARE_INTERFACE(IAdviseSink);		// Forward declaration
-DECLARE_INTERFACE(IRecordInfo);		// Forward declaration
+class IRpcStubBuffer;	// Forward declaration
+class IRpcChannelBuffer;	// Forward declaration
+class IEnumSTATDATA;		// Forward declaration
+class IAdviseSink;		// Forward declaration
+class IRecordInfo;		// Forward declaration
 
-DECLARE_INTERFACE(IEnumFORMATETC) : public IUnknown {};
-DECLARE_INTERFACE(IShellFolder) : public IUnknown {};
+class IEnumFORMATETC : public IUnknown {};
+class IShellFolder : public IUnknown {};
 
-DECLARE_INTERFACE(IErrorInfo) : public IUnknown
+class IErrorInfo : public IUnknown
 {
 public:
 	virtual HRESULT STDMETHODCALLTYPE GetGUID(
@@ -58,7 +55,8 @@ public:
 		/* [out] */ DWORD *pdwHelpContext) = 0;
 
 };
-DECLARE_INTERFACE(ICreateErrorInfo) : public IUnknown
+
+class ICreateErrorInfo : public IUnknown
 {
 public:
 	virtual HRESULT STDMETHODCALLTYPE SetGUID(
@@ -77,7 +75,8 @@ public:
 		/* [in] */ DWORD dwHelpContext) = 0;
 		
 };
-DECLARE_INTERFACE(ISupportErrorInfo) : public IUnknown
+
+class ISupportErrorInfo : public IUnknown
 {
 public:
 	virtual HRESULT STDMETHODCALLTYPE InterfaceSupportsErrorInfo(
@@ -133,7 +132,7 @@ enum LOCKTYPE
 	LOCK_ONLYONCE   = 4
 };
 
-DECLARE_INTERFACE(ISequentialStream) : public IUnknown
+class ISequentialStream : public IUnknown
 {
 public:
 	virtual /* [local] */ HRESULT STDMETHODCALLTYPE Read( 
@@ -148,7 +147,7 @@ public:
 	
 };
 
-DECLARE_INTERFACE(IStream) : public ISequentialStream
+class IStream : public ISequentialStream
 {
 public:
 	virtual /* [local] */ HRESULT STDMETHODCALLTYPE Seek( 
@@ -204,7 +203,7 @@ typedef LONG OLE_YPOS_HIMETRIC;
 typedef LONG OLE_XSIZE_HIMETRIC;
 typedef LONG OLE_YSIZE_HIMETRIC;
 
-DECLARE_INTERFACE(IPicture) : public IUnknown
+class IPicture : public IUnknown
 {
 public:
 	virtual HRESULT STDMETHODCALLTYPE get_Handle( 
@@ -278,19 +277,19 @@ enum
 	STATE_SYSTEM_INVISIBLE,
 };
 
-DECLARE_INTERFACE(IAccessible) : public IUnknown
+class IAccessible : public IUnknown
 {
 };
 
-DECLARE_INTERFACE(IServiceProvider) : public IUnknown
+class IServiceProvider : public IUnknown
 {
 };
 
-DECLARE_INTERFACE(IEnumVARIANT) : public IUnknown
+class IEnumVARIANT : public IUnknown
 {
 };
 
-DECLARE_INTERFACE(ITypeInfo) : public IUnknown
+class ITypeInfo : public IUnknown
 {
 };
 
@@ -438,6 +437,8 @@ struct STGMEDIUM
 	};
     IUnknown *pUnkForRelease;
 };
+
+HRESULT GetActiveObject(REFCLSID rclsid, void* pvReserved, IUnknown** ppunk);
 
 #undef DECLARE_INTERFACE
 

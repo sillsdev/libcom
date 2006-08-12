@@ -44,10 +44,14 @@ extern GUID IID_NULL;
 
 #define interface struct
 
-#define __uuidof(X) IID_##X
+template<class T>
+class __interface_traits
+{
+public:
+	static GUID uuid;
+};
 
-#define ATTACH_GUID_TO_CLASS(type, guid, cls) \
-	static GUID __uuidof(cls)(#guid);
+#define __uuidof(T) __interface_traits<T>::uuid
 
 #define DECLSPEC_UUID(X) // Can't be done
 #define MIDL_INTERFACE(X) DECLSPEC_UUID(X) interface
