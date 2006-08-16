@@ -33,6 +33,11 @@ inline bool operator == (const GUID& guid1, const GUID& guid2)
 	return std::memcmp(&guid1, &guid2, sizeof(guid1)) == 0;
 }
 
+inline bool operator != (const GUID& guid1, const GUID& guid2)
+{
+	return !(guid1 == guid2);
+}
+
 typedef GUID IID;
 typedef REFGUID REFIID;
 typedef LPGUID LPIID;
