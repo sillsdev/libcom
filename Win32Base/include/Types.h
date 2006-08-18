@@ -84,6 +84,7 @@ typedef WCHAR				TCHAR; // Assume we always want Unicode
 
 typedef OLECHAR*			BSTR;
 
+#include <cctype>	// So _T won't get defined again if ctype is included later
 #undef  _T			// In <ctype.h>
 #define _T(X) L##X
 
