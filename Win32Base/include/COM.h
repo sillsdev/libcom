@@ -73,6 +73,8 @@ enum CLSCTX
 #define CLSCTX_SERVER (CLSCTX_INPROC_SERVER|CLSCTX_LOCAL_SERVER)
 #define CLSCTX_ALL    (CLSCTX_INPROC|CLSCTX_SERVER)
 
+HRESULT CoCreateInstance(REFCLSID rclsid, void* pUnkOuter, DWORD dwClsContext, REFIID riid, LPVOID FAR* ppv); 
+
 int StringFromGUID2(REFGUID rguid, LPOLESTR lpsz, int cchMax);
 
 HRESULT StringFromCLSID(REFCLSID rclsid, LPOLESTR* lplpsz);
