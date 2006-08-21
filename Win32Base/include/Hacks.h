@@ -124,6 +124,14 @@ typedef int PRPC_MESSAGE;
 typedef void* RPC_IF_HANDLE;
 typedef unsigned char boolean;
 
+COLORREF RGB(BYTE, BYTE, BYTE);
+typedef struct tagRGBQUAD {
+	BYTE rgbBlue;
+	BYTE rgbGreen;
+	BYTE rgbRed;
+	BYTE rgbReserved;
+}RGBQUAD;
+
 // FieldWorks-specific
 
 #define NO_ASM 1
