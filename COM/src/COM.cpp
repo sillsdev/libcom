@@ -24,7 +24,7 @@ GUID::GUID(const char* text)
 	uuid_parse(text, reinterpret_cast<unsigned char *>(&Data1));
 }
 
-GUID IID_NULL;
+GUID GUID_NULL;
 
 int StringFromGUID2(REFGUID rguid, LPOLESTR lpsz, int cchMax)
 {

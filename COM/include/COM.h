@@ -45,7 +45,8 @@ typedef GUID CLSID;
 typedef REFGUID REFCLSID;
 typedef LPGUID LPCLSID;
 
-extern GUID IID_NULL;
+extern GUID GUID_NULL;
+#define IID_NULL GUID_NULL
 
 #define interface struct
 
