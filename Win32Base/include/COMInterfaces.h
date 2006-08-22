@@ -487,6 +487,4 @@ struct STGMEDIUM
 
 HRESULT GetActiveObject(REFCLSID rclsid, void* pvReserved, IUnknown** ppunk);
 
-#undef DECLARE_INTERFACE
-
 #endif //_COMCLASSES_H_
