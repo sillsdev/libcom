@@ -20,8 +20,6 @@ public:
 	virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void ** ppv) = 0;
 };
 
-typedef IUnknown* IUnknownPtr;
-
 #define IID_IUnknown __uuidof(IUnknown)
 
 class IClassFactory : public IUnknown {};
