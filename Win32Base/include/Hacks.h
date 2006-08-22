@@ -141,6 +141,16 @@ typedef struct tagRGBQUAD {
 	BYTE rgbReserved;
 }RGBQUAD;
 
+bool MessageBeep(unsigned int);
+enum
+{
+	MB_ICONASTERISK		= 0x00000040L,
+	MB_ICONEXCLAMATION	= 0x00000030L,
+	MB_ICONHAND			= 0x00000010L,
+	MB_ICONQUESTION		= 0x00000020L,
+	MB_OK				= 0x00000000L,
+};
+ 
 // FieldWorks-specific
 
 #define NO_ASM 1
