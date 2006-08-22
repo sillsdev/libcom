@@ -90,6 +90,15 @@ enum
 	TYMED_NULL		= 0
 };
 
+enum				// File positions
+{
+	FILE_BEGIN,
+	FILE_CURRENT,
+	FILE_END,
+};
+
+DWORD SetFilePointer(HANDLE, LONG, PLONG, DWORD);
+
 typedef struct tagCRITICAL_SECTION* CRITICAL_SECTION;
 
 void InitializeCriticalSection(CRITICAL_SECTION*);
