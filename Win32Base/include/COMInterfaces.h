@@ -154,6 +154,19 @@ enum LOCKTYPE
 	LOCK_ONLYONCE   = 4
 };
 
+enum
+{
+	STGM_READ             = 0x01,
+	STGM_WRITE            = 0x02,
+	STGM_READWRITE        = STGM_READ | STGM_WRITE,
+	STGM_CREATE           = 0x04,
+	STGM_FAILIFTHERE      = 0x08,
+	STGM_SHARE_DENY_NONE  = 0x00,
+	STGM_SHARE_DENY_READ  = 0x10,
+	STGM_SHARE_DENY_WRITE = 0x20,
+	STGM_SHARE_EXCLUSIVE  = STGM_SHARE_DENY_READ | STGM_SHARE_DENY_WRITE,
+};
+
 class ISequentialStream : public IUnknown
 {
 public:
@@ -170,19 +183,6 @@ public:
 };
 
 #define IID_ISequentialStream __uuidof(ISequentialStream)
-
-enum
-{
-	STGM_READ             = 0x01,
-	STGM_WRITE            = 0x02,
-	STGM_READWRITE        = STGM_READ | STGM_WRITE,
-	STGM_CREATE           = 0x04,
-	STGM_FAILIFTHERE      = 0x08,
-	STGM_SHARE_DENY_NONE  = 0x00,
-	STGM_SHARE_DENY_READ  = 0x10,
-	STGM_SHARE_DENY_WRITE = 0x20,
-	STGM_SHARE_EXCLUSIVE  = STGM_SHARE_DENY_READ | STGM_SHARE_DENY_WRITE,
-};
 
 class IStream : public ISequentialStream
 {
