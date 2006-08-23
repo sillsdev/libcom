@@ -20,6 +20,7 @@
 #include <stddef.h>
 #include <ctype.h>
 #include <string.h>
+#include <alloca.h>
 #include <algorithm>
 
 enum { CP_ACP, CP_UTF8 };
@@ -135,12 +136,33 @@ typedef unsigned char boolean;
 
 COLORREF RGB(BYTE, BYTE, BYTE);
 typedef struct tagRGBQUAD {
-	BYTE rgbBlue;
-	BYTE rgbGreen;
-	BYTE rgbRed;
-	BYTE rgbReserved;
+	BYTE	rgbBlue;
+	BYTE	rgbGreen;
+	BYTE	rgbRed;
+	BYTE	rgbReserved;
 }RGBQUAD;
 
+typedef struct
+{
+	HWND	hwnd;
+	UINT	message;
+	WPARAM	wParam;
+	LPARAM	lParam;
+	DWORD	time;
+	POINT	pt;
+}MSG, *PMSG;
+
+bool PeekMessage(PMSG, HWND, UINT,	UINT, UINT);
+enum
+{
+	PM_NOREMOVE,
+	PM_REMOVE,
+	PM_NOYIELD,
+	PM_QS_INPUT,
+	PM_QS_PAINT,
+	PM_QS_POSTMESSAGE,
+	PM_QS_SENDMESSAGE,
+};	
 bool MessageBeep(unsigned int);
 enum
 {
@@ -150,7 +172,10 @@ enum
 	MB_ICONQUESTION		= 0x00000020L,
 	MB_OK				= 0x00000000L,
 };
- 
+bool TranslateMessage(const MSG*);
+LRESULT DispatchMessage(const MSG*);
+
+#define _alloca alloca
 // FieldWorks-specific
 
 #define NO_ASM 1
