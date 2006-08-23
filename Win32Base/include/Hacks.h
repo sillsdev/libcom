@@ -150,9 +150,9 @@ typedef struct
 	LPARAM	lParam;
 	DWORD	time;
 	POINT	pt;
-}MSG, *PMSG;
+}MSG, *PMSG, *LPMSG;
 
-bool PeekMessage(PMSG, HWND, UINT,	UINT, UINT);
+bool PeekMessage(LPMSG, HWND, UINT,	UINT, UINT);
 enum
 {
 	PM_NOREMOVE,
@@ -174,6 +174,16 @@ enum
 };
 bool TranslateMessage(const MSG*);
 LRESULT DispatchMessage(const MSG*);
+
+int StartPage(HDC);
+int EndPage(HDC);
+int StartDoc(HDC, const DOCINFO*);
+int EndDoc(HDC);
+enum
+{
+	SP_ERROR,
+};
+int AbortDoc(HDC);
 
 #define _alloca alloca
 // FieldWorks-specific

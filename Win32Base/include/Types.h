@@ -234,4 +234,13 @@ typedef unsigned char byte;
 
 #define STDAPI EXTERN_C HRESULT STDAPICALLTYPE
 
+typedef struct
+{
+	int		cbSize;
+	LPCTSTR	lpszDocName;
+	LPCTSTR lpszOutput;
+	LPCTSTR lpszDatatype;
+	DWORD	fwType;
+}DOCINFO;
+
 #endif //_TYPES_H_
