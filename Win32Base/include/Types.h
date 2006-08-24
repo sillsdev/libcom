@@ -201,6 +201,7 @@ typedef HGLOBAL 	HKL;
 typedef HGLOBAL 	HGDIOBJ;
 typedef HGLOBAL 	HDWP;
 typedef HGLOBAL 	HWND;
+typedef HGLOBAL		HBRUSH;
 
 typedef HMETAFILEPICT 	HMF;
 typedef HENHMETAFILE 	HEMF;
