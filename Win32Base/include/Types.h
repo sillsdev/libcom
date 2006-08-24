@@ -78,9 +78,9 @@ __DECLARE_POINTER_TYPES(BOOL)
 
 // Wide characters - 16-bit
 
-typedef unsigned short		OLECHAR;
-typedef wchar_t				WCHAR;
-typedef WCHAR				TCHAR; // Assume we always want Unicode
+typedef UChar				OLECHAR;
+typedef UChar				WCHAR;
+typedef wchar_t				TCHAR; // Assume we always want Unicode
 
 typedef OLECHAR*			BSTR;
 
@@ -233,14 +233,5 @@ typedef unsigned char byte;
 #define EXTERN_C extern "C"
 
 #define STDAPI EXTERN_C HRESULT STDAPICALLTYPE
-
-typedef struct
-{
-	int		cbSize;
-	LPCTSTR	lpszDocName;
-	LPCTSTR lpszOutput;
-	LPCTSTR lpszDatatype;
-	DWORD	fwType;
-}DOCINFO;
 
 #endif //_TYPES_H_

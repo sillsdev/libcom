@@ -144,15 +144,93 @@ typedef struct tagRGBQUAD {
 
 typedef struct
 {
+	int		cbSize;
+	LPCTSTR	lpszDocName;
+	LPCTSTR lpszOutput;
+	LPCTSTR lpszDatatype;
+	DWORD	fwType;
+}DOCINFO;
+
+enum
+{
+	LOGPIXELSY,
+};
+enum
+{
+	DEFAULT_CHARSET,
+};
+enum
+{
+	OUT_TT_ONLY_PRECIS,
+};
+enum
+{
+	CLIP_DEFAULT_PRECIS,
+};
+enum
+{
+	DRAFT_QUALITY,
+};
+typedef struct tagLOGFONT
+{
+	LONG	lfHeight;
+	LONG	lfWidth;
+	LONG	lfEscapement;
+	LONG	lfOrientation;
+	LONG	lfWeight;
+	BYTE	lfItalic;
+	BYTE	lfUnderline;
+	BYTE	lfStrikeOut;
+	BYTE	lfCharSet;
+	BYTE	lfOutPrecision;
+	BYTE	lfClipPrecision;
+	BYTE	lfQuality;
+	BYTE	lfPitchAndFamily;
+	WCHAR	lfFaceName[];
+}LOGFONT, *PLOGFONT;
+
+typedef struct tagTEXTMETRIC
+{ 
+  LONG tmHeight; 
+  LONG tmAscent; 
+  LONG tmDescent; 
+  LONG tmInternalLeading; 
+  LONG tmExternalLeading; 
+  LONG tmAveCharWidth; 
+  LONG tmMaxCharWidth; 
+  LONG tmWeight; 
+  LONG tmOverhang; 
+  LONG tmDigitizedAspectX; 
+  LONG tmDigitizedAspectY; 
+  TCHAR tmFirstChar; 
+  TCHAR tmLastChar; 
+  TCHAR tmDefaultChar; 
+  TCHAR tmBreakChar; 
+  BYTE tmItalic; 
+  BYTE tmUnderlined; 
+  BYTE tmStruckOut; 
+  BYTE tmPitchAndFamily; 
+  BYTE tmCharSet; 
+} TEXTMETRIC, *PTEXTMETRIC;
+bool GetTextMetrics(HDC, PTEXTMETRIC);
+
+enum
+{
+	COLOR_WINDOWTEXT	= 8,
+};
+DWORD GetSysColor(int);
+int GetDeviceCaps(HDC, int);
+
+typedef struct
+{
 	HWND	hwnd;
 	UINT	message;
 	WPARAM	wParam;
 	LPARAM	lParam;
 	DWORD	time;
 	POINT	pt;
-}MSG, *PMSG, *LPMSG;
+}MSG, *PMSG;
 
-bool PeekMessage(LPMSG, HWND, UINT,	UINT, UINT);
 enum
 {
 	PM_NOREMOVE,
@@ -163,7 +241,8 @@ enum
 	PM_QS_POSTMESSAGE,
 	PM_QS_SENDMESSAGE,
 };	
-bool MessageBeep(unsigned int);
+bool PeekMessage(PMSG, HWND, UINT,	UINT, UINT);
+
 enum
 {
 	MB_ICONASTERISK		= 0x00000040L,
@@ -172,17 +251,19 @@ enum
 	MB_ICONQUESTION		= 0x00000020L,
 	MB_OK				= 0x00000000L,
 };
+bool MessageBeep(unsigned int);
+
 bool TranslateMessage(const MSG*);
 LRESULT DispatchMessage(const MSG*);
 
-int StartPage(HDC);
-int EndPage(HDC);
-int StartDoc(HDC, const DOCINFO*);
-int EndDoc(HDC);
 enum
 {
 	SP_ERROR,
 };
+int StartPage(HDC);
+int EndPage(HDC);
+int StartDoc(HDC, const DOCINFO*);
+int EndDoc(HDC);
 int AbortDoc(HDC);
 
 #define _alloca alloca
