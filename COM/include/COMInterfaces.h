@@ -243,6 +243,14 @@ typedef LONG OLE_YSIZE_HIMETRIC;
 class IPicture : public IUnknown
 {
 public:
+	virtual HRESULT STDMETHODCALLTYPE get_Width( 
+		/* [out] */ OLE_XSIZE_HIMETRIC *pWidth) = 0;
+	
+	virtual HRESULT STDMETHODCALLTYPE get_Height( 
+		/* [out] */ OLE_YSIZE_HIMETRIC *pHeight) = 0;
+	
+#if 0	// Leave out unneeded methods
+
 	virtual HRESULT STDMETHODCALLTYPE get_Handle( 
 		/* [out] */ OLE_HANDLE *pHandle) = 0;
 	
@@ -251,12 +259,6 @@ public:
 	
 	virtual HRESULT STDMETHODCALLTYPE get_Type( 
 		/* [out] */ SHORT *pType) = 0;
-	
-	virtual HRESULT STDMETHODCALLTYPE get_Width( 
-		/* [out] */ OLE_XSIZE_HIMETRIC *pWidth) = 0;
-	
-	virtual HRESULT STDMETHODCALLTYPE get_Height( 
-		/* [out] */ OLE_YSIZE_HIMETRIC *pHeight) = 0;
 	
 	virtual HRESULT STDMETHODCALLTYPE Render( 
 		/* [in] */ HDC hDC,
@@ -296,6 +298,8 @@ public:
 	
 	virtual HRESULT STDMETHODCALLTYPE get_Attributes( 
 		/* [out] */ DWORD *pDwAttr) = 0;
+
+#endif //0
 };
 
 #define IID_IPicture __uuidof(IPicture)
