@@ -17,7 +17,7 @@ struct FILETIME
 	DWORD dwHighDateTime;
 };
 
-struct SYSTEMTIME
+typedef struct tagSYSTEMTIME
 {
 	WORD wYear;
 	WORD wMonth;
@@ -27,11 +27,26 @@ struct SYSTEMTIME
 	WORD wMinute;
 	WORD wSecond;
 	WORD wMilliseconds;
-};
+}SYSTEMTIME, *PSYSTEMTIME;
 
+int GetTimeFormat(LCID, DWORD, PSYSTEMTIME, LPCTSTR, LPTSTR, int);
+void GetLocalTime(PSYSTEMTIME);
+void GetSystemTime(PSYSTEMTIME);
 void GetSystemTimeAsFileTime(FILETIME*);
-BOOL SystemTimeToFileTime(SYSTEMTIME*, FILETIME*);
-BOOL FileTimeToSystemTime(FILETIME*, SYSTEMTIME*);
+BOOL SystemTimeToFileTime(PSYSTEMTIME, FILETIME*);
+BOOL FileTimeToSystemTime(FILETIME*, PSYSTEMTIME);
 DWORD GetTickCount();
+
+enum
+{
+	LOCALE_SYSTEM_DEFAULT,
+	LOCALE_USER_DEFAULT,
+	LOCALE_INVARIANT,
+};
+enum
+{
+	DATE_SHORTDATE,
+};
+int GetDateFormat(LCID, DWORD, PSYSTEMTIME, LPCTSTR, LPTSTR, int);
 
 #endif //_DATETIME_H_

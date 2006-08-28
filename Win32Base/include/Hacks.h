@@ -252,7 +252,7 @@ enum
 	MB_OK				= 0x00000000L,
 };
 bool MessageBeep(unsigned int);
-
+int MessageBox(HWND, LPCTSTR, LPCTSTR, UINT);
 bool TranslateMessage(const MSG*);
 LRESULT DispatchMessage(const MSG*);
 
@@ -265,6 +265,64 @@ int EndPage(HDC);
 int StartDoc(HDC, const DOCINFO*);
 int EndDoc(HDC);
 int AbortDoc(HDC);
+
+enum
+{ 	
+	VK_PRIOR,
+	VK_NEXT,
+	VK_END,
+	VK_HOME,
+	VK_LEFT,
+	VK_UP,
+	VK_RIGHT,
+	VK_DOWN,
+	VK_INSERT,
+	VK_DELETE = 46,
+	VK_TAB,
+	VK_RETURN,
+};		
+HKL GetKeyboardLayout(DWORD);
+WORD LANGIDFROMLCID(LCID);
+
+typedef enum dwStyle
+{
+	CFS_DEFAULT,
+	CFS_FORCE_POSITION,
+	CFS_POINT,
+	CFS_RECT,
+};
+typedef struct tagCOMPOSITIONFORM
+{
+  DWORD  dwStyle;       
+  POINT  ptCurrentPos;  
+  RECT   rcArea;        
+} COMPOSITIONFORM, *PCOMPOSITIONFORM;
+bool ImmIsIME(HKL);
+bool ImmGetCompositionWindow(HIMC, PCOMPOSITIONFORM);
+HIMC ImmGetContext(HWND);
+bool ImmSetCompositionWindow(HIMC, PCOMPOSITIONFORM);
+
+typedef enum dwRop
+{
+	BLACKNESS,
+	CAPTUREBLT,
+	DSTINVERT,
+	MERGECOPY,
+	MERGEPAINT,
+	NOMIRRORBITMAP,
+	NOTSRCCOPY,
+	NOTSRCERASE,
+	PATCOPY,
+	PATINVERT,
+	PATPAINT,
+	SRCAND,
+	SRCCOPY,
+	SRCERASE,
+	SRCINVERT,
+	SRCPAINT,
+	WHITENESS,
+};
+bool BitBlt(HDC, int, int, int, int, HDC, int, int, DWORD);
 
 #define _alloca alloca
 // FieldWorks-specific
