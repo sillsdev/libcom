@@ -366,7 +366,7 @@ bool BitBlt(HDC, int, int, int, int, HDC, int, int, DWORD);
 
 #define _alloca alloca
 
-inline char* itoa(int value, char* str, int radix)
+inline char* _itoa(int value, char* str, int radix)
 {
 	std::snprintf(str, radix, "%d", value);
 	return str;
