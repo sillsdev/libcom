@@ -8,9 +8,9 @@ typedef LONG TS_ATTRID;
 typedef LONG TS_TEXTCHANGE;
 typedef LONG TS_TEXTCHANGE;
 
-struct TsViewCookie {};
-struct TfEditCookie {};
-struct TfClientId {};
+typedef DWORD TsViewCookie;
+typedef DWORD TfClientId;
+typedef DWORD TfEditCookie;
 
 enum { TS_LF_READWRITE, TS_LC_CHANGE };
 
