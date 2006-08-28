@@ -19,12 +19,12 @@ public:
 	virtual bool ValidKeyUp(UINT wp);
 };
 
-class AfGdx
+class AfGfx
 {
 public:
-	AfGdx();
-	~AfGdx();
-	static void FillSolidRect(HDC hdc, const RECT &rc, COLORREF clr, bool fUsePalette = true);
+	AfGfx();
+	~AfGfx();
+	static void FillSolidRect(HDC hdc, const Rect &rc, COLORREF clr, bool fUsePalette = true);
 	static COLORREF SetBkColor(HDC hdc, COLORREF clr);
 	static COLORREF SetTextColor(HDC hdc, COLORREF clr);
 };
