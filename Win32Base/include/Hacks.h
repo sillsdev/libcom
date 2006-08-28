@@ -21,6 +21,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <alloca.h>
+#include <cstdio>
 #include <algorithm>
 
 enum { CP_ACP, CP_UTF8 };
@@ -134,13 +135,19 @@ typedef int PRPC_MESSAGE;
 typedef void* RPC_IF_HANDLE;
 typedef unsigned char boolean;
 
-COLORREF RGB(BYTE, BYTE, BYTE);
 typedef struct tagRGBQUAD {
 	BYTE	rgbBlue;
 	BYTE	rgbGreen;
 	BYTE	rgbRed;
 	BYTE	rgbReserved;
 }RGBQUAD;
+COLORREF RGB(BYTE, BYTE, BYTE);
+BYTE GetRValue(DWORD);
+BYTE GetGValue(DWORD);
+BYTE GetBValue(DWORD);
+
+bool SetRect(RECT*, int, int, int, int);
+bool OffsetRect(RECT*, int,int);
 
 typedef struct
 {
@@ -214,8 +221,41 @@ typedef struct tagTEXTMETRIC
 } TEXTMETRIC, *PTEXTMETRIC;
 bool GetTextMetrics(HDC, PTEXTMETRIC);
 
-enum
+typedef enum nIndex
 {
+	COLOR_3DDKSHADOW	= 21,
+	COLOR_3DFACE		= 15,
+	COLOR_3DHILIGHT		= 20,
+	COLOR_3DLIGHT		= 22,
+	COLOR_3DSHADOW		= 16,
+	COLOR_ACTIVEBORDER	= 10,
+	COLOR_ACTIVECAPTION	= 2,
+	COLOR_APPWORKSPACE	= 12,
+	COLOR_BACKGROUND	= 1,
+	COLOR_BTNFACE		= 15,
+	COLOR_BTNHIGHLIGHT	= 20,
+	COLOR_BTNHILIGHT	= 20,
+	COLOR_BTNSHADOW		= 16,
+	COLOR_BTNTEXT		= 18,
+	COLOR_CAPTIONTEXT	= 9,
+	COLOR_DESKTOP		= 1,
+	COLOR_GRADIENTACTIVECAPTION = 27,
+	COLOR_GRAYTEXT		= 17,
+	COLOR_HIGHLIGHT		= 13,
+	COLOR_HIGHLIGHTTEXT	= 14,
+	COLOR_HOTLIGHT		= 26,
+	COLOR_INACTIVEBORDER = 11,
+	COLOR_INACTIVECAPTION = 3,
+	COLOR_INACTIVECAPTIONTEXT = 19,
+	COLOR_INFOBK		= 24,
+	COLOR_INFOTEXT		= 23,
+	COLOR_MENU			= 4,
+	COLOR_MENUHILIGHT	= 29,
+	COLOR_MENUBAR		= 30,
+	COLOR_MENUTEXT		= 7,
+	COLOR_SCROLLBAR		= 0,
+	COLOR_WINDOW		= 5,
+	COLOR_WINDOWFRAME	= 6,
 	COLOR_WINDOWTEXT	= 8,
 };
 DWORD GetSysColor(int);
@@ -325,6 +365,24 @@ typedef enum dwRop
 bool BitBlt(HDC, int, int, int, int, HDC, int, int, DWORD);
 
 #define _alloca alloca
+
+inline char* itoa(int value, char* str, int radix)
+{
+	std::snprintf(str, radix, "%d", value);
+	return str;
+};
+
+inline OLECHAR* _itow(int num, OLECHAR* buf, int len)
+{
+	UnicodeString uString(buf, 0, sizeof(buf));			
+	UErrorCode status = U_ZERO_ERROR;
+	NumberFormat * nf = NumberFormat::createInstance(status);
+	nf->format(num, uString);
+	
+	uString.extract(buf, sizeof(buf), status);
+	buf[sizeof(buf)-1] = 0;
+	return buf;
+};
 // FieldWorks-specific
 
 #define NO_ASM 1
