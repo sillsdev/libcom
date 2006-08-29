@@ -10,6 +10,11 @@
 
 #include "Hacks.h"
 
+#include <cstdio>
+#include <cwchar>
+#include <cassert>
+#include <unicode/ustring.h>
+
 int WideCharToMultiByte(int, int, const OLECHAR*, int, char*, int, char*, char*);
 int MultiByteToWideChar(int, int, const char*, int, OLECHAR*, int);
 
@@ -30,6 +35,36 @@ void InitializeCriticalSection(CRITICAL_SECTION*);
 void DeleteCriticalSection(CRITICAL_SECTION*);
 void EnterCriticalSection(CRITICAL_SECTION*);
 void LeaveCriticalSection(CRITICAL_SECTION*);
+
+char* _itoa_s(int value, char* buffer, size_t bufferSize, int radix)
+{
+	assert(radix == 10 && radix == 16);
+	snprintf(buffer, bufferSize, (radix == 16 ? "%x" : "%d"), value);
+	return buffer;
+};
+
+wchar_t* _itow_s(int value, wchar_t* buffer, size_t bufferSize, int radix)
+{
+	assert(radix == 10 && radix == 16);
+	swprintf(buffer, bufferSize, (radix == 16 ? L"%x" : L"%d"), value);
+	return buffer;
+};
+
+OLECHAR* _itow_s(int value, OLECHAR* buffer, size_t bufferSize, int radix)
+{
+	wchar_t tmp[64]; // Should be big enough for any number
+	_itow_s(value, tmp, sizeof(tmp), radix);
+
+	UErrorCode status = U_ZERO_ERROR;
+	u_strFromUTF32(buffer, bufferSize, 0, reinterpret_cast<UChar32*>(tmp), -1, &status);
+
+	// Ensure null-termination, but only for genuine buffer sizes
+	if (status == U_STRING_NOT_TERMINATED_WARNING ||
+	    status == U_BUFFER_OVERFLOW_ERROR)
+		buffer[bufferSize-1] = 0;
+
+	return buffer;
+};
 
 // Support functions
 

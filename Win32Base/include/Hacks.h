@@ -21,7 +21,6 @@
 #include <ctype.h>
 #include <string.h>
 #include <alloca.h>
-#include <cstdio>
 #include <algorithm>
 
 enum { CP_ACP, CP_UTF8 };
@@ -366,23 +365,13 @@ bool BitBlt(HDC, int, int, int, int, HDC, int, int, DWORD);
 
 #define _alloca alloca
 
-inline char* _itoa(int value, char* str, int radix)
-{
-	std::snprintf(str, radix, "%d", value);
-	return str;
-};
+char*    _itoa_s(int value, char*    buffer, size_t bufferSize, int radix);
+wchar_t* _itow_s(int value, wchar_t* buffer, size_t bufferSize, int radix);
+OLECHAR* _itow_s(int value, OLECHAR* buffer, size_t bufferSize, int radix);
 
-inline OLECHAR* _itow(int num, OLECHAR* buf, int len)
-{
-	UnicodeString uString(buf, 0, sizeof(buf));			
-	UErrorCode status = U_ZERO_ERROR;
-	NumberFormat * nf = NumberFormat::createInstance(status);
-	nf->format(num, uString);
-	
-	uString.extract(buf, sizeof(buf), status);
-	buf[sizeof(buf)-1] = 0;
-	return buf;
-};
+#define	_itoa(V, B, R) _itoa_s((V), (B), ~0, (R))	// Unchecked version, don't use in new code
+#define	_itow(V, B, R) _itow_s((V), (B), ~0, (R))	// Unchecked version, don't use in new code
+
 // FieldWorks-specific
 
 #define NO_ASM 1
