@@ -95,6 +95,13 @@ class ITfCategoryMgr : public IUnknown
 {
 };
 
+class ITfDisplayAttributeInfo : public IUnknown
+{
+public:
+	HRESULT GetAttributeInfo(TF_DISPLAYATTRIBUTE*);
+	
+};
+
 class ITfDisplayAttributeMgr : public IUnknown
 {
 public:
@@ -121,13 +128,6 @@ class ITfRangeACP : public IUnknown
 {
 public:
 	HRESULT GetExtent(LONG*, LONG*);
-};
-
-class ITfDisplayAttributeInfo : public IUnknown
-{
-public:
-	HRESULT GetAttributeInfo(TF_DISPLAYATTRIBUTE*);
-	
 };
 
 class ITfMouseSink : public IUnknown
