@@ -9,7 +9,6 @@
 #include "COM.h"
 #include "WinError.h"
 
-#include <uuid/uuid_types.h>
 #include <uuid/uuid.h>
 
 #include <algorithm>
