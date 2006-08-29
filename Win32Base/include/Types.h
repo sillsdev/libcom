@@ -9,6 +9,8 @@
 #ifndef _TYPES_H_
 #define _TYPES_H_
 
+#include <unicode/utypes.h>
+
 // Compiler features
 
 #define __cdecl //__attribute__((cdecl))
