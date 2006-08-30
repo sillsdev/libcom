@@ -10,6 +10,8 @@
 
 #include "Hacks.h"
 
+#include <iostream>
+#include <vector>
 #include <cstdio>
 #include <cwchar>
 #include <cassert>
@@ -65,6 +67,34 @@ OLECHAR* _itow_s(int value, OLECHAR* buffer, size_t bufferSize, int radix)
 
 	return buffer;
 };
+
+void OutputDebugString(const char* str)
+{
+	std::cerr << str;
+	std::cerr.flush();
+}
+
+void OutputDebugString(const wchar_t* str)
+{
+	std::wcerr << str;
+	std::wcerr.flush();
+}
+
+void OutputDebugString(const OLECHAR* str)
+{
+	int32_t len = u_strlen(str);
+	std::vector<wchar_t> buf(len);	// Max required
+
+	UErrorCode status = U_ZERO_ERROR;
+	u_strToUTF32((UChar32*)&buf[0], buf.size(), &len, str, len, &status);
+
+	if (U_SUCCESS(status))
+		std::wcerr.write(&buf[0], len);
+	else
+		std::wcerr << "ICU error " << status;
+
+	std::wcerr.flush();
+}
 
 // Support functions
 

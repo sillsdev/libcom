@@ -372,6 +372,17 @@ OLECHAR* _itow_s(int value, OLECHAR* buffer, size_t bufferSize, int radix);
 #define	_itoa(V, B, R) _itoa_s((V), (B), ~0, (R))	// Unchecked version, don't use in new code
 #define	_itow(V, B, R) _itow_s((V), (B), ~0, (R))	// Unchecked version, don't use in new code
 
+void OutputDebugString(const char* str);
+void OutputDebugString(const wchar_t* str);
+void OutputDebugString(const OLECHAR* str);
+
+inline void OutputDebugStringA(const char* str)
+	{ OutputDebugString(str); }
+inline void OutputDebugStringW(const wchar_t* str)
+	{ OutputDebugString(str); }
+inline void OutputDebugStringW(const OLECHAR* str)
+	{ OutputDebugString(str); }
+
 // FieldWorks-specific
 
 #define NO_ASM 1
