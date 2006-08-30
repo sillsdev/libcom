@@ -24,6 +24,14 @@ GUID::GUID(const char* text)
 }
 
 GUID GUID_NULL;
+GUID GUID_ITextStoreACPSink;
+GUID GUID_ITextStoreACPServices;
+GUID GUID_ITextStoreACP;
+GUID GUID_ITfRangeACP;
+GUID GUID_ITfContextOwnerCompositionServices;
+GUID GUID_ITfContextOwnerCompositionSink;
+GUID GUID_ITfMouseTrackerACP;
+GUID GUID_PROP_ATTRIBUTE;
 
 int StringFromGUID2(REFGUID rguid, LPOLESTR lpsz, int cchMax)
 {
