@@ -109,5 +109,7 @@ BSTR SysAllocStringLen(const OLECHAR* pch, unsigned int cch);
 BSTR SysAllocString(const OLECHAR *sz); // Zero-terminated
 BSTR SysAllocStringByteLen(LPCSTR psz, UINT len);
 void SysFreeString(BSTR bstr);
+int SysReAllocString(BSTR* pbstr, const OLECHAR* psz);
+int SysReAllocStringLen(BSTR* pbstr, const OLECHAR* pch, unsigned int cch);
 
 #endif //_COM_H_
