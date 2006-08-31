@@ -110,7 +110,8 @@ BSTR SysAllocString(const OLECHAR *sz) // Zero-terminated
 
 void SysFreeString(BSTR bstr)
 {
-	delete [] (bstr - 2);
+	if (bstr)
+		delete [] (bstr - 2);
 }
 
 int SysReAllocString(BSTR* pbstr, const OLECHAR* psz)
