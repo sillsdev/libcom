@@ -117,15 +117,19 @@ void SysFreeString(BSTR bstr)
 int SysReAllocString(BSTR* pbstr, const OLECHAR* psz)
 {
 	BSTR tmp = SysAllocString(psz);
-	if (tmp)
-		std::swap(tmp, *pbstr);
+	if (!tmp)
+		return false;
+	std::swap(tmp, *pbstr);
 	SysFreeString(tmp);
+	return true;
 }
 
 int SysReAllocStringLen(BSTR* pbstr, const OLECHAR* pch, unsigned int cch)
 {
 	BSTR tmp = SysAllocStringLen(pch, cch);
-	if (tmp)
-		std::swap(tmp, *pbstr);
+	if (!tmp)
+		return false;
+	std::swap(tmp, *pbstr);
 	SysFreeString(tmp);
+	return true;
 }
