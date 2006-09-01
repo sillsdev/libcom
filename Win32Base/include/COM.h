@@ -112,4 +112,6 @@ void SysFreeString(BSTR bstr);
 int SysReAllocString(BSTR* pbstr, const OLECHAR* psz);
 int SysReAllocStringLen(BSTR* pbstr, const OLECHAR* pch, unsigned int cch);
 
+inline HRESULT CoCreateGuid(GUID* pguid) {}
+
 #endif //_COM_H_

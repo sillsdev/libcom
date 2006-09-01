@@ -289,7 +289,12 @@ enum
 	MB_ICONHAND			= 0x00000010L,
 	MB_ICONQUESTION		= 0x00000020L,
 	MB_OK				= 0x00000000L,
+	MB_YESNO			= ~0,
+	MB_DEFBUTTON2		= ~0,
+	MB_TASKMODAL		= ~0,
 };
+const int IDYES = ~0;
+
 bool MessageBeep(unsigned int);
 int MessageBox(HWND, LPCTSTR, LPCTSTR, UINT);
 bool TranslateMessage(const MSG*);
@@ -382,6 +387,13 @@ inline void OutputDebugStringA(const char* str)
 inline void OutputDebugStringW(const wchar_t* str)
 	{ OutputDebugString(str); }
 inline void OutputDebugStringW(const OLECHAR* str)
+	{ OutputDebugString(str); }
+
+inline void OutputDebugStr(const char* str)
+	{ OutputDebugString(str); }
+inline void OutputDebugStr(const wchar_t* str)
+	{ OutputDebugString(str); }
+inline void OutputDebugStr(const OLECHAR* str)
 	{ OutputDebugString(str); }
 
 // FieldWorks-specific
