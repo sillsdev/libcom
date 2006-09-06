@@ -1,6 +1,29 @@
 #ifndef AFHACKS_H_
 #define AFHACKS_H_
 
+typedef struct tagPALETTEENTRY { 
+ 	BYTE peRed; 
+ 	BYTE peGreen; 
+ 	BYTE peBlue; 
+ 	BYTE peFlags; 
+} PALETTEENTRY; 
+
+typedef struct tagLOGPALETTE { 
+ 	WORD         palVersion; 
+ 	WORD         palNumEntries; 
+ 	PALETTEENTRY palPalEntry[1]; 
+} LOGPALETTE;
+
+int GetDeviceCaps(HDC hdc, int nIndex);
+HPALETTE CreatePalette(LOGPALETTE *lplgpl);
+UINT RealizePalette(HDC hdc);
+HPALETTE SelectPalette(HDC hdc, HPALETTE hpal, BOOL bForceBackground);
+BOOL DeleteObject(HGDIOBJ hObject);
+
+UINT SysStringLen(BSTR bstr);
+int _strnicmp(const char *string1, const char *string2, size_t count);
+int _stricmp(const char *string1, const char *string2);
+
 class AfApp
 {
 public:

@@ -134,16 +134,11 @@ typedef int PRPC_MESSAGE;
 typedef void* RPC_IF_HANDLE;
 typedef unsigned char boolean;
 
-typedef struct tagRGBQUAD {
-	BYTE	rgbBlue;
-	BYTE	rgbGreen;
-	BYTE	rgbRed;
-	BYTE	rgbReserved;
-}RGBQUAD;
-COLORREF RGB(BYTE, BYTE, BYTE);
-BYTE GetRValue(DWORD);
-BYTE GetGValue(DWORD);
-BYTE GetBValue(DWORD);
+#define RGB(r,g,b)          ((COLORREF)(((BYTE)(r)|((WORD)((BYTE)(g))<<8))|(((DWORD)(BYTE)(b))<<16)))
+#define PALETTERGB(r,g,b)   (0x02000000 | RGB(r,g,b))
+#define GetRValue(rgb)      ((BYTE)(rgb))
+#define GetGValue(rgb)      ((BYTE)(((WORD)(rgb)) >> 8))
+#define GetBValue(rgb)      ((BYTE)((rgb)>>16))
 
 bool SetRect(RECT*, int, int, int, int);
 bool OffsetRect(RECT*, int,int);
@@ -256,6 +251,8 @@ typedef enum nIndex
 	COLOR_WINDOW		= 5,
 	COLOR_WINDOWFRAME	= 6,
 	COLOR_WINDOWTEXT	= 8,
+	RC_PALETTE			= 1,
+	RASTERCAPS			= 1,	
 };
 DWORD GetSysColor(int);
 int GetDeviceCaps(HDC, int);
@@ -297,6 +294,7 @@ const int IDYES = ~0;
 
 bool MessageBeep(unsigned int);
 int MessageBox(HWND, LPCTSTR, LPCTSTR, UINT);
+int MessageBoxA(HWND, LPCTSTR, LPCTSTR, UINT);
 bool TranslateMessage(const MSG*);
 LRESULT DispatchMessage(const MSG*);
 
