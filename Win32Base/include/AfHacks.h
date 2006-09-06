@@ -29,8 +29,8 @@ class AfApp
 public:
 	AfApp();
 	~AfApp();
-	static AfApp * Papp();
-	static bool LaunchHL(HWND hwnd, LPCTSTR pszOperation, LPCTSTR pszFile,
+	AfApp * Papp();
+	bool LaunchHL(HWND hwnd, LPCTSTR pszOperation, LPCTSTR pszFile,
 		LPCTSTR pszParameters, LPCTSTR pszDirectory, int nShowCmd);
 };
 
@@ -42,39 +42,159 @@ public:
 	virtual bool ValidKeyUp(UINT wp);
 };
 
-class AfGfx
-{
-public:
-	AfGfx();
-	~AfGfx();
-	static void FillSolidRect(HDC hdc, const Rect &rc, COLORREF clr, bool fUsePalette = true);
-	static COLORREF SetBkColor(HDC hdc, COLORREF clr);
-	static COLORREF SetTextColor(HDC hdc, COLORREF clr);
-};
+void	FillSolidRect(HDC hdc, Rect &rc, COLORREF clr, BOOL fUsePalette = true);
+COLORREF SetBkColor(HDC hdc, COLORREF clr);
+COLORREF SetTextColor(HDC hdc, COLORREF clr);
 
-class AfGdi
+typedef enum
 {
-public:
-	typedef enum
-	{
-		UNDEF=0, NEW=1, OLD=2, CLUDGE_OLD=3,
-	} SelType;
-	AfGdi();
-	~AfGdi();
-	static HDC CreateCompatibleDC(HDC hdc);
-	static BOOL	DeleteDC(HDC hdc);
-	static HDC GetDC(HWND hWnd);
-	static int ReleaseDC(
-		HWND hWnd, // handle to window
-		HDC hdc);  // handle to DC
-	static HFONT CreateFontIndirect(const LOGFONT * plf);
-	static HFONT SelectObjectFont(HDC hdc, HGDIOBJ font, SelType fNew=NEW);
-	static BOOL DeleteObjectFont(HGDIOBJ font);
-	static HBITMAP CreateCompatibleBitmap(HDC hdc, int width, int height);
-	static HBITMAP SelectObjectBitmap(HDC hdc, HGDIOBJ bitmap, SelType fNew=NEW);
-	static BOOL DeleteObjectBitmap(HGDIOBJ bitmap);
-	static HBRUSH CreateSolidBrush(COLORREF crColor);
+	UNDEF = 0,
+	NEW = 1,
+	OLD = 2,
+	CLUDGE_OLD = 3,
+} SelType;
+
+typedef struct tagLOGPEN { 
+  UINT     lopnStyle; 
+  POINT    lopnWidth; 
+  COLORREF lopnColor; 
+} LOGPEN, *PLOGPEN;
+
+typedef struct tagBITMAPINFOHEADER{
+  DWORD  biSize; 
+  LONG   biWidth; 
+  LONG   biHeight; 
+  WORD   biPlanes; 
+  WORD   biBitCount; 
+  DWORD  biCompression; 
+  DWORD  biSizeImage; 
+  LONG   biXPelsPerMeter; 
+  LONG   biYPelsPerMeter; 
+  DWORD  biClrUsed; 
+  DWORD  biClrImportant; 
+} BITMAPINFOHEADER, *PBITMAPINFOHEADER; 
+
+typedef struct tagRGBQUAD {
+  BYTE    rgbBlue; 
+  BYTE    rgbGreen; 
+  BYTE    rgbRed; 
+  BYTE    rgbReserved; 
+} RGBQUAD;
+
+typedef struct tagBITMAPINFO { 
+  BITMAPINFOHEADER bmiHeader; 
+  RGBQUAD          bmiColors[1]; 
+} BITMAPINFO, *PBITMAPINFO;
+
+typedef struct tagLOGBRUSH { 
+  UINT     lbStyle; 
+  COLORREF lbColor; 
+  LONG     lbHatch; 
+} LOGBRUSH, *PLOGBRUSH;
+
+typedef enum fnObject
+{
+	DEFAULT_GUI_FONT,
 };
+ 
+const int CCHDEVICENAME = 0;
+const int CCHFORMNAME = 0;
+const int ERROR = 0;
+const int HGDI_ERROR = 0;
+
+typedef struct _devicemode { 
+  BCHAR  dmDeviceName[CCHDEVICENAME]; 
+  WORD   dmSpecVersion; 
+  WORD   dmDriverVersion; 
+  WORD   dmSize; 
+  WORD   dmDriverExtra; 
+  DWORD  dmFields; 
+  union {
+    struct {
+      short dmOrientation;
+      short dmPaperSize;
+      short dmPaperLength;
+      short dmPaperWidth;
+      short dmScale; 
+      short dmCopies; 
+      short dmDefaultSource; 
+      short dmPrintQuality; 
+    };
+    POINT dmPosition;
+    DWORD  dmDisplayOrientation;
+    DWORD  dmDisplayFixedOutput;
+  };
+
+  short  dmColor; 
+  short  dmDuplex; 
+  short  dmYResolution; 
+  short  dmTTOption; 
+  short  dmCollate; 
+  BYTE  dmFormName[CCHFORMNAME]; 
+  WORD  dmLogPixels; 
+  DWORD  dmBitsPerPel; 
+  DWORD  dmPelsWidth; 
+  DWORD  dmPelsHeight; 
+  union {
+    DWORD  dmDisplayFlags; 
+    DWORD  dmNup;
+  };
+  DWORD  dmDisplayFrequency; 
+#if(WINVER >= 0x0400) 
+  DWORD  dmICMMethod;
+  DWORD  dmICMIntent;
+  DWORD  dmMediaType;
+  DWORD  dmDitherType;
+  DWORD  dmReserved1;
+  DWORD  dmReserved2;
+#if (WINVER >= 0x0500) || (_WIN32_WINNT >= 0x0400)
+  DWORD  dmPanningWidth;
+  DWORD  dmPanningHeight;
+#endif
+#endif /* WINVER >= 0x0400 */
+} DEVMODE;
+
+HDC 	CreateCompatibleDC(HDC hdc);
+BOOL	DeleteDC(HDC hdc);
+HDC		GetDC(HWND hWnd);
+int		ReleaseDC(HWND hWnd, HDC hdc);
+HFONT	CreateFontIndirect(CONST LOGFONT * plf);
+HFONT	SelectObjectFont(HDC hdc, HGDIOBJ font, SelType fNew=NEW);
+BOOL	DeleteObjectFont(HGDIOBJ font);
+HBITMAP	CreateCompatibleBitmap(HDC hdc, int width, int height);
+HBITMAP	SelectObjectBitmap(HDC hdc, HGDIOBJ bitmap, SelType fNew=NEW);
+BOOL	DeleteObjectBitmap(HGDIOBJ bitmap);
+HBRUSH	CreateSolidBrush(COLORREF crColor);
+
+BOOL	InvertRect(HDC hDC, CONST RECT *lprc);
+BOOL	RestoreDC(HDC hdc, int nSavedDC);
+HGDIOBJ SelectObject(HDC hdc, HGDIOBJ hgdiobj);
+HPEN	CreatePen(int fnPenStyle, int nWidth, COLORREF crColor);
+HPEN	CreatePenIndirect(CONST LOGPEN *lplgpn);
+HRGN	CreateRectRgn(int nLeftRect, int nTopRect, int nRightRect, int nBottomRect);
+int		GetClipRgn(HDC hdc, HRGN hrgn);
+int		SelectClipRgn(HDC hdc, HRGN hrgn);
+HRSRC	FindResource(HMODULE hModule, LPCTSTR lpName, LPCTSTR lpType);
+HGLOBAL LoadResource(HMODULE hModule, HRSRC hResInfo);
+int 	StretchDIBits(HDC hdc, int XDest, int YDest, int nDestWidth, int nDestHeight,
+						int XSrc, int YSrc, int nSrcWidth, int nSrcHeight,
+						CONST VOID *lpBits, CONST BITMAPINFO *lpBitsInfo,
+						UINT iUsage, DWORD dwRop);
+BOOL 	ExtTextOut(HDC hdc, int X, int Y, UINT fuOptions, CONST RECT* lprc,
+					LPCTSTR lpString, UINT cbCount, CONST INT* lpDx);
+int 	GetSystemMetrics(int nIndex);
+BOOL 	SystemParametersInfo(UINT uiAction, UINT uiParam, PVOID pvParam, UINT fWinIni);
+HDC 	CreateDC(LPCTSTR lpszDriver, LPCTSTR lpszDevice, LPCTSTR lpszOutput, CONST DEVMODE* lpInitData);
+HFONT	CreateFont(int nHeight, int nWidth, int nEscapement, int nOrientation, int fnWeight,
+			DWORD fdwItalic, DWORD fdwUnderline, DWORD fdwStrikeOut, DWORD fdwCharSet,
+			DWORD fdwOutputPrecision, DWORD fdwClipPrecision, DWORD fdwQuality, DWORD fdwPitchAndFamily,
+			LPCTSTR lpszFace);
+HGDIOBJ	GetStockObject(int fnObject);
+HBITMAP	CreateBitmap(int nWidth, int nHeight, UINT cPlanes, UINT cBitsPerPel, CONST VOID* lpvBits);
+HBITMAP	LoadBitmap(HINSTANCE hInstance, LPCTSTR lpBitmapName);
+HANDLE	LoadImage(HINSTANCE hinst, LPCTSTR lpszName, UINT uType, int cxDesired, int cyDesired, UINT fuLoad);
+HBRUSH	CreateBrushIndirect(CONST LOGBRUSH *lplb);
+HBRUSH	CreatePatternBrush(HBITMAP hbmp);
 
 namespace AfUtil
 {
