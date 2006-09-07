@@ -251,8 +251,9 @@ typedef enum nIndex
 	COLOR_WINDOW		= 5,
 	COLOR_WINDOWFRAME	= 6,
 	COLOR_WINDOWTEXT	= 8,
-	RC_PALETTE			= 1,
-	RASTERCAPS			= 1,	
+	RC_PALETTE,
+	RASTERCAPS,
+	SM_CMONITORS,	
 };
 DWORD GetSysColor(int);
 int GetDeviceCaps(HDC, int);

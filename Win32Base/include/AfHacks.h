@@ -46,14 +46,6 @@ void	FillSolidRect(HDC hdc, Rect &rc, COLORREF clr, BOOL fUsePalette = true);
 COLORREF SetBkColor(HDC hdc, COLORREF clr);
 COLORREF SetTextColor(HDC hdc, COLORREF clr);
 
-typedef enum
-{
-	UNDEF = 0,
-	NEW = 1,
-	OLD = 2,
-	CLUDGE_OLD = 3,
-} SelType;
-
 typedef struct tagLOGPEN { 
   UINT     lopnStyle; 
   POINT    lopnWidth; 
@@ -159,12 +151,10 @@ BOOL	DeleteDC(HDC hdc);
 HDC		GetDC(HWND hWnd);
 int		ReleaseDC(HWND hWnd, HDC hdc);
 HFONT	CreateFontIndirect(CONST LOGFONT * plf);
-HFONT	SelectObjectFont(HDC hdc, HGDIOBJ font, SelType fNew=NEW);
-BOOL	DeleteObjectFont(HGDIOBJ font);
 HBITMAP	CreateCompatibleBitmap(HDC hdc, int width, int height);
-HBITMAP	SelectObjectBitmap(HDC hdc, HGDIOBJ bitmap, SelType fNew=NEW);
-BOOL	DeleteObjectBitmap(HGDIOBJ bitmap);
 HBRUSH	CreateSolidBrush(COLORREF crColor);
+
+LPTSTR	MAKEINTRESOURCE(WORD wInteger);
 
 BOOL	InvertRect(HDC hDC, CONST RECT *lprc);
 BOOL	RestoreDC(HDC hdc, int nSavedDC);
@@ -174,12 +164,27 @@ HPEN	CreatePenIndirect(CONST LOGPEN *lplgpn);
 HRGN	CreateRectRgn(int nLeftRect, int nTopRect, int nRightRect, int nBottomRect);
 int		GetClipRgn(HDC hdc, HRGN hrgn);
 int		SelectClipRgn(HDC hdc, HRGN hrgn);
+
+const LPCTSTR RT_BITMAP = NULL;
+
+LPVOID	LockResource(HGLOBAL hResData);
 HRSRC	FindResource(HMODULE hModule, LPCTSTR lpName, LPCTSTR lpType);
 HGLOBAL LoadResource(HMODULE hModule, HRSRC hResInfo);
+
+enum iUsage {
+	DIB_PAL_COLORS,
+	DIB_RGB_COLORS,
+};
+
 int 	StretchDIBits(HDC hdc, int XDest, int YDest, int nDestWidth, int nDestHeight,
 						int XSrc, int YSrc, int nSrcWidth, int nSrcHeight,
 						CONST VOID *lpBits, CONST BITMAPINFO *lpBitsInfo,
 						UINT iUsage, DWORD dwRop);
+
+enum fuOptions {
+	ETO_OPAQUE,
+};
+
 BOOL 	ExtTextOut(HDC hdc, int X, int Y, UINT fuOptions, CONST RECT* lprc,
 					LPCTSTR lpString, UINT cbCount, CONST INT* lpDx);
 int 	GetSystemMetrics(int nIndex);
@@ -191,10 +196,31 @@ HFONT	CreateFont(int nHeight, int nWidth, int nEscapement, int nOrientation, int
 			LPCTSTR lpszFace);
 HGDIOBJ	GetStockObject(int fnObject);
 HBITMAP	CreateBitmap(int nWidth, int nHeight, UINT cPlanes, UINT cBitsPerPel, CONST VOID* lpvBits);
-HBITMAP	LoadBitmap(HINSTANCE hInstance, LPCTSTR lpBitmapName);
 HANDLE	LoadImage(HINSTANCE hinst, LPCTSTR lpszName, UINT uType, int cxDesired, int cyDesired, UINT fuLoad);
 HBRUSH	CreateBrushIndirect(CONST LOGBRUSH *lplb);
 HBRUSH	CreatePatternBrush(HBITMAP hbmp);
+HBITMAP LoadBitmap(HINSTANCE hInstance, LPCTSTR lpBitmapName);
+HIMAGELIST ImageList_Create(int cx, int cy, UINT flags, int cInitial, int cGrow);
+HIMAGELIST ImageList_LoadImage(HINSTANCE hi, LPCTSTR lpbmp, int cx, int cGrow, COLORREF crMask,
+							UINT uType, UINT uFlags);
+BOOL ImageList_Destroy(HIMAGELIST himl);
+HIMAGELIST TreeView_CreateDragImage(HWND hwndTV, HTREEITEM hitem);
+
+typedef struct tagMONITORINFO {
+DWORD cbSize;
+RECT rcMonitor;
+RECT rcWork;
+DWORD dwFlags;
+} MONITORINFO, *LPMONITORINFO;
+
+const DWORD MONITOR_DEFAULTTONULL = 0;
+
+BOOL	GetMonitorInfo(HMONITOR hMonitor, LPMONITORINFO lpmi);
+HMONITOR MonitorFromPoint(POINT pt, DWORD dwFlags);
+
+enum uiAction {
+	SPI_GETWORKAREA,
+};
 
 namespace AfUtil
 {
