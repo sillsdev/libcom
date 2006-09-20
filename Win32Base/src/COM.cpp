@@ -92,11 +92,14 @@ void  CoTaskMemFree(void* pv)
 
 BSTR SysAllocStringLen(const OLECHAR* pch, unsigned int cch)
 {
-	OLECHAR* buf = new OLECHAR[cch + 3]; // Space for length, data, terminator
+	OLECHAR* buf = new OLECHAR[cch + 3];	// Space for length, data, terminator
 	
-	*(int*)buf = cch * sizeof(OLECHAR); // Length (bytes)
-	memcpy(buf + 2, pch, *(int*)buf);   // Data
-	buf[2 + cch] = 0;					// Terminator
+	*(int*)buf = cch * sizeof(OLECHAR);	// Length (bytes)
+	if (pch)
+		memcpy(buf + 2, pch, *(int*)buf);	// Data
+	else
+		memset(buf + 2, 0, *(int*)buf);	// Data
+	buf[2 + cch] = 0;						// Terminator
 	
 	return buf + 2;
 }
