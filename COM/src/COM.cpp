@@ -13,15 +13,24 @@
 
 #include <algorithm>
 
-GUID::GUID()
+GUID::GUID(bool create)
 {
-	memset(this, 0, sizeof(*this));
+	if (create)
+		uuid_generate(*this);
+	else
+		uuid_clear(*this);
 }
 
 GUID::GUID(const char* text)
 {
-	uuid_parse(text, reinterpret_cast<unsigned char *>(&Data1));
+	uuid_parse(text, *this);
 }
+
+GUID::operator bool () const
+{
+	return !uuid_is_null(*this);
+}
+
 
 GUID GUID_NULL;
 GUID GUID_ITextStoreACPSink;

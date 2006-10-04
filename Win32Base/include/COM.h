@@ -11,7 +11,7 @@
 
 #include "Types.h"
 
-#include <cstring>
+#include <cstring>	// For memcmp
 
 struct GUID
 {
@@ -21,12 +21,21 @@ struct GUID
 	unsigned char  Data4[8];
 	
 	// These are not in Win32, but we need them to make our emulation work
-	GUID();
+	GUID(bool create = false);
 	GUID(const char*);
+	
+	// Casting functions to allow easier use of libuuid functions
+	operator unsigned char* ()
+	{
+		return reinterpret_cast<unsigned char *>(&Data1);
+	}
+	operator const unsigned char* () const
+	{
+		return reinterpret_cast<const unsigned char *>(&Data1);
+	}
+	
+	operator bool () const;
 };
-
-typedef const GUID& REFGUID;
-typedef const GUID* LPGUID;
 
 inline bool operator == (const GUID& guid1, const GUID& guid2)
 {
@@ -37,6 +46,9 @@ inline bool operator != (const GUID& guid1, const GUID& guid2)
 {
 	return !(guid1 == guid2);
 }
+
+typedef const GUID& REFGUID;
+typedef const GUID* LPGUID;
 
 typedef GUID IID;
 typedef REFGUID REFIID;
@@ -112,6 +124,9 @@ void SysFreeString(BSTR bstr);
 int SysReAllocString(BSTR* pbstr, const OLECHAR* psz);
 int SysReAllocStringLen(BSTR* pbstr, const OLECHAR* pch, unsigned int cch);
 
-inline HRESULT CoCreateGuid(GUID* pguid) {}
+inline HRESULT CoCreateGuid(GUID* pguid)
+{
+	*pguid = GUID(true);
+}
 
 #endif //_COM_H_
