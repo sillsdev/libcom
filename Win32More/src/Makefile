@@ -1,7 +1,7 @@
 CXXFLAGS = -g
 ARFLAGS = -rs
 
-OBJS = COM.o COMClasses.o Hacks.o
+OBJS = COM.o COMClasses.o Hacks.o TextServices.o
 SRCS = $(OBJS:%.o=%.cpp)
 
 libWin32SDK.a: $(OBJS)
