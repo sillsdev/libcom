@@ -1,16 +1,15 @@
+CPPFLAGS = -MMD
 CXXFLAGS = -g
 ARFLAGS = -rs
 
 OBJS = COM.o COMClasses.o Hacks.o TextServices.o
 SRCS = $(OBJS:%.o=%.cpp)
+DEPS = $(OBJS:%.o=%.d)
 
 libWin32SDK.a: $(OBJS)
 	$(AR) $(ARFLAGS) $@ $^
 
 clean:
-	$(RM) libWin32SDK.a $(OBJS) .depend
+	$(RM) libWin32SDK.a $(OBJS) $(DEPS)
 
-.depend: $(SRCS)
-	@$(COMPILE.cc) -MM $(SRCS) >$@
-
--include .depend
+-include $(DEPS)
