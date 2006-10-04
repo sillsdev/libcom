@@ -8,11 +8,13 @@
 
 #include "TextServices.h"
 
-GUID GUID_ITextStoreACPSink;
-GUID GUID_ITextStoreACPServices;
-GUID GUID_ITextStoreACP;
-GUID GUID_ITfRangeACP;
-GUID GUID_ITfContextOwnerCompositionServices;
-GUID GUID_ITfContextOwnerCompositionSink;
-GUID GUID_ITfMouseTrackerACP;
-GUID GUID_PROP_ATTRIBUTE;
+// These all create their GUIDs dynamically - no good for multiple independent components
+// ToDo: create and assign GUIDs statically
+GUID GUID_ITextStoreACPSink(true);
+GUID GUID_ITextStoreACPServices(true);
+GUID GUID_ITextStoreACP(true);
+GUID GUID_ITfRangeACP(true);
+GUID GUID_ITfContextOwnerCompositionServices(true);
+GUID GUID_ITfContextOwnerCompositionSink(true);
+GUID GUID_ITfMouseTrackerACP(true);
+GUID GUID_PROP_ATTRIBUTE(true);
