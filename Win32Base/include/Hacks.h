@@ -368,6 +368,28 @@ typedef enum dwRop
 bool BitBlt(HDC, int, int, int, int, HDC, int, int, DWORD);
 HWND WindowFromDC(HDC);
 
+int GetModuleFileName(HMODULE, OLECHAR* buf, int length);
+
+enum
+{
+	DLL_PROCESS_ATTACH,
+	DLL_PROCESS_DETACH,
+	DLL_THREAD_ATTACH,
+	DLL_THREAD_DETACH,
+};
+
+int _set_sbh_threshold(int);
+
+enum
+{
+	_CRTDBG_REPORT_FLAG,
+	_CRTDBG_LEAK_CHECK_DF,
+};
+
+int _CrtSetDbgFlag(int);
+
+const int MAX_PATH = 260;
+
 #define _alloca alloca
 
 char*    _itoa_s(int value, char*    buffer, size_t bufferSize, int radix);
