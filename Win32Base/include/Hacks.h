@@ -143,7 +143,7 @@ typedef unsigned char boolean;
 bool SetRect(RECT*, int, int, int, int);
 bool OffsetRect(RECT*, int,int);
 
-typedef struct
+/*typedef struct
 {
 	int		cbSize;
 	LPCTSTR	lpszDocName;
@@ -151,7 +151,7 @@ typedef struct
 	LPCTSTR lpszDatatype;
 	DWORD	fwType;
 }DOCINFO;
-
+*/
 enum
 {
 	LOGPIXELSY,
@@ -303,11 +303,11 @@ enum
 {
 	SP_ERROR,
 };
-int StartPage(HDC);
-int EndPage(HDC);
-int StartDoc(HDC, const DOCINFO*);
-int EndDoc(HDC);
-int AbortDoc(HDC);
+//int StartPage(HDC);
+//int EndPage(HDC);
+//int StartDoc(HDC, const DOCINFO*);
+//int EndDoc(HDC);
+//int AbortDoc(HDC);
 
 enum
 { 	
