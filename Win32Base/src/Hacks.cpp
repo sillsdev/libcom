@@ -100,3 +100,25 @@ void OutputDebugString(const OLECHAR* str)
 
 int GetFullPathName(const char*, int, char*, const char**);
 int GetFullPathName(const OLECHAR*, int, OLECHAR*, const OLECHAR**);
+
+// Temporary, until we find a way of doing this properly on Unix
+
+#include <cwchar>
+#include <vector>
+
+static wchar_t module_name[] = L"Unknown Module";
+
+unsigned long GetModuleFileName(HMODULE, wchar_t* buf, unsigned long max)
+{
+	std::wcsncpy(buf, module_name, max);
+	buf[max - 1] = 0;
+	return std::wcslen(buf);
+}
+
+unsigned long GetModuleFileName(HMODULE h, OLECHAR* buf, unsigned long max)
+{
+	std::vector<wchar_t> tmp(max);
+	unsigned long count = GetModuleFileName(h, &tmp[0], max);
+	std::copy(tmp.begin(), tmp.end(), buf);
+	return count;
+}
