@@ -22,6 +22,12 @@ The copied portions are included here in sections named according to the above W
 headers. It is suggested that further bits copied from Windows headers be kept in
 these sections to facilitate later reading and debugging of the code.
 
+Added CoInitialize() and made other API tweaks according to changes in COMSupport.cpp.
+Moved RegisterServer() into its own header file so our COMSupport.h headers can optionally not be 
+included, yet the definition for RegisterServer() still be included. (Not including the COMSupport.h 
+may mean we're using, for example, the Wine headers.)
+Made CoCreateInstance() extern C.
+	2007-01-02, MarkS
 Moved MultiByteToWideChar and WideCharToMultiByte to here from COMSupport.h.
 	2003-06-23, GDLC
 Fixed definition of first parameter to CoCreateInstance(). Minor adjustments to typedefs
@@ -213,10 +219,10 @@ __inline bool operator >= (REFGUID guidOne, REFGUID guidOther)
 #define CLSCTX_ALL	(CLSCTX_INPROC_SERVER | CLSCTX_INPROC_HANDLER)
 #define CLSCTX_SERVER	(CLSCTX_INPROC_SERVER)
 
-// Line 617
-HRESULT CLSIDFromString(LPOLESTR lpsz, LPCLSID pclsid);
-// Line 618
-HRESULT StringFromCLSID(CLSID& rclsid, LPOLESTR* ppsz);
+// Line 617 (tho modified for a const parameter)
+HRESULT CLSIDFromString(LPCOLESTR lpsz, LPCLSID pclsid);
+// Line 618 (tho modified for a const parameter)
+HRESULT StringFromCLSID(const CLSID& rclsid, LPOLESTR* ppsz);
 
 // Line 627
 HRESULT CoCreateGuid(GUID *pguid);
@@ -440,7 +446,7 @@ HRESULT CoGetClassObject(
 	/*OUT*/ LPVOID*		ppv);
 
 // Line 567
-HRESULT CoCreateInstance(
+extern "C" HRESULT CoCreateInstance(
 	/*IN*/ REFCLSID		rclsid,
 	/*IN*/ LPUNKNOWN	pUnkOuter,
 	/*IN*/ DWORD		dwClsContext,
@@ -449,15 +455,15 @@ HRESULT CoCreateInstance(
 
 //--end copy from OBJBASE.H-------------------------------------------------------------------
 
-//------------------------------------------------------------------
-//
-//	Register Server
-//
-//	Components should call this function to register their class factory
-//	with the ComRegistry map. This should be done in the constructor of the
-//	server's class factory and the instance of the class factory should be
-//	created as a static pointer to the class factory is initialised.
- 
-void RegisterServer(const CLSID &Class, LPCLASSFACTORY Pointer);
+/**
+ * CoInitialize
+ * 
+ * (http://msdn.microsoft.com/library/default.asp?url=/library/en-us/com/html/0f171cf4-87b9-43a6-97f2-80ed344fe376.asp)
+ */
+extern "C" HRESULT CoInitialize(
+	LPVOID pvReserved);
+
+
+#include "COMLibrary.h"
 
 #endif //FILE_COMSUPPORT_SEEN

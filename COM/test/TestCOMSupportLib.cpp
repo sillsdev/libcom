@@ -1,7 +1,7 @@
 /*----------------------------------------------------------------------------
 Copyright 2002, SIL International. All rights reserved.
 
-File: TestCOMSupportLib.cp
+File: TestCOMSupportLib.cpp
 Responsibility: Graeme Costin
 Reviewed:	Date		Reviewer
 			never
@@ -10,6 +10,8 @@ Reviewed:	Date		Reviewer
 
 Test program for COMSupportLib.
 
+Included COMSupportInternals.h and made an output statement more clear, while getting Test to compile and run.
+	2006-12-22, MarkS
 Removed inclusion of Carbon.h. Minor improvements to commentary. Removed use of Carbon UInt8
 	2003-06-23, NJHM, GDLC
 Modified to load all dynamic libraries in the subdirectory DynamicLibraries
@@ -51,6 +53,8 @@ Begun.
 #include "TestCOMSupportLib.h"
 
 #include "ComponentInterfaces.h"
+
+#include "../COMSupportInternals.h"
 
 using namespace std;
 
@@ -104,7 +108,7 @@ int main()
 	DIR *	dlddir = opendir(subdir.c_str());
 	if (dlddir == 0)
 	{
-		cout << subdir << " could not be opened" << endl;
+		cout << "Directory" << subdir << " could not be opened" << endl;
 		return 1;
 	}
 	cout << subdir << " subdir now open" << endl;

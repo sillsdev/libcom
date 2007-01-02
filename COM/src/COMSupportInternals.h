@@ -7,6 +7,8 @@ Last reviewed: never
 
 	Internal details of support for COM in FieldWorks on MacOS.
 
+Added a DLL Map
+	2006-12-22, MarkS
 Commentary improved after loading of both shared and dynamic libraries was worked out.
 	2003-06-21, GDLC
 Moved internal implementation definitions to here from COMSupport.h
@@ -29,8 +31,11 @@ Added GetMutableInstance() for private use
 //	libraries on MacOS 9 compared to dynamic libraries on MacOS X.
 
 #include <map>
+#include <string>
+using std::string;
 
 typedef std::map<CLSID, LPCLASSFACTORY>	ComMap;
+typedef std::map<CLSID, string>	DllMap;
 
 class ComRegistry : public ComMap
 {
@@ -45,6 +50,11 @@ class ComRegistry : public ComMap
 		static ComRegistry* GetMutableInstance();
 
 		static void PtrToHex(LPCLASSFACTORY Ptr, char *buf);
+
+		// CLSID to DLL mapping
+		DllMap dllmap; // Should this be static?
+
+		
 		
 	public:
 
