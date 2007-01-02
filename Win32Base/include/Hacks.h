@@ -124,6 +124,8 @@ T InterlockedDecrement(T* p)
 struct EXCEPTION_POINTERS;
 struct CONTEXT;
 
+#define MAX_PATH 260
+
 int GetFullPathName(const char*, int, char*, const char**);
 int GetFullPathName(const OLECHAR*, int, OLECHAR*, const OLECHAR**);
 
@@ -387,8 +389,6 @@ enum
 };
 
 int _CrtSetDbgFlag(int);
-
-const int MAX_PATH = 260;
 
 #define _alloca alloca
 
