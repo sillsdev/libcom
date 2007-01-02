@@ -22,7 +22,13 @@ public:
 
 #define IID_IUnknown __uuidof(IUnknown)
 
-class IClassFactory : public IUnknown {};
+class IClassFactory : public IUnknown
+{
+public:
+	virtual HRESULT STDMETHODCALLTYPE LockServer(BOOL fLock) = 0;
+	virtual HRESULT STDMETHODCALLTYPE CreateInstance(IUnknown *punkOuter, REFIID iid, void** ppv) = 0;
+};
+
 class IDataObject : public IUnknown {};
 class IDispatch : public IUnknown {};
 class IStorage : public IUnknown {};
