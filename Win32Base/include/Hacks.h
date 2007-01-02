@@ -370,7 +370,8 @@ typedef enum dwRop
 bool BitBlt(HDC, int, int, int, int, HDC, int, int, DWORD);
 HWND WindowFromDC(HDC);
 
-int GetModuleFileName(HMODULE, OLECHAR* buf, int length);
+DWORD GetModuleFileName(HMODULE, OLECHAR* buf, DWORD length);
+DWORD GetModuleFileName(HMODULE, TCHAR*   buf, DWORD length);
 
 enum
 {
