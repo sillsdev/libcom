@@ -351,8 +351,7 @@ HRESULT ComRegistry::GetFactoryPtr (const CLSID &Class, LPCLASSFACTORY* pIFactor
 		// Load the DLL file into memory
 		void* dllhandle = dlopen(dllfilename.c_str(), RTLD_LAZY | RTLD_NODELETE ); // Maybe use RTLD_NOW instead of RTLD_LAZY? I definitely want the global static variable to be created.
 		if (!dllhandle) {
-			char* dllerror = dlerror();
-			fprintf(stderr, "Warning: error loading DLL file '%s' in ComRegistry::GetFactoryPtr: %s\n", dllfilename.c_str(), dllerror);
+			fprintf(stderr, "Warning: error loading DLL file '%s' in ComRegistry::GetFactoryPtr: %s\n", dllfilename.c_str(), dlerror());
 			return REGDB_E_CLASSNOTREG;
 		}
 
