@@ -24,7 +24,7 @@ LIBSUFFIX = so
 endif
 
 CPPFLAGS = -D_DEBUG -I../include -DOS_$(OS) $(PLATFORM_DEFINES)
-CXXFLAGS = -g
+CXXFLAGS = -g -MMD
 
 all: COMSupportLib.$(LIBSUFFIX) ole32.dll
 
@@ -38,9 +38,6 @@ install: COMSupportLib.$(LIBSUFFIX)
 	cp -p $^ ../bin
 
 clean:
-	rm -f *.o COMSupportLib.$(LIBSUFFIX)
+	rm -f *.[od] COMSupportLib.$(LIBSUFFIX)
 
-depend .depend:
-	mkdep $(CPPFLAGS) *.cpp
-
-include .depend
+-include *.d
