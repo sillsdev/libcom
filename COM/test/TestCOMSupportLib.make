@@ -24,7 +24,7 @@ endif
 COMPONENT_DIR = ComponentDLLDebug
 COMPONENTS_DIR= Components
 CPPFLAGS = -D_DEBUG -I../../include -IComponentDLLDebug -DOS_$(OS) $(PLATFORM_DEFINES)
-CXXFLAGS = -g
+CXXFLAGS = -g -MMD
 
 #all: COMSupportLib.$(LIBSUFFIX) Components/Component.$(LIBSUFFIX) TestCOMSupportLib
 all: ComponentDLLDebug/Component.$(LIBSUFFIX) TestCOMSupportLib
@@ -40,9 +40,6 @@ TestCOMSupportLib: TestCOMSupportLib.o $(COMPONENT_DIR)/ComponentGUIDs.o ../COMS
 	cp -a $(COMPONENT_DIR)/Component.so $(COMPONENTS_DIR)/
 	
 clean:
-	rm -f *.o ComponentDLLDebug/Component.$(LIBSUFFIX) TestCOMSupportLib
+	rm -f *.[od] ComponentDLLDebug/Component.$(LIBSUFFIX) TestCOMSupportLib
 
-depend .depend:
-	mkdep $(CPPFLAGS) *.cpp
-
-include .depend
+-include *.d
