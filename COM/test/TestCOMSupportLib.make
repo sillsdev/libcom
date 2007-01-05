@@ -38,7 +38,7 @@ $(COMPONENT_DIR)/Component.$(LIBSUFFIX): $(COMPONENT_DIR)/Component.o $(COMPONEN
 TestCOMSupportLib: TestCOMSupportLib.o $(COMPONENT_DIR)/ComponentGUIDs.o ../COMSupportLib.$(LIBSUFFIX)
 	$(LINK.cc) $^ -ldl -o $@
 	mkdir -p $(COMPONENTS_DIR)
-	cp -a $(COMPONENT_DIR)/Component.so $(COMPONENTS_DIR)/
+	cp -a $(COMPONENT_DIR)/Component.$(LIBSUFFIX) $(COMPONENTS_DIR)/
 	
 clean:
 	rm -f *.[od] ComponentDLLDebug/Component.$(LIBSUFFIX) TestCOMSupportLib
