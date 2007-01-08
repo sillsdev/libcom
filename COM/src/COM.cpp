@@ -4,6 +4,8 @@
  *	Definitions and declarations to support COM programming
  *
  *	Neil Mayhew - Apr 22, 2005
+ *
+ *	Most of this functionality will eventually come from COMSupportLibrary
  */
 
 #include "COM.h"
@@ -12,6 +14,8 @@
 #include <uuid/uuid.h>
 
 #include <algorithm>
+
+// GUID class
 
 GUID::GUID(bool create)
 {
@@ -33,47 +37,51 @@ GUID::operator bool () const
 
 GUID GUID_NULL;
 
+// Translation of IDs
+
 int StringFromGUID2(REFGUID rguid, LPOLESTR lpsz, int cchMax)
 {
-	// ToDo
+	// PORT-TODO
 	return 0; // Bytes used, including null terminator
 }
 
 HRESULT StringFromCLSID(REFCLSID rclsid, LPOLESTR* lplpsz)
 {
-	// ToDo
-	return S_OK;
+	// PORT-TODO
+	return E_NOTIMPL;
 }
 
 HRESULT CLSIDFromString(const LPOLESTR lpsz, LPCLSID pclsid)
 {
-	// ToDo
-	return S_OK;
+	// PORT-TODO
+	return E_NOTIMPL;
 }
 
 HRESULT StringFromIID(REFIID rclsid, LPOLESTR* lplpsz)
 {
-	// ToDo
-	return S_OK;
+	// PORT-TODO
+	return E_NOTIMPL;
 }
 
 HRESULT IIDFromString(const LPOLESTR lpsz, LPIID lpiid)
 {
-	// ToDo
-	return S_OK;
+	// PORT-TODO
+	return E_NOTIMPL;
 }
 
 HRESULT ProgIDFromCLSID(REFCLSID clsid, LPOLESTR* lplpszProgID)
 {
-	// ToDo
-	return S_OK;
+	// PORT-TODO
+	return E_NOTIMPL;
 }
 
 HRESULT CLSIDFromProgID(LPCOLESTR lpszProgID, LPCLSID lpclsid)
 {
-	// ToDo
-	return S_OK;
+	// PORT-TODO
+	return E_NOTIMPL;
 }
+
+// Memory allocation
 
 void* CoTaskMemAlloc(size_t cb)
 {
@@ -135,4 +143,24 @@ int SysReAllocStringLen(BSTR* pbstr, const OLECHAR* pch, unsigned int cch)
 	std::swap(tmp, *pbstr);
 	SysFreeString(tmp);
 	return true;
+}
+
+// Class registration and object creation
+
+HRESULT CoCreateInstance(REFCLSID rclsid, void* pUnkOuter, DWORD dwClsContext, REFIID riid, LPVOID FAR* ppv)
+{
+	// PORT-TODO
+	return E_NOTIMPL;
+}
+
+HRESULT CoRegisterClassObject(REFCLSID rclsid, class IUnknown* pObj, DWORD dwClsContext, DWORD flags, LPDWORD lpdwRegister)
+{
+	// PORT-TODO
+	return E_NOTIMPL;
+}
+
+HRESULT CoRevokeClassObject(DWORD dwRegister)
+{
+	// PORT-TODO
+	return E_NOTIMPL;
 }

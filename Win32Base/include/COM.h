@@ -4,6 +4,8 @@
  *	Definitions and declarations to support COM programming
  *
  *	Neil Mayhew - Apr 22, 2005
+ *
+ *	Most of this functionality will eventually come from COMSupportLibrary
  */
 
 #ifndef _COM_H_
@@ -12,6 +14,8 @@
 #include "Types.h"
 
 #include <cstring>	// For memcmp
+
+// GUID class
 
 struct GUID
 {
@@ -60,6 +64,11 @@ typedef LPGUID LPCLSID;
 extern GUID GUID_NULL;
 #define IID_NULL GUID_NULL
 
+inline HRESULT CoCreateGuid(GUID* pguid)
+{
+	*pguid = GUID(true);
+}
+
 #define interface struct
 
 template<class T>
@@ -74,19 +83,7 @@ public:
 #define DECLSPEC_UUID(X) // Can't be done
 #define MIDL_INTERFACE(X) DECLSPEC_UUID(X) interface
 
-enum CLSCTX
-{
-	CLSCTX_INPROC_SERVER  = 1,
-	CLSCTX_INPROC_HANDLER = 2,
-	CLSCTX_LOCAL_SERVER   = 4,
-	CLSCTX_REMOTE_SERVER  = 8,
-};
-
-#define CLSCTX_INPROC (CLSCTX_INPROC_SERVER|CLSCTX_INPROC_HANDLER)
-#define CLSCTX_SERVER (CLSCTX_INPROC_SERVER|CLSCTX_LOCAL_SERVER)
-#define CLSCTX_ALL    (CLSCTX_INPROC|CLSCTX_SERVER)
-
-HRESULT CoCreateInstance(REFCLSID rclsid, void* pUnkOuter, DWORD dwClsContext, REFIID riid, LPVOID FAR* ppv); 
+// Translation of IDs
 
 int StringFromGUID2(REFGUID rguid, LPOLESTR lpsz, int cchMax);
 
@@ -96,6 +93,8 @@ HRESULT StringFromIID(REFIID rclsid, LPOLESTR* lplpsz);
 HRESULT IIDFromString(const LPOLESTR lpsz, LPIID lpiid);
 HRESULT ProgIDFromCLSID(REFCLSID clsid, LPOLESTR* lplpszProgID);
 HRESULT CLSIDFromProgID(LPCOLESTR lpszProgID, LPCLSID lpclsid);
+
+// Memory allocation
 
 void* CoTaskMemAlloc(size_t cb);
 void* CoTaskMemRealloc(void* pv, size_t cb);
@@ -108,9 +107,31 @@ void SysFreeString(BSTR bstr);
 int SysReAllocString(BSTR* pbstr, const OLECHAR* psz);
 int SysReAllocStringLen(BSTR* pbstr, const OLECHAR* pch, unsigned int cch);
 
-inline HRESULT CoCreateGuid(GUID* pguid)
+// Class registration and object creation
+
+enum CLSCTX
 {
-	*pguid = GUID(true);
-}
+	CLSCTX_INPROC_SERVER  = 1,
+	CLSCTX_INPROC_HANDLER = 2,
+	CLSCTX_LOCAL_SERVER   = 4,
+	CLSCTX_REMOTE_SERVER  = 8,
+};
+
+#define CLSCTX_INPROC (CLSCTX_INPROC_SERVER|CLSCTX_INPROC_HANDLER)
+#define CLSCTX_SERVER (CLSCTX_INPROC_SERVER|CLSCTX_LOCAL_SERVER)
+#define CLSCTX_ALL    (CLSCTX_INPROC|CLSCTX_SERVER)
+
+enum REGCLS
+{
+	REGCLS_SINGLEUSE      = 0,
+	REGCLS_MULTIPLEUSE    = 1,
+	REGCLS_MULTI_SEPARATE = 2,
+	REGCLS_SUSPENDED      = 4,
+	REGCLS_SURROGATE      = 8,
+};
+
+HRESULT CoCreateInstance(REFCLSID rclsid, void* pUnkOuter, DWORD dwClsContext, REFIID riid, LPVOID FAR* ppv); 
+HRESULT CoRegisterClassObject(REFCLSID rclsid, class IUnknown* pObj, DWORD dwClsContext, DWORD flags, LPDWORD lpdwRegister);
+HRESULT CoRevokeClassObject(DWORD dwRegister);
 
 #endif //_COM_H_
