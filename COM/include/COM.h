@@ -75,7 +75,7 @@ template<class T>
 class __interface_traits
 {
 public:
-	static GUID uuid;
+	static const GUID uuid;
 };
 
 #define __uuidof(T) __interface_traits<T>::uuid
