@@ -25,8 +25,8 @@ struct GUID
 	unsigned char  Data4[8];
 	
 	// These are not in Win32, but we need them to make our emulation work
-	GUID(bool create = false);
-	GUID(const char*);
+	explicit GUID(bool create = false);
+	explicit GUID(const char*);
 	
 	// Casting functions to allow easier use of libuuid functions
 	operator unsigned char* ()
