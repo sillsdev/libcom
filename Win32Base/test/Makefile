@@ -2,11 +2,11 @@ CXXFLAGS = -g
 CPPFLAGS = -MMD -I..
 LDLIBS = -licucore -luuid
 
-PROGS = TestOutputDebugString
+PROGS = TestOutputDebugString TestGUID
 
 all: $(PROGS)
 
-TestOutputDebugString: TestOutputDebugString.o ../libWin32SDK.a
+$(PROGS): %: %.o ../libWin32SDK.a
 	$(LINK.cc) -o $@ $^ $(LDLIBS)
 
 ../libWin32SDK.a::
