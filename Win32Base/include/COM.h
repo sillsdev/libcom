@@ -13,7 +13,9 @@
 
 #include "Types.h"
 
-#include <cstring>	// For memcmp
+#include <cstring>		// For memcmp
+#include <string>		// Used for GUID conversion operator
+#include <uuid/uuid.h>	// Used for GUID conversion operator
 
 // GUID class
 
@@ -36,6 +38,12 @@ struct GUID
 	operator const unsigned char* () const
 	{
 		return reinterpret_cast<const unsigned char *>(&Data1);
+	}
+	operator std::string() const
+	{
+		char buf[37];
+		uuid_unparse(*this, buf);
+		return buf;
 	}
 	
 	operator bool () const;
