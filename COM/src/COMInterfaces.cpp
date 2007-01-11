@@ -12,7 +12,7 @@
 // Define GUIDs
 
 #define DEFINE_INTERFACE_GUID(N, G)	\
-	template<> GUID __uuidof(N)(G)
+	template<> const GUID __uuidof(N)(G)
 
 DEFINE_INTERFACE_GUID(IUnknown, "00000000-0000-0000-C000-000000000046");
 
