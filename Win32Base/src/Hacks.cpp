@@ -58,7 +58,7 @@ OLECHAR* _itow_s(int value, OLECHAR* buffer, size_t bufferSize, int radix)
 	_itow_s(value, tmp, sizeof(tmp), radix);
 
 	UErrorCode status = U_ZERO_ERROR;
-	u_strFromUTF32(buffer, bufferSize, 0, reinterpret_cast<UChar32*>(tmp), -1, &status);
+	u_strFromWCS(buffer, bufferSize, 0, tmp, -1, &status);
 
 	// Ensure null-termination, but only for genuine buffer sizes
 	if (status == U_STRING_NOT_TERMINATED_WARNING ||
@@ -86,7 +86,7 @@ void OutputDebugString(const OLECHAR* str)
 	std::vector<wchar_t> buf(len);	// Max required
 
 	UErrorCode status = U_ZERO_ERROR;
-	u_strToUTF32((UChar32*)&buf[0], buf.size(), &len, str, len, &status);
+	u_strToWCS(&buf[0], buf.size(), &len, str, len, &status);
 
 	if (U_SUCCESS(status))
 		std::wcerr.write(&buf[0], len);
