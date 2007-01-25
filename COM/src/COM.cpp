@@ -15,24 +15,31 @@
 
 #include <algorithm>
 
-// GUID class
+// SmartGUID class
 
-GUID::GUID(bool create)
+SmartGUID::SmartGUID(bool create)
 {
 	if (create)
-		uuid_generate(*this);
+		uuid_generate(buf());
 	else
-		uuid_clear(*this);
+		uuid_clear(buf());
 }
 
-GUID::GUID(const char* text)
+SmartGUID::SmartGUID(const char* text)
 {
-	uuid_parse(text, *this);
+	uuid_parse(text, buf());
 }
 
-GUID::operator bool () const
+std::string SmartGUID::str() const
 {
-	return !uuid_is_null(*this);
+	char text[37];
+	uuid_unparse(buf(), text);
+	return text;
+}
+
+bool SmartGUID::isNull() const
+{
+	return !uuid_is_null(buf());
 }
 
 GUID GUID_NULL;

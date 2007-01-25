@@ -14,50 +14,51 @@
 #include "Types.h"
 
 #include <cstring>		// For memcmp
-#include <string>		// Used for GUID conversion operator
-#include <uuid/uuid.h>	// Used for GUID conversion operator
+#include <string>		// For GUID conversion
 
 // GUID class
 
-struct GUID
+struct PlainGUID
 {
 	unsigned long  Data1;
 	unsigned short Data2;
 	unsigned short Data3;
 	unsigned char  Data4[8];
-	
+};
+
+struct SmartGUID : public PlainGUID
+{
 	// These are not in Win32, but we need them to make our emulation work
-	explicit GUID(bool create = false);
-	explicit GUID(const char*);
+	explicit SmartGUID(bool create = false);
+	explicit SmartGUID(const char*);
 	
-	// Casting functions to allow easier use of libuuid functions
-	operator unsigned char* ()
+	// Functions to allow easier use of libuuid functions
+	unsigned char* buf()
 	{
 		return reinterpret_cast<unsigned char *>(&Data1);
 	}
-	operator const unsigned char* () const
+	const unsigned char* buf() const
 	{
 		return reinterpret_cast<const unsigned char *>(&Data1);
 	}
-	operator std::string() const
-	{
-		char buf[37];
-		uuid_unparse(*this, buf);
-		return buf;
-	}
+
+	// Functions to allow easier display
+	std::string str() const;
 	
-	operator bool () const;
+	bool isNull() const;
 };
 
-inline bool operator == (const GUID& guid1, const GUID& guid2)
+inline bool operator == (const PlainGUID& guid1, const PlainGUID& guid2)
 {
 	return std::memcmp(&guid1, &guid2, sizeof(guid1)) == 0;
 }
 
-inline bool operator != (const GUID& guid1, const GUID& guid2)
+inline bool operator != (const PlainGUID& guid1, const PlainGUID& guid2)
 {
 	return !(guid1 == guid2);
 }
+
+typedef SmartGUID GUID;
 
 typedef const GUID& REFGUID;
 typedef const GUID* LPGUID;
