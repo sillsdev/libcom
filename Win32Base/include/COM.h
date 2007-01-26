@@ -31,6 +31,14 @@ struct SmartGUID : public PlainGUID
 	// These are not in Win32, but we need them to make our emulation work
 	explicit SmartGUID(bool create = false);
 	explicit SmartGUID(const char*);
+	explicit SmartGUID(const PlainGUID& other)
+		: PlainGUID(other) {}
+
+	SmartGUID& operator = (const PlainGUID& other)
+	{
+		PlainGUID::operator = (other);
+		return *this;
+	}
 	
 	// Functions to allow easier use of libuuid functions
 	unsigned char* buf()
