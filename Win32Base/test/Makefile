@@ -1,4 +1,4 @@
-CXXFLAGS = -g
+CXXFLAGS = -g -Wall
 CPPFLAGS = -MMD -I..
 LDLIBS = -licucore -luuid
 
