@@ -73,10 +73,7 @@ typedef LPGUID LPCLSID;
 extern GUID GUID_NULL;
 #define IID_NULL GUID_NULL
 
-inline HRESULT CoCreateGuid(GUID* pguid)
-{
-	*pguid = GUID(true);
-}
+HRESULT CoCreateGuid(GUID* pguid);
 
 #define interface struct
 

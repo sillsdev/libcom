@@ -154,6 +154,12 @@ int SysReAllocStringLen(BSTR* pbstr, const OLECHAR* pch, unsigned int cch)
 
 // Class registration and object creation
 
+HRESULT CoCreateGuid(GUID* pguid)
+{
+	*pguid = GUID(true);
+	return S_OK;
+}
+
 HRESULT CoCreateInstance(REFCLSID rclsid, void* pUnkOuter, DWORD dwClsContext, REFIID riid, LPVOID FAR* ppv)
 {
 	// PORT-TODO
