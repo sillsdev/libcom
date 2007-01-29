@@ -15,9 +15,9 @@
 class IUnknown
 {
 public:
+	virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void ** ppv) = 0;
 	virtual ULONG   STDMETHODCALLTYPE AddRef() = 0;
 	virtual ULONG   STDMETHODCALLTYPE Release() = 0;
-	virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void ** ppv) = 0;
 };
 
 #define IID_IUnknown __uuidof(IUnknown)
