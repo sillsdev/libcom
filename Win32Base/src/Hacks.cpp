@@ -12,13 +12,47 @@
 
 #include <iostream>
 #include <vector>
-#include <cstdio>
+#include <stdexcept>
 #include <cwchar>
 #include <cassert>
 #include <unicode/ustring.h>
 
-int WideCharToMultiByte(int, int, const OLECHAR*, int, char*, int, char*, char*);
-int MultiByteToWideChar(int, int, const char*, int, OLECHAR*, int);
+int WideCharToMultiByte(int codePage, int flags,
+	const OLECHAR* src, int srcLen, char* dst, int dstLen,
+	char* defaultChar, char* defaultUsed)
+{
+	// PORT-TODO
+	assert(codePage == CP_ACP || codePage == CP_UTF8);
+
+	UErrorCode status = U_ZERO_ERROR;
+	int32_t spaceRequiredForData;
+
+	// if dstLen is 0, pre-flight.
+	u_strToUTF8(dst, dstLen, &spaceRequiredForData, src, srcLen, &status);
+
+	if (U_FAILURE(status) && status != U_BUFFER_OVERFLOW_ERROR)
+		throw std::runtime_error("Unable to convert from UTF-16 to UTF-8");
+
+	return spaceRequiredForData;
+}
+
+int MultiByteToWideChar(int codePage, int flags,
+	const char* src, int srcLen, OLECHAR* dst, int dstLen)
+{
+	// PORT-TODO
+	assert(codePage == CP_ACP || codePage == CP_UTF8);
+
+	UErrorCode status = U_ZERO_ERROR;
+	int32_t spaceRequiredForData;
+
+	// if dstLen is 0, pre-flight.
+	u_strFromUTF8(dst, dstLen, &spaceRequiredForData, src, srcLen, &status);
+
+	if (U_FAILURE(status) && status != U_BUFFER_OVERFLOW_ERROR)
+		throw std::runtime_error("Unable to convert from UTF-8 to UTF-16");
+
+	return spaceRequiredForData;
+}
 
 bool IsBadStringPtrW(const OLECHAR*, unsigned long) {}
 bool IsBadStringPtrA(const char*, unsigned long) {}
