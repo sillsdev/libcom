@@ -1,3 +1,10 @@
+
+#	$Id$
+#
+#	Makefile for Win32SDK test programs
+#
+#	Neil Mayhew - 29 Aug 2006
+
 CXXFLAGS = -g -Wall
 CPPFLAGS = -MMD -I..
 LDLIBS = -licucore -luuid
