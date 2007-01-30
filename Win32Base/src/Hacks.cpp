@@ -54,10 +54,10 @@ int MultiByteToWideChar(int codePage, int flags,
 	return spaceRequiredForData;
 }
 
-bool IsBadStringPtrW(const OLECHAR*, unsigned long) {}
-bool IsBadStringPtrA(const char*, unsigned long) {}
-bool IsBadReadPtr(const void*, unsigned long) {}
-bool IsBadWritePtr(const void*, unsigned long) {}
+bool IsBadStringPtrW(const OLECHAR*, unsigned long) { return false; }
+bool IsBadStringPtrA(const char*, unsigned long) { return false; }
+bool IsBadReadPtr(const void*, unsigned long) { return false; }
+bool IsBadWritePtr(const void*, unsigned long) { return false; }
 
 short ClientToScreen(HWND, POINT*);
 short ScreenToClient(HWND, POINT*);
