@@ -29,6 +29,16 @@ typedef struct tagSYSTEMTIME
 	WORD wMilliseconds;
 }SYSTEMTIME, *PSYSTEMTIME;
 
+typedef struct _TIME_ZONE_INFORMATION {
+  LONG Bias;
+  WCHAR StandardName[32];
+  SYSTEMTIME StandardDate;
+  LONG StandardBias;
+  WCHAR DaylightName[32];
+  SYSTEMTIME DaylightDate;
+  LONG DaylightBias;
+} TIME_ZONE_INFORMATION, *PTIME_ZONE_INFORMATION;
+
 int GetTimeFormat(LCID, DWORD, PSYSTEMTIME, LPCTSTR, LPTSTR, int);
 void GetLocalTime(PSYSTEMTIME);
 void GetSystemTime(PSYSTEMTIME);
@@ -36,6 +46,7 @@ void GetSystemTimeAsFileTime(FILETIME*);
 BOOL SystemTimeToFileTime(PSYSTEMTIME, FILETIME*);
 BOOL FileTimeToSystemTime(FILETIME*, PSYSTEMTIME);
 DWORD GetTickCount();
+DWORD GetTimeZoneInformation(PTIME_ZONE_INFORMATION);
 
 enum
 {

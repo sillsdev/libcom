@@ -125,6 +125,7 @@ struct EXCEPTION_POINTERS;
 struct CONTEXT;
 
 #define MAX_PATH 260
+#define MAX_COMPUTERNAME_LENGTH 128
 
 int GetFullPathName(const char*, int, char*, const char**);
 int GetFullPathName(const OLECHAR*, int, OLECHAR*, const OLECHAR**);
