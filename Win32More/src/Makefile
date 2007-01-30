@@ -1,5 +1,5 @@
 CPPFLAGS = -MMD
-CXXFLAGS = -g
+CXXFLAGS = -g -Wall
 ARFLAGS = -rs
 
 OBJS = COM.o COMClasses.o Hacks.o TextServices.o
