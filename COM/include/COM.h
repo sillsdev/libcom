@@ -80,6 +80,7 @@ typedef LPGUID LPCLSID;
 
 extern GUID GUID_NULL;
 #define IID_NULL GUID_NULL
+#define CLSID_NULL GUID_NULL
 
 HRESULT CoCreateGuid(GUID* pguid);
 
