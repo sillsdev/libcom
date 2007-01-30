@@ -97,7 +97,7 @@ void* CoTaskMemAlloc(size_t cb)
 
 void* CoTaskMemRealloc(void* pv, size_t cb)
 {
-	realloc(pv, cb);
+	return realloc(pv, cb);
 }
 
 void  CoTaskMemFree(void* pv)
