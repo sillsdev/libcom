@@ -117,7 +117,7 @@ void OutputDebugString(const wchar_t* str)
 void OutputDebugString(const OLECHAR* str)
 {
 	int32_t len = u_strlen(str);
-	std::vector<wchar_t> buf(len);	// Max required
+	std::vector<wchar_t> buf(len + 1);	// Max required
 
 	UErrorCode status = U_ZERO_ERROR;
 	u_strToWCS(&buf[0], buf.size(), &len, str, len, &status);
