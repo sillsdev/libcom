@@ -21,26 +21,23 @@ DYNAMICLINK = -shared
 LIBSUFFIX = so
 endif
 
-COMPONENT_DIR = ComponentDLLDebug
+COMPONENT_DIR = TestComponent
 COMPONENTS_DIR= Components
-CPPFLAGS = -D_DEBUG -I../../include -IComponentDLLDebug -DOS_$(OS) $(PLATFORM_DEFINES)
+COMPONENT = $(COMPONENT_DIR)/Component.$(LIBSUFFIX)
+CPPFLAGS = -D_DEBUG -I../../include -I$(COMPONENT_DIR) -DOS_$(OS) $(PLATFORM_DEFINES)
 CXXFLAGS = -g -MMD
 
-#all: COMSupportLib.$(LIBSUFFIX) Components/Component.$(LIBSUFFIX) TestCOMSupportLib
-all: ComponentDLLDebug/Component.$(LIBSUFFIX) TestCOMSupportLib
+all: $(COMPONENT) TestCOMSupportLib
 
-#COMSupportLib.$(LIBSUFFIX): COMSupport.o
-#	$(LINK.cc) $(DYNAMICLINK) $^ -o $@
-
-$(COMPONENT_DIR)/Component.$(LIBSUFFIX): $(COMPONENT_DIR)/Component.o $(COMPONENT_DIR)/ComponentGUIDs.o ../COMSupportLib.$(LIBSUFFIX)
+$(COMPONENT): $(COMPONENT_DIR)/Component.o $(COMPONENT_DIR)/ComponentGUIDs.o ../COMSupportLib.$(LIBSUFFIX)
 	$(LINK.cc) $(DYNAMICLINK) $^ -o $@
 
 TestCOMSupportLib: TestCOMSupportLib.o $(COMPONENT_DIR)/ComponentGUIDs.o ../COMSupportLib.$(LIBSUFFIX)
 	$(LINK.cc) $^ -ldl -o $@
 	mkdir -p $(COMPONENTS_DIR)
-	cp -a $(COMPONENT_DIR)/Component.$(LIBSUFFIX) $(COMPONENTS_DIR)/
+	cp -a $(COMPONENT) $(COMPONENTS_DIR)/
 	
 clean:
-	rm -f *.[od] ComponentDLLDebug/Component.$(LIBSUFFIX) TestCOMSupportLib
+	rm -f *.[od] $(COMPONENT) TestCOMSupportLib
 
 -include *.d
