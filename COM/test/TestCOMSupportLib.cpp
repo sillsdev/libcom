@@ -54,7 +54,7 @@ Begun.
 
 #include "ComponentInterfaces.h"
 
-#include "../COMSupportInternals.h"
+#include "COMSupportInternals.h"
 
 using namespace std;
 
