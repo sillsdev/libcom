@@ -24,15 +24,15 @@ endif
 COMPONENT_DIR = TestComponent
 COMPONENTS_DIR= Components
 COMPONENT = $(COMPONENT_DIR)/Component.$(LIBSUFFIX)
-CPPFLAGS = -D_DEBUG -I../../include -I$(COMPONENT_DIR) -DOS_$(OS) $(PLATFORM_DEFINES)
+CPPFLAGS = -D_DEBUG -I../src -I../include -I../../include -I$(COMPONENT_DIR) -DOS_$(OS) $(PLATFORM_DEFINES)
 CXXFLAGS = -g -MMD
 
 all: $(COMPONENT) TestCOMSupportLib
 
-$(COMPONENT): $(COMPONENT_DIR)/Component.o $(COMPONENT_DIR)/ComponentGUIDs.o ../COMSupportLib.$(LIBSUFFIX)
+$(COMPONENT): $(COMPONENT_DIR)/Component.o $(COMPONENT_DIR)/ComponentGUIDs.o ../src/COMSupportLib.$(LIBSUFFIX)
 	$(LINK.cc) $(DYNAMICLINK) $^ -o $@
 
-TestCOMSupportLib: TestCOMSupportLib.o $(COMPONENT_DIR)/ComponentGUIDs.o ../COMSupportLib.$(LIBSUFFIX)
+TestCOMSupportLib: TestCOMSupportLib.o $(COMPONENT_DIR)/ComponentGUIDs.o ../src/COMSupportLib.$(LIBSUFFIX)
 	$(LINK.cc) $^ -ldl -o $@
 	mkdir -p $(COMPONENTS_DIR)
 	cp -a $(COMPONENT) $(COMPONENTS_DIR)/

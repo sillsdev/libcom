@@ -23,7 +23,7 @@ DYNAMICLINK = -shared
 LIBSUFFIX = so
 endif
 
-CPPFLAGS = -D_DEBUG -I../include -DOS_$(OS) $(PLATFORM_DEFINES)
+CPPFLAGS = -D_DEBUG -I../include -I../../include -DOS_$(OS) $(PLATFORM_DEFINES)
 CXXFLAGS = -g -MMD
 
 all: COMSupportLib.$(LIBSUFFIX) ole32.dll
