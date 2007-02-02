@@ -11,7 +11,7 @@
 
 #include "Types.h"
 #include "COM.h"
-#include "COMClasses.h"
+#include "COMInterfaces.h"
 
 #include "WinError.h"
 #include "OleDbErr.h"
