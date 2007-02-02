@@ -10,12 +10,8 @@
 #define HACKS_H
 
 #include "Types.h"
-#include "COM.h"
-#include "COMInterfaces.h"
-
+#include "DateTime.h"
 #include "WinError.h"
-#include "OleDbErr.h"
-#include "OleCtl.h"
 
 #include <stddef.h>
 #include <ctype.h>
