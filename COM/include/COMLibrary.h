@@ -7,10 +7,6 @@
 #ifndef COMLibrary_h
 #define COMLibrary_h
 
-#ifndef FILE_COMSUPPORT_SEEN
-typedef IClassFactory*	LPCLASSFACTORY;
-#endif /* !FILE_COMSUPPORT_SEEN */
-
 //------------------------------------------------------------------
 //
 //	Register Server
@@ -20,7 +16,7 @@ typedef IClassFactory*	LPCLASSFACTORY;
 //	server's class factory and the instance of the class factory should be
 //	created as a static pointer to the class factory is initialised.
  
-extern "C" void RegisterServer(const CLSID &Class, LPCLASSFACTORY Pointer);
+extern "C" void RegisterServer(const CLSID &classID, class IClassFactory* classFactory);
 
 #endif /* !COMLibrary_h */
 
