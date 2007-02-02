@@ -1,9 +1,9 @@
 /*
  *	$Id$
  *
- *	Standard COM classes
+ *	Standard COM interfaces
  *
- *	Neil Mayhew - Apr 22, 2005
+ *	Neil Mayhew - 22 Apr 2005
  */
 
 #ifndef _COMCLASSES_H_
