@@ -2,7 +2,7 @@ CPPFLAGS = -MMD -I../include
 CXXFLAGS = -g -Wall
 ARFLAGS = -rs
 
-OBJS = Hacks.o TextServices.o
+OBJS = Hacks.o
 SRCS = $(OBJS:%.o=%.cpp)
 DEPS = $(OBJS:%.o=%.d)
 
