@@ -2,7 +2,7 @@ CPPFLAGS = -MMD
 CXXFLAGS = -g -Wall
 ARFLAGS = -rs
 
-OBJS = COM.o COMClasses.o Hacks.o TextServices.o
+OBJS = COM.o COMInterfaces.o COMClasses.o Hacks.o TextServices.o
 SRCS = $(OBJS:%.o=%.cpp)
 DEPS = $(OBJS:%.o=%.d)
 
