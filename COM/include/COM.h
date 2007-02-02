@@ -66,10 +66,15 @@ inline bool operator != (const PlainGUID& guid1, const PlainGUID& guid2)
 	return !(guid1 == guid2);
 }
 
+inline bool operator < (const PlainGUID& left, const PlainGUID& right)
+{
+	return memcmp(&left, &right, sizeof(left)) < 0;
+}
+
 typedef SmartGUID GUID;
 
 typedef const GUID& REFGUID;
-typedef const GUID* LPGUID;
+typedef       GUID* LPGUID;
 
 typedef GUID IID;
 typedef REFGUID REFIID;
