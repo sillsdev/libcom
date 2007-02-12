@@ -324,7 +324,7 @@ enum
 	VK_RETURN,
 };		
 HKL GetKeyboardLayout(DWORD);
-WORD LANGIDFROMLCID(LCID);
+#define LANGIDFROMLCID(localeIdentifier) ((WORD)localeIdentifier)
 
 typedef enum dwStyle
 {
