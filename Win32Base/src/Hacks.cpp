@@ -54,6 +54,20 @@ bool OffsetRect( LPRECT rect, INT x, INT y )
     return TRUE;
 }
 
+/***********************************************************************
+ *		SetRect (USER32.@)
+ */
+bool SetRect( LPRECT rect, INT left, INT top, INT right, INT bottom )
+{
+    if (!rect) return FALSE;
+    rect->left   = left;
+    rect->right  = right;
+    rect->top    = top;
+    rect->bottom = bottom;
+    return TRUE;
+}
+
+
 // End copied code from Wine's uitools.c
 
 int WideCharToMultiByte(int codePage, int flags,
