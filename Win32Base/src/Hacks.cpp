@@ -17,6 +17,45 @@
 #include <cassert>
 #include <unicode/ustring.h>
 
+
+// Begin copied code from Wine's uitools.c, Modified 2007-02-12 MarkS.
+
+/*
+ * User Interface Functions
+ *
+ * Copyright 1997 Dimitrie O. Paun
+ * Copyright 1997 Bertho A. Stultiens
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
+ */
+
+/***********************************************************************
+ *		OffsetRect (USER32.@)
+ */
+bool OffsetRect( LPRECT rect, INT x, INT y )
+{
+    if (!rect) return FALSE;
+    rect->left   += x;
+    rect->right  += x;
+    rect->top    += y;
+    rect->bottom += y;
+    return TRUE;
+}
+
+// End copied code from Wine's uitools.c
+
 int WideCharToMultiByte(int codePage, int flags,
 	const OLECHAR* src, int srcLen, char* dst, int dstLen,
 	char* defaultChar, char* defaultUsed)
