@@ -6,8 +6,8 @@
  *	Neil Mayhew - 22 Apr 2005
  */
 
-#ifndef _COMCLASSES_H_
-#define _COMCLASSES_H_
+#ifndef _COMINTERFACES_H_
+#define _COMINTERFACES_H_
 
 #include "COM.h"
 #include "DateTime.h"
