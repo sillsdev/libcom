@@ -112,19 +112,6 @@ bool IsBadStringPtrA(const char*, unsigned long) { return false; }
 bool IsBadReadPtr(const void*, unsigned long) { return false; }
 bool IsBadWritePtr(const void*, unsigned long) { return false; }
 
-short ClientToScreen(HWND, POINT*);
-short ScreenToClient(HWND, POINT*);
-
-void GetSystemTimeAsFileTime(FILETIME*);
-BOOL SystemTimeToFileTime(SYSTEMTIME*, FILETIME*);
-BOOL FileTimeToSystemTime(FILETIME*, SYSTEMTIME*);
-DWORD GetTickCount();
-
-void InitializeCriticalSection(CRITICAL_SECTION*);
-void DeleteCriticalSection(CRITICAL_SECTION*);
-void EnterCriticalSection(CRITICAL_SECTION*);
-void LeaveCriticalSection(CRITICAL_SECTION*);
-
 char* _itoa_s(int value, char* buffer, size_t bufferSize, int radix)
 {
 	assert(radix == 10 && radix == 16);
@@ -184,9 +171,6 @@ void OutputDebugString(const OLECHAR* str)
 }
 
 // Support functions
-
-int GetFullPathName(const char*, int, char*, const char**);
-int GetFullPathName(const OLECHAR*, int, OLECHAR*, const OLECHAR**);
 
 // Temporary, until we find a way of doing this properly on Unix
 
