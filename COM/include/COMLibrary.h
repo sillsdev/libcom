@@ -1,8 +1,11 @@
-// COMLibrary.h
-// Created 20061214 MarkS
-// Separating the Windows/COM compatibility API from the COM Library functions 
-// so I can just include the COM Library functions if I use, for example, 
-// the Wine headers instead of our own Windows/COM headers.
+/*
+ *	$Id$
+ *
+ *	Functions unique to this COM Support Library
+ *
+ *	MarkS - 2007-02-05
+ *
+ */
 
 #ifndef COMLibrary_h
 #define COMLibrary_h
