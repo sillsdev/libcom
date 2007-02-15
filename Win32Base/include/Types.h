@@ -9,6 +9,7 @@
 #ifndef _TYPES_H_
 #define _TYPES_H_
 
+#include <cstddef>
 #include <unicode/utypes.h>
 
 // Compiler features
@@ -50,7 +51,8 @@ typedef ULONG	DWORD;
 typedef UCHAR	BYTE;
 typedef UCHAR	BCHAR;
 
-typedef LONG		BOOL;
+typedef LONG        BOOL;
+typedef std::size_t SIZE_T;
 
 #define __DECLARE_POINTER_TYPES(TYPE) \
 	typedef       TYPE NEAR *P##TYPE; \
