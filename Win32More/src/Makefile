@@ -1,15 +1,15 @@
-CPPFLAGS = -MMD
+CPPFLAGS = -MMD -I../include -I../../COM/include -I../../Win32Base/include
 CXXFLAGS = -g -Wall
 ARFLAGS = -rs
 
-OBJS = COM.o COMClasses.o Hacks.o TextServices.o
+OBJS = TextServices.o
 SRCS = $(OBJS:%.o=%.cpp)
 DEPS = $(OBJS:%.o=%.d)
 
-libWin32SDK.a: $(OBJS)
+libWin32More.a: $(OBJS)
 	$(AR) $(ARFLAGS) $@ $^
 
 clean:
-	$(RM) libWin32SDK.a $(OBJS) $(DEPS)
+	$(RM) libWin32More.a $(OBJS) $(DEPS)
 
 -include $(DEPS)
