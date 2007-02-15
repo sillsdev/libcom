@@ -68,7 +68,7 @@ inline bool operator != (const PlainGUID& left, const PlainGUID& right)
 
 inline bool operator < (const PlainGUID& left, const PlainGUID& right)
 {
-	return memcmp(&left, &right, sizeof(left)) < 0;
+	return std::memcmp(&left, &right, sizeof(left)) < 0;
 }
 
 typedef SmartGUID GUID;
