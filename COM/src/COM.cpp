@@ -52,18 +52,6 @@ int StringFromGUID2(REFGUID rguid, LPOLESTR lpsz, int cchMax)
 	return 0; // Bytes used, including null terminator
 }
 
-HRESULT StringFromCLSID(REFCLSID rclsid, LPOLESTR* lplpsz)
-{
-	// PORT-TODO
-	return E_NOTIMPL;
-}
-
-HRESULT CLSIDFromString(const LPOLESTR lpsz, LPCLSID pclsid)
-{
-	// PORT-TODO
-	return E_NOTIMPL;
-}
-
 HRESULT StringFromIID(REFIID rclsid, LPOLESTR* lplpsz)
 {
 	// PORT-TODO
@@ -89,21 +77,6 @@ HRESULT CLSIDFromProgID(LPCOLESTR lpszProgID, LPCLSID lpclsid)
 }
 
 // Memory allocation
-
-void* CoTaskMemAlloc(size_t cb)
-{
-	return malloc(cb);
-}
-
-void* CoTaskMemRealloc(void* pv, size_t cb)
-{
-	return realloc(pv, cb);
-}
-
-void  CoTaskMemFree(void* pv)
-{
-	free(pv);
-}
 
 BSTR SysAllocStringLen(const OLECHAR* pch, unsigned int cch)
 {
@@ -158,12 +131,6 @@ HRESULT CoCreateGuid(GUID* pguid)
 {
 	*pguid = GUID(true);
 	return S_OK;
-}
-
-HRESULT CoCreateInstance(REFCLSID rclsid, void* pUnkOuter, DWORD dwClsContext, REFIID riid, LPVOID FAR* ppv)
-{
-	// PORT-TODO
-	return E_NOTIMPL;
 }
 
 HRESULT CoRegisterClassObject(REFCLSID rclsid, class IUnknown* pObj, DWORD dwClsContext, DWORD flags, LPDWORD lpdwRegister)
