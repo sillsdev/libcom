@@ -108,9 +108,9 @@ public:
 int StringFromGUID2(REFGUID rguid, LPOLESTR lpsz, int cchMax);
 
 HRESULT StringFromCLSID(REFCLSID rclsid, LPOLESTR* lplpsz);
-HRESULT CLSIDFromString(const LPOLESTR lpsz, LPCLSID pclsid);
+HRESULT CLSIDFromString(LPCOLESTR lpsz, LPCLSID pclsid);
 HRESULT StringFromIID(REFIID rclsid, LPOLESTR* lplpsz);
-HRESULT IIDFromString(const LPOLESTR lpsz, LPIID lpiid);
+HRESULT IIDFromString(LPCOLESTR lpsz, LPIID lpiid);
 HRESULT ProgIDFromCLSID(REFCLSID clsid, LPOLESTR* lplpszProgID);
 HRESULT CLSIDFromProgID(LPCOLESTR lpszProgID, LPCLSID lpclsid);
 
