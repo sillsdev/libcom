@@ -56,14 +56,14 @@ struct SmartGUID : public PlainGUID
 	bool isNull() const;
 };
 
-inline bool operator == (const PlainGUID& guid1, const PlainGUID& guid2)
+inline bool operator == (const PlainGUID& left, const PlainGUID& right)
 {
-	return std::memcmp(&guid1, &guid2, sizeof(guid1)) == 0;
+	return std::memcmp(&left, &right, sizeof(left)) == 0;
 }
 
-inline bool operator != (const PlainGUID& guid1, const PlainGUID& guid2)
+inline bool operator != (const PlainGUID& left, const PlainGUID& right)
 {
-	return !(guid1 == guid2);
+	return !(left == right);
 }
 
 inline bool operator < (const PlainGUID& left, const PlainGUID& right)
