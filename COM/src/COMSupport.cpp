@@ -467,7 +467,9 @@ HRESULT CoGetClassObject(
 	/*IN*/ REFIID		/*requestedInterfaceID*/,
 	/*OUT*/ LPVOID*		factoryInterface)
 {
-	assert(dwClsContext == CLSCTX_INPROC);
+	if (dwClsContext =! CLSCTX_INPROC) {
+		return CO_E_NOT_SUPPORTED;
+	}
 
 	IClassFactory* pIFactory = NULL;
 	HRESULT	hr = ComRegistry::GetInstance()->GetFactoryPtr(requestedClassID, &pIFactory);
