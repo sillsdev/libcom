@@ -605,22 +605,26 @@ extern "C" void RegisterServer(const CLSID &classID, LPCLASSFACTORY classFactory
  * @param out output stream to which to write data
  */
 #pragma export on
-void ComRegistry::Dump(std::ostream& out)
+void ComRegistry::Dump(std::ostream& out) const
 {
-	ComRegistry* reg=ComRegistry::GetInstance();
-	for (ComRegistry::const_iterator p = reg->begin(); p != reg->end(); ++p)
+	for (ComRegistry::const_iterator p = begin(); p != end(); ++p)
 	{
 		LPOLESTR c;
 		
 		GUID	g = p->first;
 		HRESULT hr = StringFromCLSID(g, &c);
 		
-		if (SUCCEEDED(hr)) out << c;
+		if (SUCCEEDED(hr))
+			out << std::string(c, std::find(c, c + 999, 0));
+		else
+			out << "[GUID]";
+
+		out << " -> ";
 		
 		char ptrBuf[11];
 		PtrToHex(p->second, &ptrBuf[0]);
 		
-		out << ptrBuf;
+		out << ptrBuf << "\n";
 		
 		CoTaskMemFree(c);
 	}
@@ -628,17 +632,16 @@ void ComRegistry::Dump(std::ostream& out)
 #pragma export off
 
 /**
- * Converts the Class Factory pointer classFactory to a hexadecimal
- * NUL terminated representation in the 11 byte buffer buf.
+ * Converts a pointer to a hexadecimal NUL terminated representation in the 11 byte buffer buf.
  * @param classFactory class factory to use
  * @param buf 11 byte buffer to which to write the hexadecimal representation
  */
-static void PtrToHex(LPCLASSFACTORY Ptr, char *buf)
+void ComRegistry::PtrToHex(const void* Ptr, char *buf)
 {
 	static	wchar_t hex_digits[] = L"0123456789ABCDEF";
 	char* p=buf;
 	union {
-		LPCLASSFACTORY	cp;
+		const void*  	cp;
 		unsigned long	ci;
 	};
 	
@@ -652,4 +655,5 @@ static void PtrToHex(LPCLASSFACTORY Ptr, char *buf)
 	}
 	*p = '\0';
 }
+
 #endif	//	DEBUG

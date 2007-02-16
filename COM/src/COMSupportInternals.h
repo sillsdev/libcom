@@ -51,7 +51,7 @@ class ComRegistry : public ComMap
 
 		static ComRegistry* GetMutableInstance();
 
-		static void PtrToHex(LPCLASSFACTORY Ptr, char *buf);
+		static void PtrToHex(const void* Ptr, char *buf);
 
 		// CLSID to DLL mapping
 		DllMap dllmap; // Should this be static?
@@ -66,5 +66,5 @@ class ComRegistry : public ComMap
 
 		HRESULT GetFactoryPtr(const CLSID& Class, LPCLASSFACTORY* pIFactory) const;
 
-		void Dump(std::ostream& out);
+		void Dump(std::ostream& out) const;
 };
