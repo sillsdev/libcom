@@ -66,5 +66,5 @@ Ball.lo: IBall_idl.h
 IBallMetadata.dll:
 	ln -s raw-midl/$@
 
-MOSTLYCLEANFILES = IBall_idl.h IBall_GUIDs.cpp
+MOSTLYCLEANFILES = IBall_idl.h IBall_GUIDs.cpp ComClient.exe.mdb
 CLEANFILES = IBallMetadata.dll
