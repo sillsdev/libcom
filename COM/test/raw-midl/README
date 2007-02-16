@@ -1,0 +1,8 @@
+This directory holds unmodified MIDL output from Windows.
+
+Although these are generated files, they are difficult to create in Linux,
+so we have put them under source control.
+
+Files are modified with sed and placed in the parent directory.
+
+sed -e 's/EXTERN_C const \(IID\|CLSID\|LIBID\|DIID\) \(IID\|CLSID\|LIBID\|DIID\)_\(..*\);/#define \2_\3 __uuidof(\3)/' raw-MIDL/IBall_idl.h >IBall_idl.h
