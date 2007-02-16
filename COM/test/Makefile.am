@@ -54,3 +54,13 @@ ComClient_exe_REFERENCES = -r:IBallMetadata.dll
 
 ComClient.exe: $(ComClient_exe_SOURCES) 
 	$(CSC) $(CSC_FLAGS) -out:$@ $(ComClient_exe_SOURCES) $(ComClient_exe_REFERENCES)
+
+IBall_idl.h: raw-MIDL/IBall_idl.h fix-midl.sh
+	./fix-midl.sh $< >$@
+
+IBall_GUIDs.cpp: IBall_idl.h extract_iids.sh
+	./extract_iids.sh $< >$@
+
+Ball.lo: IBall_idl.h
+
+MOSTLYCLEANFILES = IBall_idl.h IBall_GUIDs.cpp

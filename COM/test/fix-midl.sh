@@ -2,9 +2,9 @@
 
 #	$Id$
 #
-#	Create a GUID definitions file from MIDL output
+#	Alter the output of MIDL so that it is suitable for use with FieldWorks
 #
-#	MarkS - 2007-02-16
+#	Neil Mayhew - 2007-02-16
 # 
 # COM Support Library helper script
 # Copyright (C) 2007 SIL
@@ -37,30 +37,10 @@ DATE=`date`
 for FILE
 do
 	echo "// AUTOMATICALLY GENERATED ON $DATE FROM $FILE by $0"
-	echo "//#include <COM.h>"
-	echo "#include \"$FILE\""
-	echo
 
-	sed -n -e '
-		/MIDL_INTERFACE("/{
-			h
-			n
-			G
-			s/[ \t]*:.*\n//
-			s/^[ \t]*/template<> const GUID __uuidof(/
-			s/[ \t]*MIDL_INTERFACE/)/
-			s/$/;/
-			p
-		}
-		/DECLSPEC_UUID("/{
-			h
-			n
-			G
-			s/^/template<> const GUID __uuidof(/
-			s/class DECLSPEC_UUID/)/
-			s/[ \t]*;.*\n//
-			s/$/;/
-			p
+	sed -e '
+		/EXTERN_C const \(IID\|CLSID\|LIBID\|DIID\) \(IID\|CLSID\|LIBID\|DIID\)_\(..*\);/{
+			s//#define \2_\3 __uuidof(\3)/
 		}
 	' $FILE
 done
