@@ -68,16 +68,18 @@ Removed general items to WinSupport.cpp
 
 #include <stdexcept>
 
-//------------------------------------------------------------------
-//	CLSIDFromString
-//
-//	Takes a const string representation of a Class ID and converts to the
-//	binary GUID form. Places bytes in little endian positions.
-//------------------------------------------------------------------
+/**
+ * Convert a string representation of a classID to a binary classID GUID (in little endian?).
+ * The spec says it could also return REGDB_E_CLASSNOTREG and REGDB_E_READREGDB, but we don't currently.
+ * http://msdn2.microsoft.com/en-us/library/ms680589.aspx
+ * @param inWideString input string to convert to a classID
+ * @param outClassID output binary classID GUID based on inWideString
+ * @return NOERROR on successful conversion, E_INVALIDARG if one or more invalid arguments, or CO_E_CLASSSTRING if the class string was not formatted correctly.
+ */
 #pragma export on
-HRESULT CLSIDFromString(LPCOLESTR lpsz, LPCLSID pclsid)
+HRESULT WINAPI CLSIDFromString(LPCOLESTR inWideString, LPCLSID outClassID)
 {
-	const OLECHAR *p = lpsz;
+	const OLECHAR *p = inWideString;
 	wchar_t wc;
 	char	c;
 	int		i, j, cd;
@@ -88,9 +90,9 @@ HRESULT CLSIDFromString(LPCOLESTR lpsz, LPCLSID pclsid)
 	char	*q = &cst[0];
 
 	// Better test needed here?
-	if (!lpsz || !pclsid) return E_INVALIDARG;
+	if (!inWideString || !outClassID) return E_INVALIDARG;
 
-//	// Consume open brace and any preceding characters
+//TODO	// Consume open brace and any preceding characters
 //	while ( (wc=*p++) != L'{') if (wc==L'\0') return CO_E_CLASSSTRING;
 
 	// Convert data for each of the 16 bytes of the GUID
@@ -122,31 +124,30 @@ HRESULT CLSIDFromString(LPCOLESTR lpsz, LPCLSID pclsid)
 		}
 	}
 	
-	*pclsid = clsid;
+	*outClassID = clsid;
 	return ERROR_SUCCESS;
 }
 #pragma export off
 
-//------------------------------------------------------------------
-//	StringFromCLSID
-//
-//	Takes a const Class ID in binary GUID form and converts it to the string
-//	representation.
-//
-//	NOTE: The Windows function allocates memory and calls StringFromGUID2()
-//	but unless FieldWorks actually uses StringFromGUID2() we don't
-//	need to implement it.
-//------------------------------------------------------------------
+/**
+ * Convert binary classID GUID to string representation.
+ * http://msdn2.microsoft.com/en-us/library/ms683917.aspx
+ * @param inClassID input binary classID GUID to convert
+ * @param outWideString output string based on inClassID
+ * @return S_OK on successful conversion, E_OUTOFMEMORY if we run out of memory while creating the string, or (despite the spec) E_INVALIDARG if an invalid argument was given.
+ */
 #pragma export on
-HRESULT StringFromCLSID(const CLSID &rclsid, LPOLESTR *ppsz)
+HRESULT StringFromCLSID(const CLSID &inClassID, LPOLESTR *outWideString)
 {
-	const unsigned char	*clsid = reinterpret_cast<const unsigned char*>(&rclsid);
+	// NOTE: The Windows function allocates memory and calls StringFromGUID2()
+	// but we're not implementing StringFromGUID2().
+	const unsigned char	*clsid = reinterpret_cast<const unsigned char*>(&inClassID);
 	OLECHAR			*buf, *q;
 	unsigned int	c, i;
 	static wchar_t	hex_digits[] = L"0123456789ABCDEF";
 
 	// Better test needed here?
-	if (!ppsz) return E_INVALIDARG;
+	if (!outWideString) return E_INVALIDARG;
 	
 	// Allocate buffer for string
 	if (!(buf = static_cast<OLECHAR*>(CoTaskMemAlloc(37 * sizeof(OLECHAR)))))
@@ -166,53 +167,59 @@ HRESULT StringFromCLSID(const CLSID &rclsid, LPOLESTR *ppsz)
 		}
 	}
 	*q = L'\0';
-	*ppsz = buf;
+	*outWideString = buf;
 	return S_OK;
 }
 #pragma export off
 
-//------------------------------------------------------------------
-//	CoTaskMemAlloc
-//
-//	Allocates memory for COM objects.
-//
-//	TODO: This is defined as just malloc() until a reason is found
-//	for a more complex implementation.
-//------------------------------------------------------------------
+/**
+ * Allocate memory.
+ * Because there is no guarantee that memory will actually be allocated, you should always check that the return value is not NULL.
+ * http://msdn2.microsoft.com/en-us/library/ms692727.aspx
+ * @param size number of bytes to allocate
+ * @return pointer to allocated memory, or NULL if the memory allocation request failed.
+ */
 #pragma export on
-void *	CoTaskMemAlloc(SIZE_T cb)
+void* CoTaskMemAlloc(SIZE_T size)
 {
-	return (std::malloc(cb));
+	// This is defined as just malloc() until a reason is found
+	// for a more complex implementation.
+
+	return (std::malloc(size));
 }
 #pragma export off
 
-//------------------------------------------------------------------
-//	CoTaskMemRealloc
-//
-//	Reallocates memory for COM objects.
-//
-//	TODO: This is defined as just realloc() until a reason is found
-//	for a more complex implementation.
-//------------------------------------------------------------------
+/**
+ * Change size of a previously allocated chunk of memory. 
+ * If previousAllocation is NULL, allocates memory like CoTaskMemAlloc.
+ * If previousAllocation is not NULL and newSize is 0, then previousAllocation is freed.
+ * http://msdn2.microsoft.com/en-us/library/ms687280.aspx
+ * @param previousAllocation pointer returned from a previous CoTaskMemAlloc to previous allocation of memory to be reallocated or freed, or NULL
+ * @param newSize number of bytes for the new allocation, or 0 (see description).
+ * @return pointer to reallocated memory (which may be in a different memory location than previousAllocation), or NULL if newSize is 0 and previousAllocation is not NULL, or NULL if we fail to allocate memory for the new allocation
+ */
 #pragma export on
-void *	CoTaskMemRealloc(LPVOID pv, SIZE_T cb)
+void* CoTaskMemRealloc(LPVOID previousAllocation, SIZE_T newSize)
 {
-	return (std::realloc(pv, cb));
+	// This is defined as just realloc() until a reason is found
+	// for a more complex implementation.
+
+	return (std::realloc(previousAllocation, newSize));
 }
 #pragma export off
 
-//------------------------------------------------------------------
-//	CoTaskMemFree
-//
-//	Frees memory from COM objects.
-//
-//	TODO: This is defined as just free() until a reason is found
-//	for a more complex implementation.
-//------------------------------------------------------------------
+/**
+ * Free previously allocated memory. If allocatedMemory is NULL, nothing happens.
+ * http://msdn2.microsoft.com/en-us/library/ms680722.aspx
+ * @param allocatedMemory pointer to memory previously allocated by CoTaskMemAlloc or CoTaskMemRealloc, or NULL
+ */
 #pragma export on
-void	CoTaskMemFree(LPVOID pv)
+void CoTaskMemFree(LPVOID allocatedMemory)
 {
-	std::free(pv);
+	// This is defined as just free() until a reason is found
+	// for a more complex implementation.
+
+	std::free(allocatedMemory);
 }
 #pragma export off
 
@@ -266,11 +273,10 @@ ComRegistry::ComRegistry()
 }
 #pragma export off
 
-//------------------------------------------------------------------
-//	ComRegistry destructor
-//
-//	Destroys an instance of ComRegistry.
-//------------------------------------------------------------------
+/**
+ * ComRegistry destructor. Destroys an instance of ComRegistry.
+ * Does nothing.
+ */
 #pragma export on
 ComRegistry::~ComRegistry()
 {
@@ -278,13 +284,11 @@ ComRegistry::~ComRegistry()
 }
 #pragma export off
 	
-//------------------------------------------------------------------
-//	GetMutableInstance
-//
-//	Returns a pointer to the registry.
-//
-//	NOTE: This is where the static instance of the COM registry is created.
-//------------------------------------------------------------------
+/**
+ * Gets a pointer to a previously created registry, or to a new one if none 
+ * has yet been created. The static instance of the COM registry is 
+ * created here.
+ */
 #pragma export on
 ComRegistry* ComRegistry::GetMutableInstance()
 {
@@ -293,16 +297,16 @@ ComRegistry* ComRegistry::GetMutableInstance()
 }
 #pragma export off
 
-//------------------------------------------------------------------
-//	Register
-//
-//	Adds an entry to the registry for a Class and its factory pointer
-//------------------------------------------------------------------
+/**
+ * Register a class factory. Adds an entry to the registry for a class and its factory pointer.
+ * @param classID class ID to register
+ * @param classFactory class factory that can create objects of class ID classID.
+ */
 #pragma export on
-void ComRegistry::Register (const CLSID &Class, LPCLASSFACTORY Pointer)
+void ComRegistry::Register(const CLSID &classID, LPCLASSFACTORY classFactory)
 {
-	ComRegistry *r = ComRegistry::GetMutableInstance();
-	(*r)[Class] = Pointer;
+	ComRegistry *comRegistry = ComRegistry::GetMutableInstance();
+	(*comRegistry)[classID] = classFactory;
 }
 #pragma export off
 
@@ -444,45 +448,48 @@ void registerFactoryInDLL(void* dllhandle, REFCLSID requestedClassID, REFIID fac
 }
 #pragma export off
 
-//------------------------------------------------------------------
-//	CoGetClassObject
-//
-//	Returns the pointer to the IClassFactory interface of the entry
-//	in the registry for the class rclsid.
-//
-//	NOTE: The caller is responsible for releasing the class factory.
-//
-//	NOTE: This implementation is intended for use for inprocess COM only.
-//------------------------------------------------------------------
+/**
+ * Get a class factory able to create objects of class ID requestedClassID.
+ * NOTE: This function does NOT do what the MSDN spec actually says it does. Fix this is if that's important.
+ * Note: The caller is responsible for releasing the class factory.
+ * Note: This implementation is intended for use for inprocess COM only.
+ * http://msdn2.microsoft.com/en-us/library/ms684007.aspx
+ * @param requestedClassID class ID for which you want a class factory
+ * @param dwClsContext should be CLSCTX_INPROC
+ * @param factoryInterface receives the desired class factory, of type IClassFactory
+ * @return S_OK upon success, or REGDB_E_CLASSNOTREG upon a bunch of means of failure
+ */
 #pragma export on
 HRESULT CoGetClassObject(
-	/*IN*/ REFCLSID		rclsid,
+	/*IN*/ REFCLSID		requestedClassID,
 	/*IN*/ DWORD		dwClsContext,
 	/*IN*/ LPVOID		/*pvReserved*/,
-	/*IN*/ REFIID		/*riid*/,
-	/*OUT*/ LPVOID*		ppv)
+	/*IN*/ REFIID		/*requestedInterfaceID*/,
+	/*OUT*/ LPVOID*		factoryInterface)
 {
 	assert(dwClsContext == CLSCTX_INPROC);
 
 	IClassFactory* pIFactory = NULL;
-	HRESULT	hr = ComRegistry::GetInstance()->GetFactoryPtr (rclsid, &pIFactory);
+	HRESULT	hr = ComRegistry::GetInstance()->GetFactoryPtr(requestedClassID, &pIFactory);
 	if (SUCCEEDED(hr))
 	  pIFactory->AddRef();
 
-	*ppv = pIFactory;
+	*factoryInterface = pIFactory;
 	return hr;
 }
 #pragma export off
 
 
-#pragma export on
 /**
  * CoInitialize
  * 
  * Do nothing, but be here for when Mono wants to call CoInitialize.
  * 
  * (http://msdn.microsoft.com/library/default.asp?url=/library/en-us/com/html/0f171cf4-87b9-43a6-97f2-80ed344fe376.asp)
+ * @param pvReserved unused
+ * @return S_OK
  */
+#pragma export on
 extern "C" HRESULT CoInitialize(
 	LPVOID pvReserved)
 {
@@ -536,30 +543,31 @@ GUID mangleGuid(GUID guid) {
 	return guid;
 }
 
-
-//------------------------------------------------------------------
-//	CoCreateInstance
-//
-//	Returns an instance of the class rclsid after obtaining the factory
-//	pointer of the entry in the registry for Class.
-//
-//	NOTE: This implementation is intended for use for inprocess COM only.
-//------------------------------------------------------------------
+/**
+ * Create an instance of a class of class ID requestedClassID, which implements interface ID objectInterfaceID, and will be accessible through the interface objectInterface.
+ * NOTE: This implementation is intended for use for inprocess COM only.
+ * http://msdn2.microsoft.com/en-us/library/ms686615.aspx
+ * @param requestedClassID class ID of class that will be created and given access to through objectInterface
+ * @param outerAggregateIUnknown should be NULL since we don't support aggregation
+ * @param objectInterfaceID interface ID of the interface through which you desire to interact with class of class ID requestedClassID
+ * @param objectInterface receives the interface to the desired instantiated class, or is NULL if the desired instantiated class does not support objectInterfaceID or we otherwise fail
+ * @return S_OK upon success, E_OUTOFMEMORY if we failed to create the object due to insufficient memory, CLASS_E_NOAGGREGATION if outerAggregateIUnknown is not NULL, E_NOINTERFACE if the object does not support objectInterfaceID, or REGDB_E_CLASSNOTREG upon a bunch of other means of failure (like, if we don't know how to make a requestedClassID).
+ */
 #pragma export on
 extern "C" HRESULT CoCreateInstance (
-	/*IN*/ REFCLSID		rclsid,
-	/*IN*/ LPUNKNOWN	pUnkOuter,
+	/*IN*/ REFCLSID		requestedClassID,
+	/*IN*/ LPUNKNOWN	outerAggregateIUnknown,
 	/*IN*/ DWORD		/*dwClsContext*/,
-	/*IN*/ REFIID		riid,
-	/*OUT*/ LPVOID*		ppv)
+	/*IN*/ REFIID		objectInterfaceID,
+	/*OUT*/ LPVOID*		objectInterface)
 {
-	*ppv = NULL;
+	*objectInterface = NULL;
 
 	// little endian to big endian the requestedClassID
-	CLSID mangled_clsid = mangleGuid(rclsid);
+	CLSID mangled_requestedClassID = mangleGuid(requestedClassID);
 
 	IClassFactory* pIFactory = NULL;
-	HRESULT hr = CoGetClassObject(mangled_clsid,
+	HRESULT hr = CoGetClassObject(mangled_requestedClassID,
 						static_cast <unsigned long> (CLSCTX_INPROC),
 						(void *)0,
 						IID_IClassFactory,
@@ -567,32 +575,33 @@ extern "C" HRESULT CoCreateInstance (
 	if (SUCCEEDED(hr))
 	{
 		// Create the component
-		hr = pIFactory->CreateInstance(pUnkOuter, riid, ppv);
+		hr = pIFactory->CreateInstance(outerAggregateIUnknown, objectInterfaceID, objectInterface);
 		// Release the class factory
 		pIFactory->Release();
 	}
+
 	return hr;
 }
 #pragma export off
 
-//------------------------------------------------------------------
-//
-//	Register Server
-// 	
-// 	Registers a class factory by class ID.
+/**
+ * Register a class factory by class ID in the internal registry.
+ * @param classID class ID to register
+ * @param classFactory class factory to register that can create objects of class ID classID.
+ */
 #pragma export on
-extern "C" void RegisterServer(const CLSID &Class, LPCLASSFACTORY Pointer)
+extern "C" void RegisterServer(const CLSID &classID, LPCLASSFACTORY classFactory)
 {
-	ComRegistry::GetInstance()->Register (Class, Pointer);
+	ComRegistry::GetInstance()->Register(classID, classFactory);
 }
 #pragma export off
 
 #ifdef DEBUG
-//------------------------------------------------------------------
-//	Dump
-//
-//	Dumps the contents of the registry onto the output stream out.
-//------------------------------------------------------------------
+
+/**
+ * Dump the contents of the registry onto the output stream out.
+ * @param out output stream to which to write data
+ */
 #pragma export on
 void ComRegistry::Dump(std::ostream& out)
 {
@@ -616,12 +625,12 @@ void ComRegistry::Dump(std::ostream& out)
 }
 #pragma export off
 
-//------------------------------------------------------------------
-//	PtrToHex
-//
-//	Converts the Class Factory pointer Ptr to a hexadecimal
-//	NUL terminated representation in the 11 byte buffer buf.
-//------------------------------------------------------------------
+/**
+ * Converts the Class Factory pointer classFactory to a hexadecimal
+ * NUL terminated representation in the 11 byte buffer buf.
+ * @param classFactory class factory to use
+ * @param buf 11 byte buffer to which to write the hexadecimal representation
+ */
 static void PtrToHex(LPCLASSFACTORY Ptr, char *buf)
 {
 	static	wchar_t hex_digits[] = L"0123456789ABCDEF";
