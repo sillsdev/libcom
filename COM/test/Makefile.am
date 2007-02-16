@@ -50,12 +50,12 @@ comtest_LDFLAGS = $(all_libraries) \
 CSC = gmcs
 CSC_FLAGS = -debug
 ComClient_exe_SOURCES = ComClient.cs
-ComClient_exe_REFERENCES = -r:IBallMetadata.dll
+ComClient_exe_REFERENCES = IBallMetadata.dll
 
-ComClient.exe: $(ComClient_exe_SOURCES) 
-	$(CSC) $(CSC_FLAGS) -out:$@ $(ComClient_exe_SOURCES) $(ComClient_exe_REFERENCES)
+ComClient.exe: $(ComClient_exe_SOURCES) $(ComClient_exe_REFERENCES)
+	$(CSC) $(CSC_FLAGS) -out:$@ $(ComClient_exe_SOURCES) $(ComClient_exe_REFERENCES:%=-r:%)
 
-IBall_idl.h: raw-MIDL/IBall_idl.h fix-midl.sh
+IBall_idl.h: raw-midl/IBall_idl.h fix-midl.sh
 	./fix-midl.sh $< >$@
 
 IBall_GUIDs.cpp: IBall_idl.h extract_iids.sh
@@ -63,4 +63,8 @@ IBall_GUIDs.cpp: IBall_idl.h extract_iids.sh
 
 Ball.lo: IBall_idl.h
 
+IBallMetadata.dll:
+	ln -s raw-midl/$@
+
 MOSTLYCLEANFILES = IBall_idl.h IBall_GUIDs.cpp
+CLEANFILES = IBallMetadata.dll
