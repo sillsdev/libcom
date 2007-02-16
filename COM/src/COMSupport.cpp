@@ -10,6 +10,10 @@ Reviewed:	Date		Reviewer
 
 	Support for COM in Linux
 	
+Cleaning up the code. Removing messy debugging code, putting in proper API comments, and renaming the rest of the hungarian to variables that state their use rather than type.
+	2007-01-29, MarkS
+Calling DllGetClassObject, and lots of other changes.                  I ♥ gdb
+	2007-01   , MarkS
 Implemented a DLL Map. Added CoInitialize. Made CoGetClassObject AddRef to the factory to prevent a crash. And other little changes. 
 	2006-12   , MarkS
 Adapted for command line builds with gcc, removed Carbon dependencies and ported to Linux.
@@ -40,8 +44,9 @@ Removed general items to WinSupport.cpp
 ----------------------------------------------------------------------------------------------*/
 
 
-#include "WinSupport.h"
-#include "COMSupport.h"
+#include "Types.h"
+#include "WinError.h"
+#include "COMInterfaces.h"
 
 #include <assert.h>
 #include <cstdlib>
@@ -50,6 +55,7 @@ Removed general items to WinSupport.cpp
 #include <cctype>
 
 #include "COMSupportInternals.h"
+#include "COMLibrary.h"
 
 #include <map>
 #include <dlfcn.h>
@@ -63,22 +69,6 @@ Removed general items to WinSupport.cpp
 #include <stdexcept>
 
 //------------------------------------------------------------------
-//	CoCreateGuid
-//
-//	Creates a new GUID.
-//
-//	At present this merely raises an assertion because it is
-//	unlikely that FieldWorks will need to create GUIDs on the fly.
-//------------------------------------------------------------------
-#pragma export on
-HRESULT CoCreateGuid(GUID * /*pguid*/)
-{
-	assert(false);
-	return 0;
-}
-#pragma export off
-
-//------------------------------------------------------------------
 //	CLSIDFromString
 //
 //	Takes a const string representation of a Class ID and converts to the
@@ -87,13 +77,13 @@ HRESULT CoCreateGuid(GUID * /*pguid*/)
 #pragma export on
 HRESULT CLSIDFromString(LPCOLESTR lpsz, LPCLSID pclsid)
 {
-	const wchar_t	*p = lpsz;
+	const OLECHAR *p = lpsz;
 	wchar_t wc;
 	char	c;
 	int		i, j, cd;
 	union {
-		GUID	clsid;
-		char	cst[16];
+		PlainGUID clsid;
+		char      cst[16];
 	};
 	char	*q = &cst[0];
 
@@ -151,7 +141,7 @@ HRESULT CLSIDFromString(LPCOLESTR lpsz, LPCLSID pclsid)
 HRESULT StringFromCLSID(const CLSID &rclsid, LPOLESTR *ppsz)
 {
 	const unsigned char	*clsid = reinterpret_cast<const unsigned char*>(&rclsid);
-	wchar_t			*buf, *q;
+	OLECHAR			*buf, *q;
 	unsigned int	c, i;
 	static wchar_t	hex_digits[] = L"0123456789ABCDEF";
 
@@ -159,7 +149,8 @@ HRESULT StringFromCLSID(const CLSID &rclsid, LPOLESTR *ppsz)
 	if (!ppsz) return E_INVALIDARG;
 	
 	// Allocate buffer for string
-	if ( !(buf=(static_cast <wchar_t *> (CoTaskMemAlloc(80))) )) return E_OUTOFMEMORY;
+	if (!(buf = static_cast<OLECHAR*>(CoTaskMemAlloc(37 * sizeof(OLECHAR)))))
+		return E_OUTOFMEMORY;
 	q = buf;
 
 	// Convert data for each of the 16 bytes of the GUID
@@ -232,35 +223,42 @@ void	CoTaskMemFree(LPVOID pv)
 //      Populates the DLL Map.
 //------------------------------------------------------------------
 #pragma export on
+/**
+ * Creates an instance of ComRegistry. ComRegistry stores a mapping between 
+ * classID GUIDs and their corresponding class factories. 
+ * This constructor will also populate the DLL Map from the dllmap.txt file.
+ */
 ComRegistry::ComRegistry()
 {
 	// Populate the dllmap
-	char* dllmapfilename = "../../dllmap.txt";
+
+	// Right now, dllmap.txt needs to be present in the directory from which mono was executed.
+	char* dllmapfilename = "dllmap.txt";
 	int linenum=1;
 	std::string::size_type pos;
 	std::string::size_type len;
 	std::ifstream dllmapfilestream(dllmapfilename); // Maybe have a helpful message if opening fails
+
+	if (dllmapfilestream.fail()) {
+		fprintf(stderr, "COM Support Library: %s:%d ComRegistry::ComRegistry() Warning, opening of dllmap '%s' failed.\n", __FILE__,__LINE__,dllmapfilename);
+	}
+
 	// For each dllmapping line, add to the dllmap
 	for (std::string line; getline(dllmapfilestream, line); linenum++) {
-
 		pos = line.find(" ", 0);
 		if (std::string::npos == pos) {
-			fprintf(stderr, "Warning: malformed dllmap line in file '%s' on line %d", dllmapfilename, linenum);
+			fprintf(stderr, "COM Support Library: Warning: malformed dllmap line in file '%s' on line %d", dllmapfilename, linenum);
 			continue;
 		}
 		len = line.length();
 		std::string classid = line.substr(0,pos);
-		std::string dllfilename = line.substr(pos, len);
+		std::string dllfilename = line.substr(pos+1, len);
 	
+		// Convert classid to an OLE string, then to binary
+		std::vector<OLECHAR> olestr(classid.begin(), classid.end());
+		olestr.push_back(0);
 		CLSID clsid;
-
-		// magic from Neil. I did not error-check this myself.
-		string guidstr = classid;
-		std::vector<wchar_t> wstr(guidstr.size() + 1);
-		std::copy(guidstr.begin(), guidstr.end(), wstr.begin());
-		wstr.back() = 0;
-		CLSIDFromString(&wstr[0], &clsid);
-		// magic/
+		CLSIDFromString(&olestr[0], &clsid);
 
 		dllmap[clsid] = dllfilename;
 	}
@@ -280,7 +278,6 @@ ComRegistry::~ComRegistry()
 }
 #pragma export off
 	
-//		~ComRegistry();
 //------------------------------------------------------------------
 //	GetMutableInstance
 //
@@ -292,7 +289,7 @@ ComRegistry::~ComRegistry()
 ComRegistry* ComRegistry::GetMutableInstance()
 {
 	static ComRegistry instance;
-    return &instance;
+	return &instance;
 }
 #pragma export off
 
@@ -309,27 +306,71 @@ void ComRegistry::Register (const CLSID &Class, LPCLASSFACTORY Pointer)
 }
 #pragma export off
 
-//------------------------------------------------------------------
-//	GetFactoryPtr
-//
-//	Returns the factory pointer of the entry in the registry
-//	for Class.
-// 
-// 	If the Class ID is not found, we look in the dllmap, 
-//	find and open the corresponding DLL file, register its COM objects, 
-// 	and return the factory pointer for Class.
-// 
-//	If the Class ID is not found in the registry or dllmap, 
-//	pIFactory is left unchanged, and REGDB_E_CLASSNOTREG is returned.
-//------------------------------------------------------------------
+/**
+ * Get a class factory from comRegistry that can produce classes of a certain classID.
+ * @param classID Class ID that you want a class factory for
+ * @param comRegistry COM Registry in which to search
+ * @return pointer to class factory corresponding to classID, or NULL if not found
+ * @see ComRegistry::Register
+ */
+LPCLASSFACTORY getFactory(const CLSID &classID, const ComRegistry* comRegistry) {
+	
+	ComRegistry::const_iterator where = comRegistry->find(classID);
+	
+	if (where != comRegistry->end())
+	{
+		return (*where).second;
+	}
+	return NULL;
+}
+
+/** Thrown if a specific ClassID was not found in the DLL Map. */
+class ClassIDNotFoundInDllMap : std::exception {};
+/** Thrown if the DLL filename corresponding to a ClassID in the DLL Map is empty (not specified). */
+class DLLFilenameInDllMapIsEmpty : std::exception {};
+/** Thrown if a certain ClassID is not registered. */
+class exceptionREGDB_E_CLASSNOTREG : std::exception {};
+
+/**
+ *	Find DLL filename corresponding to Class ID in a dllmap.
+ * 
+ * 	@param classID Class ID matching a DLL file in the dllmap
+ * 	@param dllmap dllmap from which to find desired DLL files
+ * 	@return dll filename
+ *	@throws ClassIDNotFoundInDllMap if classID is not in the dllmap
+ *	@throws DLLFilenameInDllMapIsEmpty if the DLL filename is empty
+ */
+string getDLLFilename(const CLSID &classID, const DllMap& dllmap) {
+
+	DllMap::const_iterator dllwhere = dllmap.find(classID);
+	if (dllwhere == dllmap.end()) {
+		throw ClassIDNotFoundInDllMap();
+	}
+
+	string dllfilename = (*dllwhere).second;
+	if (dllfilename.empty()) {
+		throw DLLFilenameInDllMapIsEmpty();
+	}
+	
+	return dllfilename;
+}
+
+
 #pragma export on
-HRESULT ComRegistry::GetFactoryPtr (const CLSID &Class, LPCLASSFACTORY* pIFactory) const
+/**
+ * Get a class factory for a class out of the registry, possibly loading a necessary DLL file.
+ * If classID is not found in the registry, we look in the DLL Map, find and open the corresponding DLL file, 
+ * the DLL registers its COM objects or we will, and we return the class factory for classID.
+ * If we fail to get the desired factory, then classFactory is left unchanged.
+ * @return S_OK upon successfully getting a class factory, or if the class factory is not already in the registry: REGDB_E_CLASSNOTREG if classID is not in the DLL Map, REGDB_E_CLASSNOTREG if the DLL filename in the DLL Map is empty (unspecified), REGDB_E_CLASSNOTREG if there was an error dlopen()ing the DLL file, REGDB_E_CLASSNOTREG if there was a problem registering a factory for classID in the DLL, or REGDB_E_CLASSNOTREG if we really ultimately fail to find the class factory.
+ */
+HRESULT ComRegistry::GetFactoryPtr (const CLSID &classID, LPCLASSFACTORY* classFactory) const
 {
 	// Look for the factory pointer, by Class ID, in the COM registry
-	const iterator where = ComRegistry::GetInstance()->find(Class);
-	if (where != end())
-	{
-		*pIFactory = (*where).second;
+	LPCLASSFACTORY resultFactory = 0;
+	ComRegistry* comRegistry = ComRegistry::GetInstance();
+	if (resultFactory = getFactory(classID, comRegistry)) {
+		*classFactory = resultFactory;
 		return S_OK;
 	}
 
@@ -338,28 +379,68 @@ HRESULT ComRegistry::GetFactoryPtr (const CLSID &Class, LPCLASSFACTORY* pIFactor
 	// If we know where the DLL is, dlopen it to get it registered, 
 	// and try again.
 
-	// Find the DLL file according to Class ID in the dllmap
-	DllMap::const_iterator dllwhere = dllmap.find(Class);
-	if (dllwhere == dllmap.end()) {
+	// Find the DLL file according to classID in the dllmap
+	string dllfilename;
+	try {
+		dllfilename = getDLLFilename(classID, dllmap);
+	} catch (ClassIDNotFoundInDllMap const& e) {
+		return REGDB_E_CLASSNOTREG;
+	} catch (DLLFilenameInDllMapIsEmpty const& e) {
 		return REGDB_E_CLASSNOTREG;
 	}
-	string dllfilename = (*dllwhere).second;
-	if (dllfilename.empty()) {
-		return REGDB_E_CLASSNOTREG;
-	} else {
 
-		// Load the DLL file into memory
-		void* dllhandle = dlopen(dllfilename.c_str(), RTLD_LAZY | RTLD_NODELETE ); // Maybe use RTLD_NOW instead of RTLD_LAZY? I definitely want the global static variable to be created.
-		if (!dllhandle) {
-			fprintf(stderr, "Warning: error loading DLL file '%s' in ComRegistry::GetFactoryPtr: %s\n", dllfilename.c_str(), dlerror());
+	// Load the DLL file into memory.
+	// If RTLD_NODELETE is not enough to avoid undesirable things related to 
+	// calling dlopen(3) more than once on the same DLL file, then 
+	// RTLD_NOLOAD could be used to test if it's already loaded.
+	void* dllhandle = dlopen(dllfilename.c_str(), RTLD_LAZY | RTLD_NODELETE); // Maybe use RTLD_NOW instead of RTLD_LAZY? I definitely want the global static variable to be created.
+
+	if (!dllhandle) {
+			char* dllerror = dlerror();
+			fprintf(stderr, "COM Support Library: Warning: error loading DLL file '%s' in ComRegistry::GetFactoryPtr: %s\n", dllfilename.c_str(), dllerror);
 			return REGDB_E_CLASSNOTREG;
 		}
 
-		// I assume that I don't actually have to call any of the methods in the DLL, since there should be a global static GenericFactory. But maybe we need to call DllMain anyway for some reason. We'll see. -MarkS
-
-		// CLSID Class should now be registered, so try again.
-		return GetFactoryPtr(Class, pIFactory);
+	// Register the COM object we just opened.
+	try {
+		registerFactoryInDLL(dllhandle, classID, IID_IClassFactory);
+	} catch(exceptionREGDB_E_CLASSNOTREG const& e) {
+		return REGDB_E_CLASSNOTREG;
 	}
+
+	// classID should now be registered (either by it calling RegisterServer, or by us registering it for it), so try again.
+	// TODO: Note, the whole idea of it calling our RegisterServer I think is our own invention, so that ..way should probably be removed.
+	if (resultFactory = getFactory(classID, comRegistry)) {
+		*classFactory = resultFactory;
+		return S_OK;
+	}
+	return REGDB_E_CLASSNOTREG;
+}
+/**
+ * Register a class factory for requestedClassID from an open COM DLL file by calling its DllGetClassObject function.
+ * 
+ * @param dllhandle handle to an open COM DLL file
+ * @param requestedClassID class ID to get a factory for
+ * @param factoryInterfaceID interface ID for IClassFactory (or an interface ID for any interface that an IClassFactory in the DLL implements)
+ * @throws exceptionREGDB_E_CLASSNOTREG if there was an error calling DllGetClassObject and we never registered the factory (which might be a little different than REGDB_E_CLASSNOTREG is really intended for).
+ */
+void registerFactoryInDLL(void* dllhandle, REFCLSID requestedClassID, REFIID factoryInterfaceID /*= IID_IClassFactory*/) {
+
+	IClassFactory* factory;
+	// DllGetClassObject: http://msdn2.microsoft.com/en-us/library/ms680760.aspx
+	HRESULT (*DllGetClassObject)(REFCLSID requestedClassID, REFIID requestedInterfaceID, VOID ** objectInterface);
+	dlerror(); // clear any old error conditions
+	*(void **) (&DllGetClassObject) = dlsym(dllhandle, "DllGetClassObject");
+	char* dllerror = dlerror();
+	if (NULL != dllerror)
+	{
+		fprintf(stderr, "COM Support Library: Error getting COM object's DllGetClassObject function. Error: %s\n", dllerror);
+		throw exceptionREGDB_E_CLASSNOTREG();
+	}
+	// Note that if we pass factory as a null pointer, it'll not work.
+	(*DllGetClassObject)(requestedClassID, factoryInterfaceID, (VOID**)&factory);
+	// Register the class factory
+	RegisterServer(requestedClassID, factory);
 }
 #pragma export off
 
@@ -409,6 +490,53 @@ extern "C" HRESULT CoInitialize(
 }
 #pragma export off
 
+inline void swap(unsigned char &a, unsigned char &b) {
+	char tmp = a;
+	a = b;
+	b = tmp;
+}
+
+/**
+ * Change a little endian GUID to a big endian GUID.
+ * @param guid little endian GUID
+ * @return big endian GUID based on guid
+ */
+GUID mangleGuid(GUID guid) {
+
+	// this is implemented quickly and dirtily
+
+	unsigned char tmp;
+	
+	//unsigned char* data = guid.str().c_str();
+	unsigned char data[37];
+	//const char* origGuid = guid.str().c_str();
+	
+	memcpy(data,reinterpret_cast<void*>(&guid),37);
+	int last = sizeof(long)-1;
+
+	for (int i=0;i< (last+1)/2 ; i++) {
+		tmp = data[i];
+		data[i] = data[last-i];
+		data[last-i] = tmp;
+	}
+	
+	//fprintf(stderr,"data8 is %c.\n", data[8]);
+	swap(data[4],data[5]);
+	swap(data[6],data[7]);
+	//fprintf(stderr,"data8 is now %c.\n",data[8]);
+	
+	// bswap_32/16 would be better, but doesn't seem to be working for me
+	
+	//GUID origguidguid = origGuid;
+	//GUID origguidguid;
+	//CLSIDFromString(origGuid, origguidguid);
+	//return origguidguid;
+	
+	memcpy((void*)&guid,data,37);
+	return guid;
+}
+
+
 //------------------------------------------------------------------
 //	CoCreateInstance
 //
@@ -427,8 +555,11 @@ extern "C" HRESULT CoCreateInstance (
 {
 	*ppv = NULL;
 
+	// little endian to big endian the requestedClassID
+	CLSID mangled_clsid = mangleGuid(rclsid);
+
 	IClassFactory* pIFactory = NULL;
-	HRESULT hr = CoGetClassObject(rclsid,
+	HRESULT hr = CoGetClassObject(mangled_clsid,
 						static_cast <unsigned long> (CLSCTX_INPROC),
 						(void *)0,
 						IID_IClassFactory,

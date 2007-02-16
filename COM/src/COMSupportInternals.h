@@ -37,6 +37,8 @@ using std::string;
 typedef std::map<CLSID, LPCLASSFACTORY>	ComMap;
 typedef std::map<CLSID, string>	DllMap;
 
+void registerFactoryInDLL(void* dllhandle, REFCLSID requestedClassID, REFIID factoryInterfaceID = IID_IClassFactory);
+
 class ComRegistry : public ComMap
 {
 	public:
