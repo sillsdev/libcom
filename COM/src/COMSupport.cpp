@@ -270,6 +270,11 @@ ComRegistry::ComRegistry()
 		dllmap[clsid] = dllfilename;
 	}
 	dllmapfilestream.close();
+
+#if DUMP_COM_REGISTRY
+	std::cout << "Registry created:\n";
+	Dump(std::cout);
+#endif
 }
 #pragma export off
 
@@ -445,6 +450,11 @@ void registerFactoryInDLL(void* dllhandle, REFCLSID requestedClassID, REFIID fac
 	(*DllGetClassObject)(requestedClassID, factoryInterfaceID, (VOID**)&factory);
 	// Register the class factory
 	RegisterServer(requestedClassID, factory);
+
+#if DUMP_COM_REGISTRY
+	std::cout << "Registry updated:\n";
+	ComRegistry::GetInstance()->Dump(std::cout);
+#endif
 }
 #pragma export off
 
