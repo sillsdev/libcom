@@ -9,7 +9,7 @@
 #ifndef _COMPOINTERS_H_
 #define _COMPOINTERS_H_
 
-#include "COMClasses.h"
+#include "COMInterfaces.h"
 
 #ifdef _COM_SMARTPTR_TYPEDEF	// Smart-pointer classes must define this
 	#define _DEFINE_PTR(I) _COM_SMARTPTR_TYPEDEF(I, IID_##I)
