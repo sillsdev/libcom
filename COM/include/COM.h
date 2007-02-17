@@ -150,7 +150,10 @@ enum REGCLS
 	REGCLS_SURROGATE      = 8,
 };
 
-HRESULT CoCreateInstance(REFCLSID rclsid, void* pUnkOuter, DWORD dwClsContext, REFIID riid, LPVOID FAR* ppv); 
+// These must be extern "C" because Mono needs to access them using dlsym
+extern "C" HRESULT CoInitialize(LPVOID pvReserved);
+extern "C" HRESULT CoCreateInstance(REFCLSID rclsid, void* pUnkOuter, DWORD dwClsContext, REFIID riid, LPVOID FAR* ppv); 
+
 HRESULT CoRegisterClassObject(REFCLSID rclsid, class IUnknown* pObj, DWORD dwClsContext, DWORD flags, LPDWORD lpdwRegister);
 HRESULT CoRevokeClassObject(DWORD dwRegister);
 

@@ -602,7 +602,7 @@ extern "C" HRESULT CoCreateInstance (
  * @param classFactory class factory to register that can create objects of class ID classID.
  */
 #pragma export on
-extern "C" void RegisterServer(const CLSID &classID, LPCLASSFACTORY classFactory)
+void RegisterServer(const CLSID &classID, LPCLASSFACTORY classFactory)
 {
 	ComRegistry::GetInstance()->Register(classID, classFactory);
 }

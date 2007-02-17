@@ -19,7 +19,7 @@
 //	server's class factory and the instance of the class factory should be
 //	created as a static pointer to the class factory is initialised.
  
-extern "C" void RegisterServer(const CLSID &classID, class IClassFactory* classFactory);
+void RegisterServer(const CLSID &classID, class IClassFactory* classFactory);
 
 #endif /* !COMLibrary_h */
 
