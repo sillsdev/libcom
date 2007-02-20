@@ -405,7 +405,7 @@ HRESULT ComRegistry::GetFactoryPtr (const CLSID &classID, LPCLASSFACTORY* classF
 	void* dllhandle = dlopen(dllfilename.c_str(), RTLD_LAZY | RTLD_NODELETE); // Maybe use RTLD_NOW instead of RTLD_LAZY? I definitely want the global static variable to be created.
 
 	if (!dllhandle) {
-			char* dllerror = dlerror();
+			const char* dllerror = dlerror();
 			fprintf(stderr, "COM Support Library: Warning: error loading DLL file '%s' in ComRegistry::GetFactoryPtr: %s\n", dllfilename.c_str(), dllerror);
 			return REGDB_E_CLASSNOTREG;
 		}
@@ -440,7 +440,7 @@ void registerFactoryInDLL(void* dllhandle, REFCLSID requestedClassID, REFIID fac
 	HRESULT (*DllGetClassObject)(REFCLSID requestedClassID, REFIID requestedInterfaceID, VOID ** objectInterface);
 	dlerror(); // clear any old error conditions
 	*(void **) (&DllGetClassObject) = dlsym(dllhandle, "DllGetClassObject");
-	char* dllerror = dlerror();
+	const char* dllerror = dlerror();
 	if (NULL != dllerror)
 	{
 		fprintf(stderr, "COM Support Library: Error getting COM object's DllGetClassObject function. Error: %s\n", dllerror);
