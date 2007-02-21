@@ -1,10 +1,11 @@
 #!/bin/sh
 
+#
 #	$Id$
 #
 #	Create a GUID definitions file from MIDL output
 #
-#	MarkS - 2007-02-16
+#	MarkS - 2007-01-22
 # 
 # COM Support Library helper script
 # Copyright (C) 2007 SIL

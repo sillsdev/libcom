@@ -3,7 +3,7 @@
 #
 #	Ball Automake file
 #
-#	MarkS - 2007-02-05
+#	MarkS - 2007-01-25
 #
 # Ball COM Support Library Test
 # Copyright (C) 2007 SIL
