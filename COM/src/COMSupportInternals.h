@@ -1,3 +1,13 @@
+/*
+ *	$Id$
+ *
+ *	COM Support Library internals
+ *
+ *	Graeme Costin - 2001-08-07
+ *
+ */
+
+
 /*----------------------------------------------------------------------------------------------
 Copyright 2001, SIL International. All rights reserved.
 
@@ -17,19 +27,6 @@ Added GetMutableInstance() for private use
 	2001-08-07, GDLC
 ----------------------------------------------------------------------------------------------*/
 
-//--------------------------------------------------------------------------------------------
-//	ComRegistry class
-//
-//	This class implements a non-persistent registry of COM classes which is built as an
-//	application using it loads itself and the shared libraries it uses. Since this
-//	registry is re-built every time an application launches it is always up-to-date
-//	with the latest versions of the shared libraries.
-//
-//	The single instance of the COM registry is constructed in response to static items
-//	in the shared libraries. This works fine as long as the shared or dynamic libraries
-//	are actually loaded into the program's memory space; different APIs are needed for shared
-//	libraries on MacOS 9 compared to dynamic libraries on MacOS X.
-
 #include <map>
 #include <string>
 using std::string;
@@ -39,6 +36,19 @@ typedef std::map<CLSID, string>	DllMap;
 
 void registerFactoryInDLL(void* dllhandle, REFCLSID requestedClassID, REFIID factoryInterfaceID = IID_IClassFactory);
 
+/** 
+ * ComRegistry class.
+ * 
+ * This class implements a non-persistent registry of COM classes which is built as an
+ * application using it loads itself and the shared libraries it uses. Since this
+ * registry is re-built every time an application launches it is always up-to-date
+ * with the latest versions of the shared libraries.
+ * 
+ * The single instance of the COM registry is constructed in response to static items
+ * in the shared libraries. This works fine as long as the shared or dynamic libraries
+ * are actually loaded into the program's memory space; different APIs are needed for shared
+ * libraries on MacOS 9 compared to dynamic libraries on MacOS X.
+ */
 class ComRegistry : public ComMap
 {
 	public:
@@ -53,7 +63,7 @@ class ComRegistry : public ComMap
 
 		static void PtrToHex(const void* Ptr, char *buf);
 
-		// CLSID to DLL mapping
+		/** CLSID to DLL mapping */	
 		DllMap dllmap; // Should this be static?
 
 		
