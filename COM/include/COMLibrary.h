@@ -3,22 +3,31 @@
  *
  *	Functions unique to this COM Support Library
  *
- *	MarkS - 2007-02-05
+ *	MarkS - 2006-12
  *
+ * COM Support Library
+ * Copyright (C) 2007 SIL
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ *
+ * http://www.gnu.org/licenses/lgpl.html
  */
 
 #ifndef COMLibrary_h
 #define COMLibrary_h
 
-//------------------------------------------------------------------
-//
-//	Register Server
-//
-//	Components should call this function to register their class factory
-//	with the ComRegistry map. This should be done in the constructor of the
-//	server's class factory and the instance of the class factory should be
-//	created as a static pointer to the class factory is initialised.
- 
 void RegisterServer(const CLSID &classID, class IClassFactory* classFactory);
 
 #endif /* !COMLibrary_h */
