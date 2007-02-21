@@ -3,10 +3,10 @@
  *
  *	COM Support Library internals
  *
- *	Graeme Costin - 2001-08-07
+ *	Graeme Costin - 2001-08
  *
  * COM Support Library
- * Copyright (C) 2007 SIL
+ * Copyright (C) 2001, 2007 SIL International
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,24 +25,6 @@
  * http://www.gnu.org/licenses/lgpl.html
  */
 
-/*----------------------------------------------------------------------------------------------
-Copyright 2001, SIL International. All rights reserved.
-
-File: COMSupportInternals.h
-Responsibility: Graeme Costin
-Last reviewed: never
-
-	Internal details of support for COM in FieldWorks on MacOS.
-
-Added a DLL Map
-	2006-12-22, MarkS
-Commentary improved after loading of both shared and dynamic libraries was worked out.
-	2003-06-21, GDLC
-Moved internal implementation definitions to here from COMSupport.h
-	2001-07-19, GDLC
-Added GetMutableInstance() for private use
-	2001-08-07, GDLC
-----------------------------------------------------------------------------------------------*/
 
 #include <map>
 #include <string>

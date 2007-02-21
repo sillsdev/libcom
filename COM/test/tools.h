@@ -5,8 +5,11 @@
  *
  *	MarkS - 2006-12-15
  *
+ *	This tools.h file should probably be removed and its contents 
+ *	reorganized into another location if wanted.
+ *
  * COM Support Library
- * Copyright (C) 2007 SIL
+ * Copyright (C) 2007 SIL International
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,14 +27,6 @@
  *
  * http://www.gnu.org/licenses/lgpl.html
  */
-
-// tools.h
-// Created 20061215 MarkS
-// Helpful tools whilst debugging, etc.
-// Modified 20070130 MarkS
-// Cleaned up slightly. Added LGPL license notice. This tools.h file should 
-// probably be removed and its contents reorganized into another 
-// location if wanted.
 
 #ifndef tools_h
 #define tools_h

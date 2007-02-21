@@ -6,7 +6,7 @@
  *	MarkS - 2005-01
  *
  * Ball COM Support Library Test
- * Copyright (C) 2007 SIL
+ * Copyright (C) 2007 SIL International
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,19 +24,6 @@
  *
  * http://www.gnu.org/licenses/lgpl.html
  */
-
-// Ball.h
-// Created  2005.01.xx, MarkS
-// Ball class declaration, as well as code to help tie into COM, 
-// such as a CFactory class.
-// Note: Portions of this file were copied from Component.h, and it 
-// says that some of its code was taken from "Rogerson's book CD-ROM", so
-// we should probably ensure this is totally legit/legal before releasing 
-// such code (TODO).
-// Modified 2007.01.23, MarkS
-// Removing all non-LGPLable code. Done.
-// Modified 2007.01.30, MarkS
-// Cleaning up.
 
 #ifndef _Ball_h_
 #define _Ball_h_

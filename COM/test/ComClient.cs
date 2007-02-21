@@ -1,12 +1,12 @@
 /*
  *	$Id$
  *
- *	C# COM Client example and test
+ *	C# COM Ball Client example and test
  *
  *	MarkS - 2005-01-21
  *
  * Ball COM Support Library Test
- * Copyright (C) 2007 SIL
+ * Copyright (C) 2007 SIL International
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,15 +24,6 @@
  *
  * http://www.gnu.org/licenses/lgpl.html
  */
-
-// ComClient.cs
-// Created  2005.01.21, MarkS
-// ComClient accesses a Ball through COM (hopefully).
-// Modified 2006.12.12 MarkS
-// Okay, I'm re-working some things to try to get Mono COM RCW's to connect to our FakeCOMLibrary, and that into the Ball COM object.
-// instantaneously, LD_PRELOAD=./libballmodule.so LD_LIBRARY_PATH=$HOME/repo/libraries/COMSupportLibrary mono ComClient.exe
-// Modified 20070130 MarkS
-// Cleaning up.
 
 using System;
 using System.Runtime.InteropServices;

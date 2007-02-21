@@ -1,12 +1,12 @@
 /*
  *	$Id$
  *
- *	COM Support Library
+ *	Main COM Support Library code
  *
  *	Graeme Costin - 2001-05
  *
  * COM Support Library
- * Copyright (C) 2007 SIL
+ * Copyright (C) 2001, 2007 SIL International
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,54 +24,6 @@
  *
  * http://www.gnu.org/licenses/lgpl.html
  */
-
-/*----------------------------------------------------------------------------------------------
-Copyright 2001, SIL International. All rights reserved.
-
-COM Support Library
-
-File: COMSupport.cpp
-Responsibility: Graeme Costin
-Reviewed:	Date		Reviewer
-			2001-05-24	Neil Mayhew
-
-	$Id$
-
-	Support for COM in Linux
-	
-Cleaning up the code. Removing messy debugging code, putting in proper API comments, and renaming the rest of the hungarian to variables that state their use rather than type.
-	2007-01-29, MarkS
-Calling DllGetClassObject, and lots of other changes.                  I ♥ gdb
-	2007-01   , MarkS
-Implemented a DLL Map. Added CoInitialize. Made CoGetClassObject AddRef to the factory to prevent a crash. And other little changes. 
-	2006-12   , MarkS
-Adapted for command line builds with gcc, removed Carbon dependencies and ported to Linux.
-Clean up ready for checking in.
-	2003-06-24, NJHM, GDLC
-Modified CLSIDFromString() to avoid use of wide character functions
-	2003-06-21, NJHM
-Fixed definition of first parameter to CoCreateInstance().
-	2003-05-14, GDLC
-Added RegisterServer() for registering class factories in our ComRegistry.
-	2003-05-01, GDLC
-Added CoGetClassObject() and changed CoCreateInstance() to use it.
-	2003-04-21, GDLC
-Fixed bug in StringFromCLSID (L'-' and missing unsigned)
-	2003-04-14, GDLC
-Added #pragma export on/off. Added ComRegistry constructor and destructor so that
-linker would not object when linking the shared library.
-	2002-12-12, GDLC
-Created new project: COMSuppLibShared.mcp as a modified copy of WinSuppLibShared.mcp
-Removed use of FieldWorks debug.h; added include of assert.h
-	2002-12-09, GDLC
-Adjusted for GUID definitions from GUIDDEF.H
-	2002-02-13, GDLC
-Moved #include "debug.h" from COMSupport.h to this file
-	2002-01-16, GDLC
-Removed general items to WinSupport.cpp
-	2001-07-17, GDLC
-----------------------------------------------------------------------------------------------*/
-
 
 #include "Types.h"
 #include "WinError.h"

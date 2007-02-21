@@ -6,7 +6,7 @@
  *	MarkS - 2006-11-16
  *
  * Ball COM Support Library Test
- * Copyright (C) 2007 SIL
+ * Copyright (C) 2007 SIL International
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,19 +25,12 @@
  * http://www.gnu.org/licenses/lgpl.html
  */
 
-// IBall.idl
-// Created 20061116 MarkS
-// Modified 20061212 MarkS, to be .. right :)
-// DOS$ midl /mktyplib203 IBall.idl
-// DOS$ tlbimp IBall.tlb /out:IBallMetadata.dll
-// Modified 20070130 MarkS
-// Added LGPL notice, and cleaned up slightly.
-// Modified 20070131 MarkS
-// Made the guids actually unique (generated from uuidgen)
+// To create a .tlb, C++ GUIDs and header code, and C# Interop/Metadata DLL:
 // DOS$ midl /Oicf /env win32 /tlb IBall.tlb /dlldata IBall_d.c /h IBall_idl.h /iid IBall_iid.h IBall.idl
 // DOS$ tlbimp IBall.tlb /out:IBallMetadata.dll
-// Linux$ ./extract_iids.sh IBall_idl.h
-// Linux$ mv IBall_idl.h raw-MIDL/IBall_idl.h && sed -e 's/EXTERN_C const \(IID\|CLSID\|LIBID\|DIID\) \(IID\|CLSID\|LIBID\|DIID\)_\(..*\);/#define \2_\3 __uuidof(\3)/' raw-MIDL/IBall_idl.h >IBall_idl.h
+// Linux$ mv IBall_idl.h raw-MIDL/IBall_idl.h && ./fix-midl.sh raw-MIDL/IBall_idl.h > IBall_idl.h
+//(Linux$ mv IBall_idl.h raw-MIDL/IBall_idl.h && sed -e 's/EXTERN_C const \(IID\|CLSID\|LIBID\|DIID\) \(IID\|CLSID\|LIBID\|DIID\)_\(..*\);/#define \2_\3 __uuidof(\3)/' raw-MIDL/IBall_idl.h >IBall_idl.h
+// Linux$ ./extract_iids.sh IBall_idl.h > IBall_GUIDs.cpp
 
 import "oaidl.idl";
 import "ocidl.idl";

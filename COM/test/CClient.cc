@@ -1,12 +1,12 @@
 /*
  *	$Id$
  *
- *	C++ COM Client example and test
+ *	C++ COM Ball Client example and test
  *
  *	MarkS - 2006-12-12
  *
  * Ball COM Support Library Test
- * Copyright (C) 2007 SIL
+ * Copyright (C) 2007 SIL International
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,26 +24,6 @@
  *
  * http://www.gnu.org/licenses/lgpl.html
  */
-
-// CClient.cc
-// Created 20061212 MarkS
-// Designed to test against libballmodule.so and our FakeCOMLibrary
-// Using some of what was learned in .../code/tests/wineinvoke/CWi/cwi.c
-// when g++ing, make sure to " -rdynamic -ldl "
-// hm, instantaneously: g++ CClient.c GUIDs.cpp -rdynamic -ldl
-// make libballmodule && g++ CCliet.c GUIDs.cpp -rdynamic -ldl && LD_PRELOAD=./libballmodule.so ./a.out
-// this works, praised God :D. it reports dist as 55 :D
-// Modified 20070119 MarkS
-// Working in the fwCB_THREE test, mono seemed to make a Ball but failed to 
-// poke the Ball.bounce() function. To help me understand why not, I'll use 
-// a C++ way of working with the COM Ball to try to track down the problem.
-// I'll need to modify this file to make it work with the now way of doing 
-// things from the pCB2 to fwCB_THREE tests.
-// Modified 20070124 MarkS
-// LGPL'd.
-// Modified 20070130 MarkS
-// Cleaning up.
- 
 
 #include <stdio.h>
 #include <dlfcn.h>

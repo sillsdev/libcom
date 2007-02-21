@@ -6,7 +6,7 @@
  *	MarkS - 2005-01
  *
  * Ball COM Support Library Test
- * Copyright (C) 2007 SIL
+ * Copyright (C) 2007 SIL International
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,25 +24,6 @@
  *
  * http://www.gnu.org/licenses/lgpl.html
  */
-
-// Ball.cpp
-// Created  2005.01.xx, MarkS
-// Ball class
-// TODO: Parts of this file were copied from Component.cpp, which says that 
-// some of it was copied from "Rogerson's book CD-ROM", so before releasing 
-// this, we need to ensure that it is all legit/legal copyright wise. It may 
-// have perhaps been from something called "Inside COM" from a 
-// "Chapter 7 Example".
-// Modified 2006.12.14 MarkS
-// Doing a bunch of modifications on the Ball test code as I look at ways to 
-// tie into COM in desirable ways.
-// Modified 2006.12.18 MarkS
-// Beginning to modify Ball to make it use COM in the way FieldWorks will.
-// This will likely include massive changes to Ball.cpp.
-// Modified 2007.01.23, MarkS
-// Removing all non-LGPLable code. Done.
-// Modified 2007.01.30, MarkS
-// Cleaning up.
 
 #include <assert.h>
 
