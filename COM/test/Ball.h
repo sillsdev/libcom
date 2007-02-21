@@ -1,5 +1,11 @@
 /*
-/* Ball COM Support Library Test
+ *	$Id$
+ *
+ *	Ball COM Server example and test headers
+ *
+ *	MarkS - 2005-01
+ *
+ * Ball COM Support Library Test
  * Copyright (C) 2007 SIL
  * 
  * This library is free software; you can redistribute it and/or

@@ -1,5 +1,11 @@
 /*
-/* COM Support Library
+ *	$Id$
+ *
+ *	Debugging tools
+ *
+ *	MarkS - 2006-12-15
+ *
+ * COM Support Library
  * Copyright (C) 2007 SIL
  * 
  * This library is free software; you can redistribute it and/or

@@ -1,4 +1,11 @@
-/* Ball COM Support Library Test
+/*
+ *	$Id$
+ *
+ *	C++ COM Client example and test
+ *
+ *	MarkS - 2006-12-12
+ *
+ * Ball COM Support Library Test
  * Copyright (C) 2007 SIL
  * 
  * This library is free software; you can redistribute it and/or

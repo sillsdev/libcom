@@ -1,4 +1,11 @@
-/* Ball COM Support Library Test
+/*
+ *	$Id$
+ *
+ *	Ball COM interface
+ *
+ *	MarkS - 2006-11-16
+ *
+ * Ball COM Support Library Test
  * Copyright (C) 2007 SIL
  * 
  * This library is free software; you can redistribute it and/or
