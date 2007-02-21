@@ -1,5 +1,11 @@
 /*
-/* Ball COM Support Library Test
+ *	$Id$
+ *
+ *	Ball COM Server example and test of COM
+ *
+ *	MarkS - 2005-01
+ *
+ * Ball COM Support Library Test
  * Copyright (C) 2007 SIL
  * 
  * This library is free software; you can redistribute it and/or
@@ -53,9 +59,8 @@
 #include <stdexcept>
 #include "GenericFactory.h"
 
-// begin WINE rip from winbase.h
+// Begin copied code from Wine's winbase.h, modified 2007-02-01 by Neil Mayhew
 
-// So says the winbase.h: (modified 2007-02-01 by Neil Mayhew)
 /*
  * Copyright (C) the Wine project
  *
@@ -95,7 +100,7 @@ extern inline LONG WINAPI InterlockedDecrement( LONG volatile *dest )
     return --*dest;
 }
 
-// end winbase.h rip
+// End copied code from Wine's winbase.h
 
 // Global variables
 

@@ -1,5 +1,16 @@
+/*
+ *	$Id$
+ *
+ *	COM Support Library
+ *
+ *	Graeme Costin - 2001-05
+ *
+ */
+
 /*----------------------------------------------------------------------------------------------
 Copyright 2001, SIL International. All rights reserved.
+
+COM Support Library
 
 File: COMSupport.cpp
 Responsibility: Graeme Costin
@@ -74,7 +85,7 @@ Removed general items to WinSupport.cpp
  * http://msdn2.microsoft.com/en-us/library/ms680589.aspx
  * @param inWideString input string to convert to a classID
  * @param outClassID output binary classID GUID based on inWideString
- * @return NOERROR on successful conversion, E_INVALIDARG if one or more invalid arguments, or CO_E_CLASSSTRING if the class string was not formatted correctly.
+ * @return ERROR_SUCCESS on successful conversion, E_INVALIDARG if one or more invalid arguments, or CO_E_CLASSSTRING if the class string was not formatted correctly.
  */
 #pragma export on
 HRESULT WINAPI CLSIDFromString(LPCOLESTR inWideString, LPCLSID outClassID)
@@ -223,18 +234,13 @@ void CoTaskMemFree(LPVOID allocatedMemory)
 }
 #pragma export off
 
-//------------------------------------------------------------------
-//	ComRegistry creator
-//
-//	Creates an instance of ComRegistry.
-//      Populates the DLL Map.
-//------------------------------------------------------------------
-#pragma export on
+
 /**
  * Creates an instance of ComRegistry. ComRegistry stores a mapping between 
  * classID GUIDs and their corresponding class factories. 
  * This constructor will also populate the DLL Map from the dllmap.txt file.
  */
+#pragma export on
 ComRegistry::ComRegistry()
 {
 	// Populate the dllmap
@@ -467,7 +473,7 @@ void registerFactoryInDLL(void* dllhandle, REFCLSID requestedClassID, REFIID fac
  * @param requestedClassID class ID for which you want a class factory
  * @param dwClsContext should be CLSCTX_INPROC
  * @param factoryInterface receives the desired class factory, of type IClassFactory
- * @return S_OK upon success, or REGDB_E_CLASSNOTREG upon a bunch of means of failure
+ * @return S_OK upon success, CO_E_NOT_SUPPORTED upon being given an unsupported context, or REGDB_E_CLASSNOTREG upon a bunch of means of failure
  */
 #pragma export on
 HRESULT CoGetClassObject(
@@ -493,7 +499,7 @@ HRESULT CoGetClassObject(
 
 
 /**
- * CoInitialize
+ * CoInitialize.
  * 
  * Do nothing, but be here for when Mono wants to call CoInitialize.
  * 
@@ -643,7 +649,7 @@ void ComRegistry::Dump(std::ostream& out) const
 
 /**
  * Converts a pointer to a hexadecimal NUL terminated representation in the 11 byte buffer buf.
- * @param classFactory class factory to use
+ * @param Ptr pointer to convert
  * @param buf 11 byte buffer to which to write the hexadecimal representation
  */
 void ComRegistry::PtrToHex(const void* Ptr, char *buf)
