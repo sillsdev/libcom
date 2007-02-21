@@ -8,7 +8,7 @@
 #	MarkS - 2007-01-22
 # 
 # COM Support Library helper script
-# Copyright (C) 2007 SIL
+# Copyright (C) 2007 SIL International
 # 
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
