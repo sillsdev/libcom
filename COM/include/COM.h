@@ -174,4 +174,15 @@ extern "C" HRESULT CoCreateInstance(REFCLSID rclsid, class IUnknown* pUnkOuter, 
 HRESULT CoRegisterClassObject(REFCLSID rclsid, class IUnknown* pObj, DWORD dwClsContext, DWORD flags, LPDWORD lpdwRegister);
 HRESULT CoRevokeClassObject(DWORD dwRegister);
 
+/**
+ * @brief Get access to a class from the implementing DLL, such as a class's class factory
+ * @param requestedClassID class ID of your desired class
+ * @param requestedInterfaceID an interface ID that your desired class implements (such as IID_IClassFactory)
+ * @param objectInterface interface to your desired class
+ * @return S_OK upon success, E_OUTOFMEMORY upon running out of memory, E_NOINTERFACE if the class does not support the requested interface, CLASS_E_CLASSNOTAVAILABLE if this DLL doesn't support the requestedClassID
+ * 
+ * http://msdn2.microsoft.com/en-us/library/ms680760.aspx
+ */
+EXTERN_C HRESULT DllGetClassObject(REFCLSID requestedClassID, REFIID requestedInterfaceID, LPVOID * objectInterface);
+
 #endif //_COM_H_
