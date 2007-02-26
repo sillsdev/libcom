@@ -71,7 +71,6 @@ int main() {
 
 // http://msdn.microsoft.com/library/default.asp?url=/library/en-us/com/html/0f171cf4-87b9-43a6-97f2-80ed344fe376.asp
 
-	hr = 123;
   hr = (*CoCreateInstance)(
 		requestedClassID,
 		outerAggregateIUnknown, // (IUnknown *)NULL,
