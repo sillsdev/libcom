@@ -30,10 +30,16 @@
 #include <string>
 using std::string;
 
-typedef std::map<CLSID, LPCLASSFACTORY>	ComMap;
-typedef std::map<CLSID, string>	DllMap;
+struct factory_dllfilename_pair {
+	LPCLASSFACTORY factory;
+	string dllfilename;
+};
 
-void registerFactoryInDLL(void* dllhandle, REFCLSID requestedClassID, REFIID factoryInterfaceID = IID_IClassFactory);
+typedef std::map<CLSID, factory_dllfilename_pair> ComponentMap;
+
+HRESULT registerFactoryInDLL(void* dllhandle, REFCLSID requestedClassID, REFIID factoryInterfaceID = IID_IClassFactory);
+void dump_component_map(ComponentMap component_map, std::ostream& out);
+string getDLLFilename(const CLSID &, const ComponentMap&);
 
 /** 
  * ComRegistry class.
@@ -47,8 +53,10 @@ void registerFactoryInDLL(void* dllhandle, REFCLSID requestedClassID, REFIID fac
  * in the shared libraries. This works fine as long as the shared or dynamic libraries
  * are actually loaded into the program's memory space; different APIs are needed for shared
  * libraries on MacOS 9 compared to dynamic libraries on MacOS X.
+ * 
+ * TODO: update comment
  */
-class ComRegistry : public ComMap
+class ComRegistry
 {
 	public:
 	
@@ -59,13 +67,10 @@ class ComRegistry : public ComMap
 	private:
 
 		static ComRegistry* GetMutableInstance();
+		LPCLASSFACTORY getFactory(const CLSID &);
 
-		static void PtrToHex(const void* Ptr, char *buf);
-
-		/** CLSID to DLL mapping */	
-		DllMap dllmap; // Should this be static?
-
-		
+		/** CLSID to Class Factory and Dll Filename mapping */
+		ComponentMap component_map;
 		
 	public:
 
@@ -74,6 +79,7 @@ class ComRegistry : public ComMap
 		void Register(const CLSID &Class, LPCLASSFACTORY Pointer);
 
 		HRESULT GetFactoryPtr(const CLSID& Class, LPCLASSFACTORY* pIFactory) const;
+		
+		static void PtrToHex(const void* Ptr, char *buf);
 
-		void Dump(std::ostream& out) const;
 };
