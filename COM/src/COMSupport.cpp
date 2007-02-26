@@ -320,18 +320,13 @@ LPCLASSFACTORY ComRegistry::getFactory(const CLSID &classID) {
 
 /** Thrown if a specific ClassID was not found (in the component map) */
 class ClassIDNotFound : std::exception {};
-/** Thrown if the DLL filename corresponding to a ClassID (in the component map) is empty (not specified) */
-class DLLFilenameIsEmpty : std::exception {};
-/** Thrown if a certain ClassID is not registered. */
-class exceptionREGDB_E_CLASSNOTREG : std::exception {};
 
 /**
  *	@brief Find DLL filename corresponding to Class ID in a component map.
  * 	@param classID Class ID matching a DLL file in the dllmap
  * 	@param component_map component map from which to find desired DLL filename
- * 	@return dll filename
+ * 	@return dll filename, which could be empty
  *	@throws ClassIDNotFound if classID is not in the component map
- *	@throws DLLFilenameIsEmpty if the DLL filename is empty (TODO: this made more sense before the ComponentMap was introduced. Consider just returning an empty string now.)
  */
 string getDLLFilename(const CLSID &classID, const ComponentMap& component_map) {
 
@@ -341,9 +336,6 @@ string getDLLFilename(const CLSID &classID, const ComponentMap& component_map) {
 	}
 
 	string dllfilename = (*where).second.dllfilename;
-	if (dllfilename.empty()) {
-		throw DLLFilenameIsEmpty();
-	}
 	
 	return dllfilename;
 }
@@ -381,9 +373,9 @@ HRESULT ComRegistry::GetFactoryPtr (const CLSID &classID, LPCLASSFACTORY* classF
 		dllfilename = getDLLFilename(classID, component_map);
 	} catch (ClassIDNotFound const& e) {
 		return REGDB_E_CLASSNOTREG;
-	} catch (DLLFilenameIsEmpty const& e) {
-		return REGDB_E_CLASSNOTREG;
 	}
+	if (dllfilename.empty())
+		return REGDB_E_CLASSNOTREG;
 
 	// Load the DLL file into memory.
 	// If RTLD_NODELETE is not enough to avoid undesirable things related to 
@@ -399,7 +391,7 @@ HRESULT ComRegistry::GetFactoryPtr (const CLSID &classID, LPCLASSFACTORY* classF
 
 	// Register the COM object we just opened.
 	HRESULT hr = registerFactoryInDLL(dllhandle, classID, IID_IClassFactory);
-	if (S_OK != hr)
+	if (FAILED(hr))
 		return hr;
 	
 	// classID should now be registered (either by it calling RegisterServer, or by us registering it for it), so try again.
@@ -438,7 +430,7 @@ HRESULT registerFactoryInDLL(void* dllhandle, REFCLSID requestedClassID, REFIID 
 	// Note that if we pass factory as a null pointer, it'll not work.
 	HRESULT hr = (*DllGetClassObject)(requestedClassID, factoryInterfaceID, (VOID**)&factory);
 	
-	if (S_OK != hr)
+	if (FAILED(hr))
 		return hr;
 	if (NULL == factory) {
 		return REGDB_E_CLASSNOTREG;
