@@ -116,6 +116,25 @@ void Ball::CreateCom(IUnknown *outerAggregateIUnknown, REFIID interfaceid, void 
 // Upon being dlopen'ed, this will create our class factory (and as long as RegisterServer() is still being used, will register a pointer to the class factory (as an IClassFactory))
 static CFactory classFactory;
 
+
+EXTERN_C HRESULT DllGetClassObject(REFCLSID requestedClassID, REFIID requestedInterfaceID, LPVOID * objectInterface)
+{
+
+	GUID IID_Ball = __uuidof(Ball);
+
+	if (requestedClassID != IID_Ball)
+		return CLASS_E_CLASSNOTAVAILABLE;
+
+	CFactory* factory = new CFactory();
+	if (NULL == factory)
+		return E_OUTOFMEMORY;
+	
+	HRESULT hr = factory->QueryInterface(requestedInterfaceID, objectInterface);
+	factory->Release();
+	
+	return hr;
+}
+
 // Ball's Class Factory.
 
 // Ball's Class Factory's implementation of IUnknown.
@@ -205,7 +224,7 @@ HRESULT __stdcall CFactory::LockServer(BOOL shouldLock) {
 	return S_OK;
 }
 
-#endif /* USE_GENERIC_FACTORY */
+#endif /* !USE_GENERIC_FACTORY */
 
 
 /** Ball constructor.
@@ -292,12 +311,4 @@ ULONG __stdcall Ball::Release() {
 }
 
 
-// /**
-// * DllGetClassObject()
-// * 
-// * http://msdn2.microsoft.com/en-us/library/ms680760.aspx
-// */
-//EXTERN_C HRESULT DllGetClassObject(REFCLSID requestedClassID, REFIID requestedInterfaceID, LPVOID objectInterface)
-//{
-//	
-//}
+

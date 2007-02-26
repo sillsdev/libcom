@@ -63,7 +63,7 @@ private:
 	volatile LONG m_referenceCount; 
 };
 
-#define USE_GENERIC_FACTORY
+#undef USE_GENERIC_FACTORY
 
 #ifndef USE_GENERIC_FACTORY
 // CFactory class
@@ -89,7 +89,7 @@ public:
 	virtual HRESULT __stdcall LockServer(BOOL shouldLock);
 
 	CFactory() : m_referenceCount((LONG)1) {
-		RegisterServer(CLSID_Ball, static_cast<IClassFactory*>(this));
+		// RegisterServer(CLSID_Ball, static_cast<IClassFactory*>(this));
 	}
 
 	~CFactory() 
@@ -99,6 +99,7 @@ public:
 private:
 	volatile LONG m_referenceCount;
 };
+
 #endif /* !USE_GENERIC_FACTORY */
 
 #endif /* _Ball_h_ */
