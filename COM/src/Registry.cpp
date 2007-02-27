@@ -31,6 +31,7 @@
 #include "COMPointers.h"
 #include "COMSupportInternals.h"
 #include "ComRegistry.h"
+#include "COM.h"
 
 /**
  * CoInitialize.
@@ -77,7 +78,7 @@ HRESULT CoGetClassObject(
 	}
 
 	IClassFactory* factory = NULL;
-	HRESULT	hr = ComRegistry::GetInstance()->GetFactoryPtr(requestedClassID, &factory);
+	HRESULT	hr = ComRegistry::get_instance()->get_factory_pointer(requestedClassID, &factory);
 	if (SUCCEEDED(hr))
 	  factory->AddRef();
 
@@ -110,7 +111,7 @@ extern "C" HRESULT CoCreateInstance (
 	*objectInterface = NULL;
 
 	// little endian to big endian the requestedClassID
-	CLSID mangled_requestedClassID = mangleGuid(requestedClassID);
+	CLSID mangled_requestedClassID = mangle_guid(requestedClassID);
 
 	IClassFactory* pIFactory = NULL;
 	HRESULT hr = CoGetClassObject(mangled_requestedClassID,

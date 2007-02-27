@@ -43,9 +43,8 @@ struct factory_dllfilename_pair {
 
 typedef std::map<CLSID, factory_dllfilename_pair> ComponentMap;
 
-HRESULT registerFactoryInDLL(void* dllhandle, REFCLSID requestedClassID, REFIID factoryInterfaceID = IID_IClassFactory);
+HRESULT register_factory_in_dll(void* dllhandle, REFCLSID requestedClassID, REFIID factoryInterfaceID = IID_IClassFactory);
 void dump_component_map(ComponentMap component_map, std::ostream& out);
-string getDLLFilename(const CLSID &, const ComponentMap&);
-GUID mangleGuid(GUID guid);
+string get_dll_filename(const CLSID &, const ComponentMap&);
 
 #endif // COMSupportInternals_h

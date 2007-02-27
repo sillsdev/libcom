@@ -89,7 +89,7 @@ public:
 	virtual HRESULT __stdcall LockServer(BOOL shouldLock);
 
 	CFactory() : m_referenceCount((LONG)1) {
-		// RegisterServer(CLSID_Ball, static_cast<IClassFactory*>(this));
+		// register_server(CLSID_Ball, static_cast<IClassFactory*>(this));
 	}
 
 	~CFactory() 

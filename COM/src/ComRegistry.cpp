@@ -98,7 +98,7 @@ ComRegistry::~ComRegistry()
  * created here.
  */
 #pragma export on
-ComRegistry* ComRegistry::GetMutableInstance()
+ComRegistry* ComRegistry::get_mutable_instance()
 {
 	static ComRegistry instance;
 	return &instance;
@@ -107,17 +107,18 @@ ComRegistry* ComRegistry::GetMutableInstance()
 
 /**
  * @brief Register a class factory.
+ * 
  * Adds an entry to the registry for a class and its factory pointer.
  * @param classID class ID to register
  * @param classFactory class factory that can create objects of class ID classID.
  */
 #pragma export on
-void ComRegistry::Register(const CLSID &classID, LPCLASSFACTORY classFactory)
+void ComRegistry::register_factory(const CLSID &classID, LPCLASSFACTORY classFactory)
 {
 	// Preserve the old dll filename
 	string old_dllfilename = "";
 	try {
-		old_dllfilename = getDLLFilename(classID, component_map);
+		old_dllfilename = get_dll_filename(classID, component_map);
 	} catch(std::exception e) {
 		// If getting the dll filename failed, that's okay.
 	};
@@ -129,11 +130,12 @@ void ComRegistry::Register(const CLSID &classID, LPCLASSFACTORY classFactory)
 
 /**
  * @brief Get a class factory that can produce classes of a certain classID.
+ * 
  * @param classID Class ID that you want a class factory for
  * @return pointer to class factory corresponding to classID, or NULL if not found
  * @see ComRegistry::Register
  */
-LPCLASSFACTORY ComRegistry::getFactory(const CLSID &classID) {
+LPCLASSFACTORY ComRegistry::get_factory(const CLSID &classID) {
 	
 	ComponentMap::const_iterator where = this->component_map.find(classID);
 	
@@ -147,6 +149,7 @@ LPCLASSFACTORY ComRegistry::getFactory(const CLSID &classID) {
 #pragma export on
 /**
  * @brief Get a class factory for a class out of the registry, possibly loading a necessary DLL file.
+ * 
  * If classID is not found in the registry, we look in the component map, find and open the corresponding DLL file, 
  * the DLL registers its COM objects or we will, and we return the class factory for classID.
  * If we fail to get the desired factory, then classFactory is left unchanged.
@@ -156,12 +159,12 @@ LPCLASSFACTORY ComRegistry::getFactory(const CLSID &classID) {
  * @return CLASS_E_CLASSNOTAVAILABLE if the DLL does not support the requested class id, though the dll map file claimed it did
  * @return REGDB_E_CLASSNOTREG if there was an error calling DllGetClassObject and we never registered the factory
  */
-HRESULT ComRegistry::GetFactoryPtr (const CLSID &classID, LPCLASSFACTORY* classFactory) const
+HRESULT ComRegistry::get_factory_pointer (const CLSID &classID, LPCLASSFACTORY* classFactory) const
 {
 	// Look for the factory pointer, by Class ID, in the COM registry
 	LPCLASSFACTORY resultFactory = 0;
-	ComRegistry* comRegistry = ComRegistry::GetInstance();
-	if (resultFactory = comRegistry->getFactory(classID)) {
+	ComRegistry* comRegistry = ComRegistry::get_instance();
+	if (resultFactory = comRegistry->get_factory(classID)) {
 		*classFactory = resultFactory;
 		return S_OK;
 	}
@@ -174,7 +177,7 @@ HRESULT ComRegistry::GetFactoryPtr (const CLSID &classID, LPCLASSFACTORY* classF
 	// Find the DLL file according to classID in the dllmap
 	string dllfilename;
 	try {
-		dllfilename = getDLLFilename(classID, component_map);
+		dllfilename = get_dll_filename(classID, component_map);
 	} catch (ClassIDNotFound const& e) {
 		return REGDB_E_CLASSNOTREG;
 	}
@@ -189,17 +192,17 @@ HRESULT ComRegistry::GetFactoryPtr (const CLSID &classID, LPCLASSFACTORY* classF
 
 	if (!dllhandle) {
 			const char* dllerror = dlerror();
-			fprintf(stderr, "COM Support Library: Warning: error loading DLL file '%s' in ComRegistry::GetFactoryPtr: %s\n", dllfilename.c_str(), dllerror);
+			fprintf(stderr, "COM Support Library: Warning: error loading DLL file '%s' in ComRegistry::get_factory_pointer: %s\n", dllfilename.c_str(), dllerror);
 			return REGDB_E_CLASSNOTREG;
 		}
 
 	// Register the COM object we just opened.
-	HRESULT hr = registerFactoryInDLL(dllhandle, classID, IID_IClassFactory);
+	HRESULT hr = register_factory_in_dll(dllhandle, classID, IID_IClassFactory);
 	if (FAILED(hr))
 		return hr;
 	
-	// classID should now be registered (either by it calling RegisterServer, or by us registering it for it), so try again.
-	if (resultFactory = comRegistry->getFactory(classID)) {
+	// classID should now be registered (either by it calling register_server, or by us registering it for it), so try again.
+	if (resultFactory = comRegistry->get_factory(classID)) {
 		*classFactory = resultFactory;
 		return S_OK;
 	}
@@ -208,10 +211,11 @@ HRESULT ComRegistry::GetFactoryPtr (const CLSID &classID, LPCLASSFACTORY* classF
 
 /**
  * @brief Converts a pointer to a hexadecimal NUL terminated representation in the 11 byte buffer buf.
- * @param Ptr pointer to convert
+ * 
+ * @param pointer pointer to convert
  * @param buf 11 byte buffer to which to write the hexadecimal representation
  */
-void ComRegistry::PtrToHex(const void* Ptr, char *buf)
+void ComRegistry::pointer_to_hex(const void* pointer, char *buf)
 {
 	static	wchar_t hex_digits[] = L"0123456789ABCDEF";
 	char* p=buf;
@@ -220,7 +224,7 @@ void ComRegistry::PtrToHex(const void* Ptr, char *buf)
 		unsigned long	ci;
 	};
 	
-	cp = Ptr;
+	cp = pointer;
 	
 	*p++ = '0'; *p++ = 'x';
 	for (int i=0; i<8; i++)

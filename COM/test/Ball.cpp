@@ -113,9 +113,8 @@ void Ball::CreateCom(IUnknown *outerAggregateIUnknown, REFIID interfaceid, void 
   
 #else /* non-Generic Factory */
 
-// Upon being dlopen'ed, this will create our class factory (and as long as RegisterServer() is still being used, will register a pointer to the class factory (as an IClassFactory))
+// Upon being dlopen'ed, this will create our class factory (and as long as register_server() is still being used, will register a pointer to the class factory (as an IClassFactory))
 static CFactory classFactory;
-
 
 EXTERN_C HRESULT DllGetClassObject(REFCLSID requestedClassID, REFIID requestedInterfaceID, LPVOID * objectInterface)
 {
@@ -254,9 +253,6 @@ HRESULT Ball::roll(long distance, long *total) {
 	return S_OK;
 }
 
-
-GUID mangleGuid(GUID guid);
-
 // Ball's implementation of IUnknown (QueryInterface, AddRef, Release)
 // http://msdn2.microsoft.com/en-us/library/ms680509.aspx
 
@@ -271,7 +267,7 @@ GUID mangleGuid(GUID guid);
  * @return S_OK on success or E_NOINTERFACE if Ball does not support the requested interface.
  */
 HRESULT __stdcall Ball::QueryInterface(const IID& interfaceid, void** objectInterface) {
-	IID mangled_interfaceid = mangleGuid(interfaceid);
+	IID mangled_interfaceid = mangle_guid(interfaceid);
 	if (IID_IUnknown == mangled_interfaceid) {
 		*objectInterface = static_cast<IBall*>(this); 
 	} else if (IID_IBall == mangled_interfaceid) {

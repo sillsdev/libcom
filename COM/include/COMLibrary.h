@@ -28,7 +28,7 @@
 #ifndef COMLibrary_h
 #define COMLibrary_h
 
-void RegisterServer(const CLSID &classID, class IClassFactory* classFactory);
+void register_server(const CLSID &classID, class IClassFactory* classFactory);
 
 #endif /* !COMLibrary_h */
 
