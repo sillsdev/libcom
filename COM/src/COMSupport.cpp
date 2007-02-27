@@ -58,7 +58,7 @@
  * 	@return dll filename, which could be empty
  *	@throws ClassIDNotFound if classID is not in the component map
  */
-string getDLLFilename(const CLSID &classID, const ComponentMap& component_map) {
+string get_dll_filename(const CLSID &classID, const ComponentMap& component_map) {
 
 	ComponentMap::const_iterator where = component_map.find(classID);
 	if (where == component_map.end()) {
@@ -83,7 +83,7 @@ string getDLLFilename(const CLSID &classID, const ComponentMap& component_map) {
  * @return REGDB_E_CLASSNOTREG if there was an error calling DllGetClassObject and we never registered the factory (which might be a little different than REGDB_E_CLASSNOTREG is really intended for).
  * @return S_OK upon success
  */
-HRESULT registerFactoryInDLL(void* dllhandle, REFCLSID requestedClassID, REFIID factoryInterfaceID /*= IID_IClassFactory*/) {
+HRESULT register_factory_in_dll(void* dllhandle, REFCLSID requestedClassID, REFIID factoryInterfaceID /*= IID_IClassFactory*/) {
 
 	IClassFactory* factory;
 	// DllGetClassObject: http://msdn2.microsoft.com/en-us/library/ms680760.aspx
@@ -106,7 +106,7 @@ HRESULT registerFactoryInDLL(void* dllhandle, REFCLSID requestedClassID, REFIID 
 	}
 	
 	// Register the class factory
-	RegisterServer(requestedClassID, factory);
+	register_server(requestedClassID, factory);
 
 #if DUMP_COM_REGISTRY
 	// TODO Rework this after more refactoring is done
@@ -130,7 +130,7 @@ inline void swap(unsigned char &a, unsigned char &b) {
  * @param guid little endian GUID
  * @return big endian GUID based on guid
  */
-GUID mangleGuid(GUID guid) {
+GUID mangle_guid(GUID guid) {
 
 	// this is implemented quickly and dirtily
 
@@ -176,9 +176,9 @@ GUID mangleGuid(GUID guid) {
  * @param classFactory class factory to register that can create objects of class ID classID.
  */
 #pragma export on
-void RegisterServer(const CLSID &classID, LPCLASSFACTORY classFactory)
+void register_server(const CLSID &classID, LPCLASSFACTORY classFactory)
 {
-	ComRegistry::GetInstance()->Register(classID, classFactory);
+	ComRegistry::get_instance()->register_factory(classID, classFactory);
 }
 #pragma export off
 
@@ -186,6 +186,7 @@ void RegisterServer(const CLSID &classID, LPCLASSFACTORY classFactory)
 
 /**
  * @brief Output the component map
+ * 
  * @param component_map component map to dump
  * @param out output stream to which to write data
  */
