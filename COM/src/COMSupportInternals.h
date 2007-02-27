@@ -26,9 +26,15 @@
  */
 
 
+#ifndef COMSupportInternals_h
+#define COMSupportInternals_h
+
 #include <map>
 #include <string>
 using std::string;
+
+/** Thrown if a specific ClassID was not found (in the component map) */
+class ClassIDNotFound : std::exception {};
 
 struct factory_dllfilename_pair {
 	LPCLASSFACTORY factory;
@@ -40,46 +46,6 @@ typedef std::map<CLSID, factory_dllfilename_pair> ComponentMap;
 HRESULT registerFactoryInDLL(void* dllhandle, REFCLSID requestedClassID, REFIID factoryInterfaceID = IID_IClassFactory);
 void dump_component_map(ComponentMap component_map, std::ostream& out);
 string getDLLFilename(const CLSID &, const ComponentMap&);
+GUID mangleGuid(GUID guid);
 
-/** 
- * ComRegistry class.
- * 
- * This class implements a non-persistent registry of COM classes which is built as an
- * application using it loads itself and the shared libraries it uses. Since this
- * registry is re-built every time an application launches it is always up-to-date
- * with the latest versions of the shared libraries.
- * 
- * The single instance of the COM registry is constructed in response to static items
- * in the shared libraries. This works fine as long as the shared or dynamic libraries
- * are actually loaded into the program's memory space; different APIs are needed for shared
- * libraries on MacOS 9 compared to dynamic libraries on MacOS X.
- * 
- * TODO: update comment
- */
-class ComRegistry
-{
-	public:
-	
-		ComRegistry();
-	
-		~ComRegistry();
-
-	private:
-
-		static ComRegistry* GetMutableInstance();
-		LPCLASSFACTORY getFactory(const CLSID &);
-
-		/** CLSID to Class Factory and Dll Filename mapping */
-		ComponentMap component_map;
-		
-	public:
-
-		static ComRegistry* GetInstance() { return GetMutableInstance(); }
-	
-		void Register(const CLSID &Class, LPCLASSFACTORY Pointer);
-
-		HRESULT GetFactoryPtr(const CLSID& Class, LPCLASSFACTORY* pIFactory) const;
-		
-		static void PtrToHex(const void* Ptr, char *buf);
-
-};
+#endif // COMSupportInternals_h

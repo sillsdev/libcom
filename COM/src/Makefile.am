@@ -27,7 +27,7 @@
 
 lib_LTLIBRARIES = libcom.la 
 
-libcom_la_SOURCES = COM.cpp COMInterfaces.cpp COMClasses.cpp COMSupport.cpp
+libcom_la_SOURCES = COM.cpp COMInterfaces.cpp COMClasses.cpp COMSupport.cpp Registry.cpp GUID.cpp Memory.cpp ComRegistry.cpp
 
 # set the include path found by configure
 INCLUDES = $(all_includes) -I$(top_srcdir)/include -I$(top_srcdir)/../Win32Base/include
