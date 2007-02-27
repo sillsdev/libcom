@@ -106,6 +106,8 @@ extern GUID GUID_NULL;
 
 HRESULT CoCreateGuid(GUID* pguid);
 
+GUID mangle_guid(GUID guid);
+
 #define interface struct
 
 template<class T>
