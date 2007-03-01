@@ -52,6 +52,7 @@ extern "C" HRESULT CoInitialize(
 
 /**
  * @brief Get a class factory able to create objects of class ID requestedClassID.
+ * 
  * NOTE: This function does NOT do what the MSDN spec actually says it does. Fix this is if that's important.
  * Note: The caller is responsible for releasing the class factory.
  * Note: This implementation is intended for use for inprocess COM only.
@@ -89,6 +90,7 @@ HRESULT CoGetClassObject(
 
 /**
  * @brief Create an instance of a class of class ID requestedClassID, which implements interface ID objectInterfaceID, and will be accessible through the interface objectInterface.
+ * 
  * NOTE: This implementation is intended for use for inprocess COM only.
  * http://msdn2.microsoft.com/en-us/library/ms686615.aspx
  * @param requestedClassID class ID of class that will be created and given access to through objectInterface
