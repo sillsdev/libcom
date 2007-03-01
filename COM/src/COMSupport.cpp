@@ -51,74 +51,6 @@
 
 #include "ComRegistry.h"
 
-/**
- *	@brief Find DLL filename corresponding to Class ID in a component map.
- * 	@param classID Class ID matching a DLL file in the dllmap
- * 	@param component_map component map from which to find desired DLL filename
- * 	@return dll filename, which could be empty
- *	@throws ClassIDNotFound if classID is not in the component map
- */
-string get_dll_filename(const CLSID &classID, const ComponentMap& component_map) {
-
-	ComponentMap::const_iterator where = component_map.find(classID);
-	if (where == component_map.end()) {
-		throw ClassIDNotFound();
-	}
-
-	string dllfilename = (*where).second.dllfilename;
-	
-	return dllfilename;
-}
-
-
-/**
- * @brief Register a class factory for requestedClassID from an open COM DLL file by calling its DllGetClassObject function.
- * There could be additional HRESULTs returned than those specified here.
- * @param dllhandle handle to an open COM DLL file
- * @param requestedClassID class ID to get a factory for
- * @param factoryInterfaceID interface ID for IClassFactory (or an interface ID for any interface that an IClassFactory in the DLL implements)
- * @return E_OUTOFMEMORY upon running out of memory while creating the class factory
- * @return E_NOINTERFACE if the class does not support the requested interface
- * @return CLASS_E_CLASSNOTAVAILABLE if the DLL does not support the requested class id
- * @return REGDB_E_CLASSNOTREG if there was an error calling DllGetClassObject and we never registered the factory (which might be a little different than REGDB_E_CLASSNOTREG is really intended for).
- * @return S_OK upon success
- */
-HRESULT register_factory_in_dll(void* dllhandle, REFCLSID requestedClassID, REFIID factoryInterfaceID /*= IID_IClassFactory*/) {
-
-	IClassFactory* factory;
-	// DllGetClassObject: http://msdn2.microsoft.com/en-us/library/ms680760.aspx
-	HRESULT (*DllGetClassObject)(REFCLSID requestedClassID, REFIID requestedInterfaceID, VOID ** objectInterface);
-	dlerror(); // clear any old error conditions
-	*(void **) (&DllGetClassObject) = dlsym(dllhandle, "DllGetClassObject");
-	const char* dllerror = dlerror();
-	if (NULL != dllerror)
-	{
-		fprintf(stderr, "COM Support Library: Error getting COM object's DllGetClassObject function. Error: %s\n", dllerror);
-		return REGDB_E_CLASSNOTREG;
-	}
-	// Note that if we pass factory as a null pointer, it'll not work.
-	HRESULT hr = (*DllGetClassObject)(requestedClassID, factoryInterfaceID, (VOID**)&factory);
-	
-	if (FAILED(hr))
-		return hr;
-	if (NULL == factory) {
-		return REGDB_E_CLASSNOTREG;
-	}
-	
-	// Register the class factory
-	register_server(requestedClassID, factory);
-
-#if DUMP_COM_REGISTRY
-	// TODO Rework this after more refactoring is done
-	//std::cerr << "Registry updated:\n";
-	  //ComRegistry::GetInstance()->Dump(std::cout);
-	//dump_component_map(component_map, std::cerr);
-#endif
-
-	return S_OK;
-}
-#pragma export off
-
 inline void swap(unsigned char &a, unsigned char &b) {
 	char tmp = a;
 	a = b;
@@ -126,7 +58,8 @@ inline void swap(unsigned char &a, unsigned char &b) {
 }
 
 /**
- * Change a little endian GUID to a big endian GUID.
+ * @brief Change a little endian GUID to a big endian GUID.
+ * 
  * @param guid little endian GUID
  * @return big endian GUID based on guid
  */
@@ -166,7 +99,8 @@ GUID mangle_guid(GUID guid) {
 }
 
 /**
- * Register a class factory by class ID in the internal registry.
+ * @brief Register a class factory by class ID in the internal registry.
+ * 
  * "Components should call this function to register their class factory
  * with the ComRegistry map. This should be done in the constructor of the
  * server's class factory and the instance of the class factory should be
@@ -182,45 +116,3 @@ void register_server(const CLSID &classID, LPCLASSFACTORY classFactory)
 }
 #pragma export off
 
-#ifdef DEBUG
-
-/**
- * @brief Output the component map
- * 
- * @param component_map component map to dump
- * @param out output stream to which to write data
- */
-#pragma export on
-void dump_component_map(ComponentMap component_map, std::ostream& out)
-{
-	for (ComponentMap::const_iterator iterator = component_map.begin(); iterator != component_map.end(); ++iterator)
-	{
-		LPOLESTR classid;
-		LPCLASSFACTORY factory;
-		char factory_pointer_string[11];
-		string dllfilename;
-		factory_dllfilename_pair data;
-		
-		GUID guid = iterator->first;
-		data = iterator->second;
-		
-		HRESULT hr = StringFromCLSID(guid, &classid);
-		
-		if (SUCCEEDED(hr))
-			out << std::string(classid, std::find(classid, classid+999, 0));
-		else
-			out << "[GUID]";
-		
-		out << " -> ";
-		
-		factory = (*iterator).second.factory;
-		ComRegistry::PtrToHex(factory, &factory_pointer_string[0]);
-		dllfilename = (*iterator).second.dllfilename;
-		out << factory_pointer_string << ", " << dllfilename << "\n";
-		
-		CoTaskMemFree(classid);
-	}
-}
-#pragma export off
-
-#endif	//	DEBUG
