@@ -46,10 +46,10 @@ int main() {
 		/*IN*/ REFIID		objectInterfaceID,
 		/*OUT*/ LPVOID*		objectInterface);
 
-  REFCLSID		requestedClassID = CLSID_Ball; // the class id that I'm looking for
+  REFCLSID		requestedClassID = mangle_guid(CLSID_Ball); // the class id that I'm looking for
   LPUNKNOWN	outerAggregateIUnknown = NULL;
   DWORD		dwClsContext = (DWORD)CLSCTX_INPROC_SERVER;
-  REFIID		objectInterfaceID = IID_IBall;
+  REFIID		objectInterfaceID = mangle_guid(IID_IBall);
   LPVOID*		objectInterface = NULL; // we want a pointer to an IUnknown interface
   HRESULT hr;
 
