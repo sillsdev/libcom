@@ -198,10 +198,14 @@ HRESULT ComRegistry::get_factory_pointer(const CLSID &classID, LPCLASSFACTORY* c
 			return REGDB_E_CLASSNOTREG;
 		}
 
-	// Register the COM object we just opened.
-	HRESULT hr = register_factory_in_dll(dllhandle, classID, IID_IClassFactory);
+	// Get a factory in the COM object we just opened.
+	IClassFactory* tempFactory=NULL;
+	HRESULT hr = find_factory_in_dll(dllhandle, classID, &tempFactory);
 	if (FAILED(hr))
 		return hr;
+	
+	// Register the obtained class factory
+	register_server(classID, tempFactory);
 	
 	// classID should now be registered (either by it calling register_server, or by us registering it for it), so try again.
 	if (resultFactory = comRegistry->get_factory(classID)) {
@@ -294,22 +298,21 @@ void ComRegistry::dump_component_map(std::ostream& out)
 #pragma export off
 
 /**
- * @brief Register a class factory for requestedClassID from an open COM DLL file by calling its DllGetClassObject function.
+ * @brief Find a class factory for requestedClassID from an open COM DLL file by calling its DllGetClassObject function.
  * 
  * There could be additional HRESULTs returned than those specified here.
  *
  * @param dllhandle handle to an open COM DLL file
  * @param requestedClassID class ID to get a factory for
- * @param factoryInterfaceID interface ID for IClassFactory (or an interface ID for any interface that an IClassFactory in the DLL implements)
+ * @param factory receives a class factory able to generate objects with class id requestedClassID
  * @return E_OUTOFMEMORY upon running out of memory while creating the class factory
  * @return E_NOINTERFACE if the class does not support the requested interface
  * @return CLASS_E_CLASSNOTAVAILABLE if the DLL does not support the requested class id
- * @return REGDB_E_CLASSNOTREG if there was an error calling DllGetClassObject and we never registered the factory (which might be a little different than REGDB_E_CLASSNOTREG is really intended for).
+ * @return REGDB_E_CLASSNOTREG if there was an error calling DllGetClassObject (TODO a better HRESULT should probably be used here).
  * @return S_OK upon success
  */
-HRESULT ComRegistry::register_factory_in_dll(void* dllhandle, REFCLSID requestedClassID, REFIID factoryInterfaceID /*= IID_IClassFactory*/) {
+HRESULT ComRegistry::find_factory_in_dll(void* dllhandle, REFCLSID requestedClassID, IClassFactory** factory) {
 
-	IClassFactory* factory;
 	// DllGetClassObject: http://msdn2.microsoft.com/en-us/library/ms680760.aspx
 	HRESULT (*DllGetClassObject)(REFCLSID requestedClassID, REFIID requestedInterfaceID, VOID ** objectInterface);
 	dlerror(); // clear any old error conditions
@@ -321,16 +324,13 @@ HRESULT ComRegistry::register_factory_in_dll(void* dllhandle, REFCLSID requested
 		return REGDB_E_CLASSNOTREG;
 	}
 	// Note that if we pass factory as a null pointer, it'll not work.
-	HRESULT hr = (*DllGetClassObject)(requestedClassID, factoryInterfaceID, (VOID**)&factory);
+	HRESULT hr = (*DllGetClassObject)(requestedClassID, IID_IClassFactory, (VOID**)factory);
 	
 	if (FAILED(hr))
 		return hr;
-	if (NULL == factory) {
+	if (NULL == factory || NULL == *factory) {
 		return REGDB_E_CLASSNOTREG;
 	}
-	
-	// Register the class factory
-	register_server(requestedClassID, factory);
 
 #if DUMP_COM_REGISTRY
 	// TODO Rework this after more refactoring is done
@@ -342,4 +342,3 @@ HRESULT ComRegistry::register_factory_in_dll(void* dllhandle, REFCLSID requested
 	return S_OK;
 }
 #pragma export off
-
