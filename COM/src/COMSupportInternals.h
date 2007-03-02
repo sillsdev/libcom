@@ -33,9 +33,6 @@
 #include <string>
 using std::string;
 
-/** Thrown if a specific ClassID was not found (in the component map) */
-class ClassIDNotFound : std::exception {};
-
 struct factory_dllfilename_pair {
 	LPCLASSFACTORY factory;
 	string dllfilename;
