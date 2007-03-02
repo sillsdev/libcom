@@ -54,7 +54,7 @@ class ComRegistry
 		ComRegistry();
 		~ComRegistry();
 
-		/** get_instance */
+		/** Gets an instance of the ComRegistry (singleton) */
 		static ComRegistry* get_instance() { return get_mutable_instance(); }
 		static void pointer_to_hex(const void* pointer, char *buf);
 		void register_factory(const CLSID &Class, LPCLASSFACTORY Pointer);
