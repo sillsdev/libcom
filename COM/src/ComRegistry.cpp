@@ -31,6 +31,7 @@
 #include "WinError.h"
 #include <dlfcn.h>
 #include "COMLibrary.h"
+#include <iostream>
 
  /**
  * Creates an instance of ComRegistry. ComRegistry stores a mapping between 
@@ -69,15 +70,15 @@ ComRegistry::ComRegistry()
 		olestr.push_back(0);
 		CLSID clsid;
 		CLSIDFromString(&olestr[0], &clsid);
-
-		factory_dllfilename_pair data = {NULL, dllfilename};
-		component_map[clsid] = data;
+		
+		component_map[clsid].factory = NULL;
+		component_map[clsid].dllfilename = dllfilename;
 	}
 	dllmapfilestream.close();
 
 #if DUMP_COM_REGISTRY
 	std::cerr << "Registry created:\n";
-	dump_component_map(component_map, std::cerr);
+	dump_component_map(std::cerr);
 #endif
 }
 #pragma export off
@@ -116,16 +117,12 @@ ComRegistry* ComRegistry::get_mutable_instance()
 #pragma export on
 void ComRegistry::register_factory(const CLSID &classID, LPCLASSFACTORY classFactory)
 {
-	// Preserve the old dll filename
-	string old_dllfilename = "";
-	try {
-		old_dllfilename = get_dll_filename(classID);
-	} catch(std::exception e) {
-		// If getting the dll filename failed, that's okay.
-	};
-	
-	factory_dllfilename_pair data = {classFactory, old_dllfilename};
-	component_map[classID] = data;
+	component_map[classID].factory = classFactory;
+
+#if DUMP_COM_REGISTRY
+	std::cerr << "Registry updated:\n";
+	dump_component_map(std::cerr);
+#endif
 }
 #pragma export off
 
@@ -193,10 +190,10 @@ HRESULT ComRegistry::get_factory_pointer(const CLSID &classID, LPCLASSFACTORY* c
 	void* dllhandle = dlopen(dllfilename.c_str(), RTLD_LAZY | RTLD_NODELETE); // Maybe use RTLD_NOW instead of RTLD_LAZY? I definitely want the global static variable to be created.
 
 	if (!dllhandle) {
-			const char* dllerror = dlerror();
-			fprintf(stderr, "COM Support Library: Warning: error loading DLL file '%s' in ComRegistry::get_factory_pointer: %s\n", dllfilename.c_str(), dllerror);
-			return REGDB_E_CLASSNOTREG;
-		}
+		const char* dllerror = dlerror();
+		fprintf(stderr, "COM Support Library: Warning: error loading DLL file '%s' in ComRegistry::get_factory_pointer: %s\n", dllfilename.c_str(), dllerror);
+		return REGDB_E_CLASSNOTREG;
+	}
 
 	// Get a factory in the COM object we just opened.
 	IClassFactory* tempFactory=NULL;
@@ -206,7 +203,7 @@ HRESULT ComRegistry::get_factory_pointer(const CLSID &classID, LPCLASSFACTORY* c
 	
 	// Register the obtained class factory
 	register_server(classID, tempFactory);
-	
+
 	// classID should now be registered (either by it calling register_server, or by us registering it for it), so try again.
 	if (resultFactory = comRegistry->get_factory(classID)) {
 		*classFactory = resultFactory;
@@ -273,10 +270,8 @@ void ComRegistry::dump_component_map(std::ostream& out)
 		LPCLASSFACTORY factory;
 		char factory_pointer_string[11];
 		string dllfilename;
-		factory_dllfilename_pair data;
 		
 		GUID guid = iterator->first;
-		data = iterator->second;
 		
 		HRESULT hr = StringFromCLSID(guid, &classid);
 		
@@ -331,13 +326,6 @@ HRESULT ComRegistry::find_factory_in_dll(void* dllhandle, REFCLSID requestedClas
 	if (NULL == factory || NULL == *factory) {
 		return REGDB_E_CLASSNOTREG;
 	}
-
-#if DUMP_COM_REGISTRY
-	// TODO Rework this after more refactoring is done
-	//std::cerr << "Registry updated:\n";
-	  //ComRegistry::GetInstance()->Dump(std::cout);
-	//dump_component_map(component_map, std::cerr);
-#endif
 
 	return S_OK;
 }
