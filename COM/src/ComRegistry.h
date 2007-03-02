@@ -30,6 +30,7 @@
 
 #include "COMInterfaces.h"
 #include "COMSupportInternals.h"
+#include <stdexcept>
 
 /** 
  * ComRegistry class.
@@ -60,7 +61,15 @@ class ComRegistry
 		HRESULT get_factory_pointer(const CLSID& Class, LPCLASSFACTORY* pIFactory);
 		string get_dll_filename(const CLSID &);
 		void dump_component_map(std::ostream& out);
-		HRESULT register_factory_in_dll(void* dllhandle, REFCLSID requestedClassID, REFIID factoryInterfaceID = IID_IClassFactory);
+		HRESULT find_factory_in_dll(void* dllhandle, REFCLSID requestedClassID, IClassFactory** factory);
+
+		/** Base class of all ComRegistry exceptions */
+		class ComRegistryException : std::runtime_error {
+		public:
+			ComRegistryException() : std::runtime_error("libcom ComRegistry exception") {}
+		};
+		/** Thrown if a specific ClassID was not found (in the component map) */
+		class ClassIDNotFound : ComRegistryException {};
 
 	private:
 
