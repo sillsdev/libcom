@@ -161,9 +161,8 @@ LPCLASSFACTORY ComRegistry::get_factory(const CLSID &classID) {
 HRESULT ComRegistry::get_factory_pointer(const CLSID &classID, LPCLASSFACTORY* classFactory)
 {
 	// Look for the factory pointer, by Class ID, in the COM registry
-	LPCLASSFACTORY resultFactory = 0;
-	ComRegistry* comRegistry = ComRegistry::get_instance();
-	if (resultFactory = comRegistry->get_factory(classID)) {
+	LPCLASSFACTORY resultFactory = NULL;
+	if (resultFactory = get_factory(classID)) {
 		*classFactory = resultFactory;
 		return S_OK;
 	}
@@ -205,7 +204,7 @@ HRESULT ComRegistry::get_factory_pointer(const CLSID &classID, LPCLASSFACTORY* c
 	register_server(classID, tempFactory);
 
 	// classID should now be registered (either by it calling register_server, or by us registering it for it), so try again.
-	if (resultFactory = comRegistry->get_factory(classID)) {
+	if (resultFactory = get_factory(classID)) {
 		*classFactory = resultFactory;
 		return S_OK;
 	}
