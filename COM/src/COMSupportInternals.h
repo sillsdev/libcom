@@ -37,6 +37,10 @@ using std::string;
 struct factory_dllfilename_pair {
 	LPCLASSFACTORY factory;
 	string dllfilename;
+	
+	factory_dllfilename_pair() {
+		factory = NULL;
+	}
 };
 
 /** Class ID to factory,dllfilename mapping */

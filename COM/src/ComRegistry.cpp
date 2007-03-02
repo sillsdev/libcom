@@ -71,7 +71,6 @@ ComRegistry::ComRegistry()
 		CLSID clsid;
 		CLSIDFromString(&olestr[0], &clsid);
 		
-		component_map[clsid].factory = NULL;
 		component_map[clsid].dllfilename = dllfilename;
 	}
 	dllmapfilestream.close();
