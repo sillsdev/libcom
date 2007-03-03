@@ -20,7 +20,6 @@ UINT RealizePalette(HDC hdc);
 HPALETTE SelectPalette(HDC hdc, HPALETTE hpal, BOOL bForceBackground);
 BOOL DeleteObject(HGDIOBJ hObject);
 
-UINT SysStringLen(BSTR bstr);
 int _strnicmp(const char *string1, const char *string2, size_t count);
 int _stricmp(const char *string1, const char *string2);
 
