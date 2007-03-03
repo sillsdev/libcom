@@ -142,6 +142,11 @@ int SysReAllocStringLen(BSTR* pbstr, const OLECHAR* pch, unsigned int cch)
 	return true;
 }
 
+unsigned int SysStringLen(BSTR bstr)
+{
+	return *(unsigned int*)(bstr - 2);
+}
+
 // Class registration and object creation
 
 HRESULT CoCreateGuid(GUID* pguid)

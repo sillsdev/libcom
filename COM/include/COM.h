@@ -145,6 +145,7 @@ BSTR SysAllocStringByteLen(LPCSTR psz, UINT len);
 void SysFreeString(BSTR bstr);
 int SysReAllocString(BSTR* pbstr, const OLECHAR* psz);
 int SysReAllocStringLen(BSTR* pbstr, const OLECHAR* pch, unsigned int cch);
+UINT SysStringLen(BSTR bstr);
 
 // Class registration and object creation
 
