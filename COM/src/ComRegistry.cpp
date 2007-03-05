@@ -200,9 +200,9 @@ HRESULT ComRegistry::get_factory_pointer(const CLSID &classID, LPCLASSFACTORY* c
 		return hr;
 	
 	// Register the obtained class factory
-	register_server(classID, tempFactory);
+	RegisterFactory(classID, tempFactory);
 
-	// classID should now be registered (either by it calling register_server, or by us registering it for it), so try again.
+	// classID should now be registered (either by it calling RegisterFactory, or by us registering it for it), so try again.
 	if (resultFactory = get_factory(classID)) {
 		*classFactory = resultFactory;
 		return S_OK;

@@ -113,7 +113,7 @@ void Ball::CreateCom(IUnknown *outerAggregateIUnknown, REFIID interfaceid, void 
   
 #else /* non-Generic Factory */
 
-// Upon being dlopen'ed, this will create our class factory (and as long as register_server() is still being used, will register a pointer to the class factory (as an IClassFactory))
+// Upon being dlopen'ed, this will create our class factory (and as long as RegisterFactory() is still being used, will register a pointer to the class factory (as an IClassFactory))
 static CFactory classFactory;
 
 EXTERN_C HRESULT DllGetClassObject(REFCLSID requestedClassID, REFIID requestedInterfaceID, LPVOID * objectInterface)

@@ -110,7 +110,7 @@ GUID mangle_guid(GUID guid) {
  * @param classFactory class factory to register that can create objects of class ID classID.
  */
 #pragma export on
-void register_server(const CLSID &classID, LPCLASSFACTORY classFactory)
+void RegisterFactory(const CLSID &classID, LPCLASSFACTORY classFactory)
 {
 	ComRegistry::get_instance()->register_factory(classID, classFactory);
 }
