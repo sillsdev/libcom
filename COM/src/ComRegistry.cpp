@@ -71,13 +71,13 @@ ComRegistry::ComRegistry()
 		CLSID clsid;
 		CLSIDFromString(&olestr[0], &clsid);
 		
-		component_map[clsid].dllfilename = dllfilename;
+		m_componentMap[clsid].dllfilename = dllfilename;
 	}
 	dllmapfilestream.close();
 
 #if DUMP_COM_REGISTRY
 	std::cerr << "Registry created:\n";
-	dump_component_map(std::cerr);
+	dumpComponentMap(std::cerr);
 #endif
 }
 #pragma export off
@@ -99,7 +99,7 @@ ComRegistry::~ComRegistry()
  * created here.
  */
 #pragma export on
-ComRegistry* ComRegistry::get_mutable_instance()
+ComRegistry* ComRegistry::getMutableInstance()
 {
 	static ComRegistry instance;
 	return &instance;
@@ -114,13 +114,13 @@ ComRegistry* ComRegistry::get_mutable_instance()
  * @param classFactory class factory that can create objects of class ID classID.
  */
 #pragma export on
-void ComRegistry::register_factory(const CLSID &classID, LPCLASSFACTORY classFactory)
+void ComRegistry::registerFactory(const CLSID &classID, LPCLASSFACTORY classFactory)
 {
-	component_map[classID].factory = classFactory;
+	m_componentMap[classID].factory = classFactory;
 
 #if DUMP_COM_REGISTRY
 	std::cerr << "Registry updated:\n";
-	dump_component_map(std::cerr);
+	dumpComponentMap(std::cerr);
 #endif
 }
 #pragma export off
@@ -132,11 +132,11 @@ void ComRegistry::register_factory(const CLSID &classID, LPCLASSFACTORY classFac
  * @return pointer to class factory corresponding to classID, or NULL if not found
  * @see ComRegistry::Register
  */
-LPCLASSFACTORY ComRegistry::get_factory(const CLSID &classID) {
+LPCLASSFACTORY ComRegistry::getFactory(const CLSID &classID) {
 	
-	ComponentMap::const_iterator where = this->component_map.find(classID);
+	ComponentMap::const_iterator where = this->m_componentMap.find(classID);
 	
-	if (where != component_map.end())
+	if (where != m_componentMap.end())
 	{
 		return (*where).second.factory;
 	}
@@ -157,11 +157,11 @@ LPCLASSFACTORY ComRegistry::get_factory(const CLSID &classID) {
  * @return CLASS_E_CLASSNOTAVAILABLE if the DLL does not support the requested class id, though the dll map file claimed it did
  * @return REGDB_E_CLASSNOTREG if there was an error calling DllGetClassObject and we never registered the factory
  */
-HRESULT ComRegistry::get_factory_pointer(const CLSID &classID, LPCLASSFACTORY* classFactory)
+HRESULT ComRegistry::getFactoryPointer(const CLSID &classID, LPCLASSFACTORY* classFactory)
 {
 	// Look for the factory pointer, by Class ID, in the COM registry
 	LPCLASSFACTORY resultFactory = NULL;
-	if (resultFactory = get_factory(classID)) {
+	if (resultFactory = getFactory(classID)) {
 		*classFactory = resultFactory;
 		return S_OK;
 	}
@@ -174,7 +174,7 @@ HRESULT ComRegistry::get_factory_pointer(const CLSID &classID, LPCLASSFACTORY* c
 	// Find the DLL file according to classID in the dllmap
 	string dllfilename;
 	try {
-		dllfilename = get_dll_filename(classID);
+		dllfilename = getDllFilename(classID);
 	} catch (ClassIDNotFound const& e) {
 		return REGDB_E_CLASSNOTREG;
 	}
@@ -189,13 +189,13 @@ HRESULT ComRegistry::get_factory_pointer(const CLSID &classID, LPCLASSFACTORY* c
 
 	if (!dllhandle) {
 		const char* dllerror = dlerror();
-		fprintf(stderr, "COM Support Library: Warning: error loading DLL file '%s' in ComRegistry::get_factory_pointer: %s\n", dllfilename.c_str(), dllerror);
+		fprintf(stderr, "COM Support Library: Warning: error loading DLL file '%s' in ComRegistry::getFactoryPointer: %s\n", dllfilename.c_str(), dllerror);
 		return REGDB_E_CLASSNOTREG;
 	}
 
 	// Get a factory in the COM object we just opened.
 	IClassFactory* tempFactory=NULL;
-	HRESULT hr = find_factory_in_dll(dllhandle, classID, &tempFactory);
+	HRESULT hr = findFactoryInDll(dllhandle, classID, &tempFactory);
 	if (FAILED(hr))
 		return hr;
 	
@@ -203,7 +203,7 @@ HRESULT ComRegistry::get_factory_pointer(const CLSID &classID, LPCLASSFACTORY* c
 	RegisterFactory(classID, tempFactory);
 
 	// classID should now be registered (either by it calling RegisterFactory, or by us registering it for it), so try again.
-	if (resultFactory = get_factory(classID)) {
+	if (resultFactory = getFactory(classID)) {
 		*classFactory = resultFactory;
 		return S_OK;
 	}
@@ -216,7 +216,7 @@ HRESULT ComRegistry::get_factory_pointer(const CLSID &classID, LPCLASSFACTORY* c
  * @param pointer pointer to convert
  * @param buf 11 byte buffer to which to write the hexadecimal representation
  */
-void ComRegistry::pointer_to_hex(const void* pointer, char *buf)
+void ComRegistry::pointerToHex(const void* pointer, char *buf)
 {
 	static	wchar_t hex_digits[] = L"0123456789ABCDEF";
 	char* p=buf;
@@ -242,10 +242,10 @@ void ComRegistry::pointer_to_hex(const void* pointer, char *buf)
  * 	@return dll filename, which could be empty
  *	@throws ClassIDNotFound if classID is not in the component map
  */
-string ComRegistry::get_dll_filename(const CLSID &classID) {
+string ComRegistry::getDllFilename(const CLSID &classID) {
 
-	ComponentMap::const_iterator where = component_map.find(classID);
-	if (where == component_map.end()) {
+	ComponentMap::const_iterator where = m_componentMap.find(classID);
+	if (where == m_componentMap.end()) {
 		throw ClassIDNotFound();
 	}
 
@@ -260,9 +260,9 @@ string ComRegistry::get_dll_filename(const CLSID &classID) {
  * @param out output stream to which to write data
  */
 #pragma export on
-void ComRegistry::dump_component_map(std::ostream& out)
+void ComRegistry::dumpComponentMap(std::ostream& out)
 {
-	for (ComponentMap::const_iterator iterator = component_map.begin(); iterator != component_map.end(); ++iterator)
+	for (ComponentMap::const_iterator iterator = m_componentMap.begin(); iterator != m_componentMap.end(); ++iterator)
 	{
 		LPOLESTR classid;
 		LPCLASSFACTORY factory;
@@ -281,7 +281,7 @@ void ComRegistry::dump_component_map(std::ostream& out)
 		out << " -> ";
 		
 		factory = (*iterator).second.factory;
-		pointer_to_hex(factory, &factory_pointer_string[0]);
+		pointerToHex(factory, &factory_pointer_string[0]);
 		dllfilename = (*iterator).second.dllfilename;
 		out << factory_pointer_string << ", " << dllfilename << "\n";
 		
@@ -304,7 +304,7 @@ void ComRegistry::dump_component_map(std::ostream& out)
  * @return REGDB_E_CLASSNOTREG if there was an error calling DllGetClassObject (TODO a better HRESULT should probably be used here).
  * @return S_OK upon success
  */
-HRESULT ComRegistry::find_factory_in_dll(void* dllhandle, REFCLSID requestedClassID, IClassFactory** factory) {
+HRESULT ComRegistry::findFactoryInDll(void* dllhandle, REFCLSID requestedClassID, IClassFactory** factory) {
 
 	// DllGetClassObject: http://msdn2.microsoft.com/en-us/library/ms680760.aspx
 	HRESULT (*DllGetClassObject)(REFCLSID requestedClassID, REFIID requestedInterfaceID, VOID ** objectInterface);

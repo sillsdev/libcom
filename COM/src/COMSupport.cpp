@@ -112,7 +112,7 @@ GUID mangle_guid(GUID guid) {
 #pragma export on
 void RegisterFactory(const CLSID &classID, LPCLASSFACTORY classFactory)
 {
-	ComRegistry::get_instance()->register_factory(classID, classFactory);
+	ComRegistry::getInstance()->registerFactory(classID, classFactory);
 }
 #pragma export off
 

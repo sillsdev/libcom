@@ -79,7 +79,7 @@ HRESULT CoGetClassObject(
 	}
 
 	IClassFactory* factory = NULL;
-	HRESULT	hr = ComRegistry::get_instance()->get_factory_pointer(requestedClassID, &factory);
+	HRESULT	hr = ComRegistry::getInstance()->getFactoryPointer(requestedClassID, &factory);
 	if (SUCCEEDED(hr))
 	  factory->AddRef();
 

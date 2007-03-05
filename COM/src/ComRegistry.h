@@ -55,13 +55,13 @@ class ComRegistry
 		~ComRegistry();
 
 		/** Gets an instance of the ComRegistry (singleton) */
-		static ComRegistry* get_instance() { return get_mutable_instance(); }
-		static void pointer_to_hex(const void* pointer, char *buf);
-		void register_factory(const CLSID &Class, LPCLASSFACTORY Pointer);
-		HRESULT get_factory_pointer(const CLSID& Class, LPCLASSFACTORY* pIFactory);
-		string get_dll_filename(const CLSID &);
-		void dump_component_map(std::ostream& out);
-		HRESULT find_factory_in_dll(void* dllhandle, REFCLSID requestedClassID, IClassFactory** factory);
+		static ComRegistry* getInstance() { return getMutableInstance(); }
+		static void pointerToHex(const void* pointer, char *buf);
+		void registerFactory(const CLSID &Class, LPCLASSFACTORY Pointer);
+		HRESULT getFactoryPointer(const CLSID& Class, LPCLASSFACTORY* pIFactory);
+		string getDllFilename(const CLSID &);
+		void dumpComponentMap(std::ostream& out);
+		HRESULT findFactoryInDll(void* dllhandle, REFCLSID requestedClassID, IClassFactory** factory);
 
 		/** Base class of all ComRegistry exceptions */
 		class ComRegistryException : std::runtime_error {
@@ -73,11 +73,11 @@ class ComRegistry
 
 	private:
 
-		static ComRegistry* get_mutable_instance();
-		LPCLASSFACTORY get_factory(const CLSID &);
+		static ComRegistry* getMutableInstance();
+		LPCLASSFACTORY getFactory(const CLSID &);
 
 		/** CLSID to Class Factory and Dll Filename mapping */
-		ComponentMap component_map;
+		ComponentMap m_componentMap;
 };
 
 #endif // ComRegistry_h
