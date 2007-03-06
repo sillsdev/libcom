@@ -76,6 +76,19 @@ class ComRegistry
 		static ComRegistry* getMutableInstance();
 		LPCLASSFACTORY getFactory(const CLSID &);
 
+		/** factory,dllfilename pair */
+		struct Entry {
+			LPCLASSFACTORY factory;
+			string dllfilename;
+			
+			Entry() {
+				factory = NULL;
+			}
+		};
+		
+		/** Class ID to factory,dllfilename mapping */
+		typedef std::map<CLSID, Entry> ComponentMap;
+
 		/** CLSID to Class Factory and Dll Filename mapping */
 		ComponentMap m_componentMap;
 };

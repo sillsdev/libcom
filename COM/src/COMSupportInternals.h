@@ -33,17 +33,4 @@
 #include <string>
 using std::string;
 
-/** factory,dllfilename pair */
-struct factory_dllfilename_pair {
-	LPCLASSFACTORY factory;
-	string dllfilename;
-	
-	factory_dllfilename_pair() {
-		factory = NULL;
-	}
-};
-
-/** Class ID to factory,dllfilename mapping */
-typedef std::map<CLSID, factory_dllfilename_pair> ComponentMap;
-
 #endif // COMSupportInternals_h
