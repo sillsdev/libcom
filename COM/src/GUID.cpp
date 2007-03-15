@@ -28,9 +28,12 @@
 #include "Types.h"
 #include "COM.h"
 #include "WinError.h"
+#include <vector>
+#include <unicode/ustring.h>
 
 /**
- * Convert a string representation of a classID to a binary classID GUID (in little endian?).
+ * Convert a string representation of a classID to a binary classID GUID (in host byte order).
+ * The string value should not be enclosed with {...}.
  * The spec says it could also return REGDB_E_CLASSNOTREG and REGDB_E_READREGDB, but we don't currently.
  * http://msdn2.microsoft.com/en-us/library/ms680589.aspx
  * @param inWideString input string to convert to a classID
@@ -40,58 +43,26 @@
 #pragma export on
 HRESULT WINAPI CLSIDFromString(LPCOLESTR inWideString, LPCLSID outClassID)
 {
-	const OLECHAR *p = inWideString;
-	wchar_t wc;
-	char	c;
-	int		i, j, cd;
-	union {
-		PlainGUID clsid;
-		char      cst[16];
-	};
-	char	*q = &cst[0];
+	if (!inWideString || !outClassID)
+		return E_INVALIDARG;
 
-	// Better test needed here?
-	if (!inWideString || !outClassID) return E_INVALIDARG;
-
-//TODO	// Consume open brace and any preceding characters
-//	while ( (wc=*p++) != L'{') if (wc==L'\0') return CO_E_CLASSSTRING;
-
-	// Convert data for each of the 16 bytes of the GUID
-	for (i=0; i<16; i++)
+	std::vector<char> text(inWideString, inWideString + u_strlen(inWideString) + 1);
+	try
 	{
-		for (j=0, cd=0; j<2; j++)
-		{
-			wc = *p++;
-			c = char(wc);
-			if ( wc == L'\0') return CO_E_CLASSSTRING;
-			if ( wc != c ) return CO_E_CLASSSTRING;
-//			if (std::iswxdigit(c))
-			if (std::isxdigit(c))
-			{
-				cd <<= 4;
-				if ('0' <= c && c <= '9')
-					cd += c - '0';
-				else
-//					cd += std::towupper(c) - ('A' - 10);
-					cd += std::toupper(c) - ('A' - 10);
-    		}
-			else return CO_E_CLASSSTRING;
-		}
-		*q++ = char(cd);
-		
-		if (i==3 || i==5 || i== 7 || i==9)
-		{
-			if ( (wc=*p++) != L'-') return CO_E_CLASSSTRING;
-		}
+		GUID clsid(&text[0]);
+		*outClassID = clsid;
+		return ERROR_SUCCESS;
 	}
-	
-	*outClassID = clsid;
-	return ERROR_SUCCESS;
+	catch (...)
+	{
+	}
+	return CO_E_CLASSSTRING;
 }
 #pragma export off
 
 /**
  * Convert binary classID GUID to string representation.
+ * The string value will not be enclosed with {...}.
  * http://msdn2.microsoft.com/en-us/library/ms683917.aspx
  * @param inClassID input binary classID GUID to convert
  * @param outWideString output string based on inClassID
@@ -100,34 +71,17 @@ HRESULT WINAPI CLSIDFromString(LPCOLESTR inWideString, LPCLSID outClassID)
 #pragma export on
 HRESULT StringFromCLSID(const CLSID &inClassID, LPOLESTR *outWideString)
 {
-	// NOTE: The Windows function allocates memory and calls StringFromGUID2()
-	// but we're not implementing StringFromGUID2().
-	const unsigned char	*clsid = reinterpret_cast<const unsigned char*>(&inClassID);
-	OLECHAR			*buf, *q;
-	unsigned int	c, i;
-	static wchar_t	hex_digits[] = L"0123456789ABCDEF";
-
-	// Better test needed here?
 	if (!outWideString) return E_INVALIDARG;
 	
-	// Allocate buffer for string
-	if (!(buf = static_cast<OLECHAR*>(CoTaskMemAlloc(37 * sizeof(OLECHAR)))))
-		return E_OUTOFMEMORY;
-	q = buf;
+	std::string result = inClassID.str();
 
-	// Convert data for each of the 16 bytes of the GUID
-	for (i=0; i<16; i++)
-	{
-		c = *clsid++;
-		*q++ = hex_digits[c >> 4];
-		*q++ = hex_digits[c & 0xF];
-		
-		if (i==3 || i==5 || i== 7 || i==9)
-		{
-			*q++ = L'-';
-		}
-	}
-	*q = L'\0';
+	// Allocate buffer for return value
+	OLECHAR* buf = static_cast<OLECHAR*>(CoTaskMemAlloc((result.size() + 1) * sizeof(OLECHAR)));
+	if (!buf)
+		return E_OUTOFMEMORY;
+
+	std::copy(result.begin(), result.end(), buf);
+
 	*outWideString = buf;
 	return S_OK;
 }
