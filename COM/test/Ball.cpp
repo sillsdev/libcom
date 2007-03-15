@@ -267,10 +267,9 @@ HRESULT Ball::roll(long distance, long *total) {
  * @return S_OK on success or E_NOINTERFACE if Ball does not support the requested interface.
  */
 HRESULT __stdcall Ball::QueryInterface(const IID& interfaceid, void** objectInterface) {
-	IID mangled_interfaceid = mangle_guid(interfaceid);
-	if (IID_IUnknown == mangled_interfaceid) {
+	if (IID_IUnknown == interfaceid) {
 		*objectInterface = static_cast<IBall*>(this); 
-	} else if (IID_IBall == mangled_interfaceid) {
+	} else if (IID_IBall == interfaceid) {
 		*objectInterface = static_cast<IBall*>(this);
 	} else {
 		*objectInterface = NULL;

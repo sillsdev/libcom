@@ -112,11 +112,8 @@ extern "C" HRESULT CoCreateInstance (
 {
 	*objectInterface = NULL;
 
-	// little endian to big endian the requestedClassID
-	CLSID mangled_requestedClassID = mangle_guid(requestedClassID);
-
 	IClassFactory* pIFactory = NULL;
-	HRESULT hr = CoGetClassObject(mangled_requestedClassID,
+	HRESULT hr = CoGetClassObject(requestedClassID,
 						static_cast <unsigned long> (CLSCTX_INPROC),
 						(void *)0,
 						IID_IClassFactory,

@@ -29,6 +29,7 @@
 #include "WinError.h"
 
 #include <uuid/uuid.h>
+#include <arpa/inet.h>	// For htonl etc.
 
 #include <algorithm>
 
@@ -37,7 +38,13 @@
 SmartGUID::SmartGUID(bool create)
 {
 	if (create)
+	{
 		uuid_generate(buf());
+
+		Data1 = ntohl(Data1);
+		Data2 = ntohs(Data2);
+		Data3 = ntohs(Data3);
+	}
 	else
 		uuid_clear(buf());
 }
@@ -45,17 +52,27 @@ SmartGUID::SmartGUID(bool create)
 SmartGUID::SmartGUID(const char* text)
 {
 	uuid_parse(text, buf());
+
+	Data1 = ntohl(Data1);
+	Data2 = ntohs(Data2);
+	Data3 = ntohs(Data3);
 }
 
 std::string SmartGUID::str() const
 {
+	PlainGUID temp;
+	temp.Data1 = htonl(Data1);
+	temp.Data2 = htons(Data2);
+	temp.Data3 = htons(Data3);
+	memcpy(temp.Data4, Data4, sizeof(Data4));
 	char text[37];
-	uuid_unparse(buf(), text);
+	uuid_unparse(reinterpret_cast<const unsigned char *>(&temp.Data1), text);
 	return text;
 }
 
 bool SmartGUID::isNull() const
 {
+	// Assume null value is independent of byte order
 	return !uuid_is_null(buf());
 }
 

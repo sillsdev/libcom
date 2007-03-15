@@ -51,53 +51,6 @@
 
 #include "ComRegistry.h"
 
-inline void swap(unsigned char &a, unsigned char &b) {
-	char tmp = a;
-	a = b;
-	b = tmp;
-}
-
-/**
- * @brief Change a little endian GUID to a big endian GUID.
- * 
- * @param guid little endian GUID
- * @return big endian GUID based on guid
- */
-GUID mangle_guid(GUID guid) {
-
-	// this is implemented quickly and dirtily
-
-	unsigned char tmp;
-	
-	//unsigned char* data = guid.str().c_str();
-	unsigned char data[37];
-	//const char* origGuid = guid.str().c_str();
-	
-	memcpy(data,reinterpret_cast<void*>(&guid),37);
-	int last = sizeof(long)-1;
-
-	for (int i=0;i< (last+1)/2 ; i++) {
-		tmp = data[i];
-		data[i] = data[last-i];
-		data[last-i] = tmp;
-	}
-	
-	//fprintf(stderr,"data8 is %c.\n", data[8]);
-	swap(data[4],data[5]);
-	swap(data[6],data[7]);
-	//fprintf(stderr,"data8 is now %c.\n",data[8]);
-	
-	// bswap_32/16 would be better, but doesn't seem to be working for me
-	
-	//GUID origguidguid = origGuid;
-	//GUID origguidguid;
-	//CLSIDFromString(origGuid, origguidguid);
-	//return origguidguid;
-	
-	memcpy((void*)&guid,data,37);
-	return guid;
-}
-
 /**
  * @brief Register a class factory by class ID in the internal registry.
  * 
