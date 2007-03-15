@@ -65,12 +65,8 @@ ComRegistry::ComRegistry()
 		std::string classid = line.substr(0,pos);
 		std::string dllfilename = line.substr(pos+1, len);
 	
-		// Convert classid to an OLE string, then to binary
-		std::vector<OLECHAR> olestr(classid.begin(), classid.end());
-		olestr.push_back(0);
-		CLSID clsid;
-		CLSIDFromString(&olestr[0], &clsid);
-		
+		CLSID clsid(classid.c_str());
+
 		m_componentMap[clsid].dllfilename = dllfilename;
 	}
 	dllmapfilestream.close();
@@ -264,28 +260,11 @@ void ComRegistry::dumpComponentMap(std::ostream& out)
 {
 	for (ComponentMap::const_iterator iterator = m_componentMap.begin(); iterator != m_componentMap.end(); ++iterator)
 	{
-		LPOLESTR classid;
-		LPCLASSFACTORY factory;
-		char factory_pointer_string[11];
-		string dllfilename;
-		
 		GUID guid = iterator->first;
+		LPCLASSFACTORY factory = iterator->second.factory;
+		string dllfilename = iterator->second.dllfilename;
 		
-		HRESULT hr = StringFromCLSID(guid, &classid);
-		
-		if (SUCCEEDED(hr))
-			out << std::string(classid, std::find(classid, classid+999, 0));
-		else
-			out << "[GUID]";
-		
-		out << " -> ";
-		
-		factory = (*iterator).second.factory;
-		pointerToHex(factory, &factory_pointer_string[0]);
-		dllfilename = (*iterator).second.dllfilename;
-		out << factory_pointer_string << ", " << dllfilename << "\n";
-		
-		CoTaskMemFree(classid);
+		out << guid.str() << " -> " << factory << ", " << dllfilename << "\n";
 	}
 }
 #pragma export off
