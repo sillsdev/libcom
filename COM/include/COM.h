@@ -32,6 +32,7 @@
 
 #include <cstring>		// For memcmp
 #include <string>		// For GUID conversion
+#include <stdexcept>
 
 // GUID class
 
@@ -47,7 +48,7 @@ struct SmartGUID : public PlainGUID
 {
 	// These are not in Win32, but we need them to make our emulation work
 	explicit SmartGUID(bool create = false);
-	explicit SmartGUID(const char*);
+	explicit SmartGUID(const char*) throw (std::runtime_error);
 	explicit SmartGUID(const PlainGUID& other)
 		: PlainGUID(other) {}
 

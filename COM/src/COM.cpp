@@ -49,9 +49,18 @@ SmartGUID::SmartGUID(bool create)
 		uuid_clear(buf());
 }
 
-SmartGUID::SmartGUID(const char* text)
+/**
+ * @brief Create a SmartGUID from a text GUID string
+ * @param text GUID string
+ * @throw std::runtime_error if text could not be parsed
+ */
+SmartGUID::SmartGUID(const char* text) 
+	throw (std::runtime_error)
 {
-	uuid_parse(text, buf());
+	if (uuid_parse(text, buf()))
+	{
+		throw std::runtime_error("Failed to parse GUID string");
+	}
 
 	Data1 = ntohl(Data1);
 	Data2 = ntohs(Data2);
