@@ -32,44 +32,23 @@
 #include <dlfcn.h>
 #include "COMLibrary.h"
 #include <iostream>
+#include <stdlib.h>
+#include <stdio.h>
+#include <libgen.h>
+#include <string.h>
+#include <errno.h>
 
- /**
+using std::vector;
+
+/**
  * Creates an instance of ComRegistry. ComRegistry stores a mapping between 
  * classID GUIDs and their corresponding class factories. 
- * This constructor will also populate the DLL Map from the dllmap.txt file.
+ * This constructor will also populate the component map from the disk file(s).
  */
 #pragma export on
 ComRegistry::ComRegistry()
 {
-	// Populate the dllmap
-
-	// Right now, dllmap.txt needs to be present in the directory from which mono was executed.
-	char* dllmapfilename = "dllmap.txt";
-	int linenum=1;
-	std::string::size_type pos;
-	std::string::size_type len;
-	std::ifstream dllmapfilestream(dllmapfilename); // Maybe have a helpful message if opening fails
-
-	if (dllmapfilestream.fail()) {
-		fprintf(stderr, "COM Support Library: %s:%d ComRegistry::ComRegistry() Warning, opening of dllmap '%s' failed.\n", __FILE__,__LINE__,dllmapfilename);
-	}
-
-	// For each dllmapping line, add to the dllmap
-	for (std::string line; getline(dllmapfilestream, line); linenum++) {
-		pos = line.find(" ", 0);
-		if (std::string::npos == pos) {
-			fprintf(stderr, "COM Support Library: Warning: malformed dllmap line in file '%s' on line %d", dllmapfilename, linenum);
-			continue;
-		}
-		len = line.length();
-		std::string classid = line.substr(0,pos);
-		std::string dllfilename = line.substr(pos+1, len);
-	
-		CLSID clsid(classid.c_str());
-
-		m_componentMap[clsid].dllfilename = dllfilename;
-	}
-	dllmapfilestream.close();
+	populateComponentMap();
 
 #if DUMP_COM_REGISTRY
 	std::cerr << "Registry created:\n";
@@ -283,6 +262,7 @@ void ComRegistry::dumpComponentMap(std::ostream& out)
  * @return REGDB_E_CLASSNOTREG if there was an error calling DllGetClassObject (TODO a better HRESULT should probably be used here).
  * @return S_OK upon success
  */
+#pragma export on
 HRESULT ComRegistry::findFactoryInDll(void* dllhandle, REFCLSID requestedClassID, IClassFactory** factory) {
 
 	// DllGetClassObject: http://msdn2.microsoft.com/en-us/library/ms680760.aspx
@@ -307,3 +287,187 @@ HRESULT ComRegistry::findFactoryInDll(void* dllhandle, REFCLSID requestedClassID
 	return S_OK;
 }
 #pragma export off
+
+/**
+ * @brief Add GUID-dllfilename mappings to the component map based on entries in a components-map file.
+ *
+ * # Comment lines are ignored
+ * 
+ * @param mapfilename components-map file to process
+ */
+#pragma export on
+void ComRegistry::populateFromComponentsMapFile(const string mapfilename)
+{
+	std::ifstream dllmapfilestream(mapfilename.c_str());
+	int errorNumber = errno;
+	if (dllmapfilestream.fail()) {
+		// Don't print an error if it's just that the file doesn't exist
+		if (ENOENT != errorNumber)
+		{
+			int bufLength=1024;
+			char errorMessage[bufLength];
+			char *actualErrorMessage = strerror_r(errorNumber, errorMessage, bufLength);
+			fprintf(stderr, 
+				"libcom: Warning: opening of components-map '%s' failed: %s\n", 
+				mapfilename.c_str(), actualErrorMessage);
+		}
+		return;
+	}
+
+	// For each valid dllmapping line, add to the component map
+	int linenum=1;
+	for (std::string line; getline(dllmapfilestream, line); linenum++) 
+	{
+		// Ignore comments (lines beginning with #)
+		if (componentsMapCommentIndicator == line.substr(0,1))
+			continue;
+		
+		// Ignore empty lines
+		if (line.empty())
+			continue;
+		
+		// Split the line into GUID and DLL Filename parts
+		string::size_type pos = line.find(" ", 0);
+		if (std::string::npos == pos) {
+			fprintf(stderr, "libcom: Warning: malformed line (no space) at %s:%d\n", 
+				mapfilename.c_str(), linenum);
+			continue;
+		}
+		std::string classIdString = line.substr(0,pos);
+		std::string dllfilename = line.substr(pos+1, string::npos);
+		//TODO line.find(" ",0) may have given us something that might make substr throw an out_of_range if there was a space at the end of line possibly? Test that.
+
+		if (classIdString.empty())
+		{
+			fprintf(stderr, 
+				"libcom: Warning: malformed line; can't find class id at %s:%d\n",
+				mapfilename.c_str(), linenum);
+			continue;
+		}
+		
+		if (dllfilename.empty())
+		{
+			fprintf(stderr, 
+				"libcom: Warning: malformed line; can't find filename at %s:%d\n",
+				mapfilename.c_str(), linenum);
+			continue;
+		}
+
+		CLSID clsid;
+		try {
+			CLSID tmp_clsid(classIdString.c_str());
+			clsid = tmp_clsid;
+		}
+		catch (std::runtime_error) {
+			fprintf(stderr, "libcom: Warning: malformed GUID string at %s:%d\n",
+				mapfilename.c_str(), linenum);
+			continue;
+		}
+		
+		// Make dllfilename absolute
+
+		// If dllfilename is not yet absolute, make it based on the 
+		// location of the containing components-map file rather than the cwd 
+		// before making it absolute.
+		if (directorySeparator != dllfilename.substr(0,1)) // if not begin with /
+		{
+			char* mapfilename_tmp = strdup(mapfilename.c_str());
+			if (NULL == mapfilename_tmp)
+			{
+				fprintf(stderr, 
+					"libcom: Warning: Insufficient memory available to duplicate a string :P\n");
+				continue;
+			}
+			// Note that dirname(3) may modify its argument and its return is 
+			// statically allocated and probably not threadsafe.
+			string mapfilename_dirname(dirname(mapfilename_tmp)); //TODO any error checking?
+			free(mapfilename_tmp);
+			
+			dllfilename = mapfilename_dirname + directorySeparator + dllfilename;
+		
+			// Make dllfilename an absolute pathname
+			char* absoluteDllPath_tmp = canonicalize_file_name(dllfilename.c_str()); // TODO won't this still not work unless I cd to the components-map directory?
+			errorNumber = errno;
+			if (NULL == absoluteDllPath_tmp)
+			{
+				int bufLength = 1024;
+				char errorMessage[bufLength];
+				char *actualErrorMessage = strerror_r(errorNumber, errorMessage, bufLength);
+				fprintf(stderr, 
+					"libcom: Warning: error at %s:%d making dll filename '%s' into an absolute path: %s\n", 
+					mapfilename.c_str(), linenum, dllfilename.c_str(), actualErrorMessage);
+				continue;
+			}
+			dllfilename = string(absoluteDllPath_tmp);
+			free(absoluteDllPath_tmp);
+		}
+		
+		// Associate the GUID with the dll file in the components-map unless 
+		// the GUID is already in the component map.
+		
+		if (m_componentMap.end() != m_componentMap.find(clsid))
+		{
+			fprintf(stderr, 
+				"libcom: Warning: duplicate class id '%s' at %s:%d not readded to component map.\n", 
+				classIdString.c_str(), mapfilename.c_str(), linenum);
+			continue;
+		}
+		
+		m_componentMap[clsid].dllfilename = dllfilename;
+	}
+	dllmapfilestream.close();
+}
+#pragma export off
+
+/** 
+ * @brief Populate the component map
+ * 
+ * Populate the GUID-filename part of the component map based on the 
+ * components-map file in each directory listed in COMPONENTS_MAP_PATH.
+ * 
+ * COMPONENTS_MAP_PATH would look like LD_LIBRARY_PATH, as a 
+ * colon-delimited list of directories, such as:
+ *   dir/dir:../dir:dir:/dir
+ * 
+ * If COMPONENTS_MAP_PATH is NULL or empty, it will not be processed.
+ */
+#pragma export on
+void ComRegistry::populateComponentMap()
+{
+	// Get the paths from the environment, or empty string if NULL.
+	const char* value_tmp = getenv(componentsMapPathEnvironmentKey.c_str());
+	string paths = value_tmp ? value_tmp : "";
+	
+	// If the environment value was NULL or empty string, don't try to use it
+	if (paths.empty())
+		return;
+
+	// Process each path in the environment value.
+	string::size_type location = 0;
+	do {
+		string::size_type delimiterPos = 
+			paths.find(componentsMapPathDelimiter, location);
+		string::size_type tokenLen = 
+			paths.npos == delimiterPos ? paths.npos : delimiterPos-location;
+		string path = paths.substr(location,tokenLen) 
+			+ directorySeparator + componentsMapFilename;
+		populateFromComponentsMapFile(path);
+		location = delimiterPos;
+	} while(location++ < paths.npos);
+}
+#pragma export off
+
+/** Components-map path environment key */
+const string ComRegistry::componentsMapPathEnvironmentKey("COMPONENTS_MAP_PATH");
+
+/** Components-map filename */
+const string ComRegistry::componentsMapFilename("components.map");
+
+/** Components-map path delimiter */
+const string ComRegistry::componentsMapPathDelimiter(":");
+
+/** Directory separator */
+const string ComRegistry::directorySeparator("/");
+
+/** Components-map comment indicator */
+const string ComRegistry::componentsMapCommentIndicator("#");

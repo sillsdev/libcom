@@ -31,6 +31,9 @@
 #include "COMInterfaces.h"
 #include "COMSupportInternals.h"
 #include <stdexcept>
+#include <vector>
+
+using std::vector;
 
 /** 
  * ComRegistry class.
@@ -89,8 +92,17 @@ class ComRegistry
 		/** Class ID to factory,dllfilename mapping */
 		typedef std::map<CLSID, Entry> ComponentMap;
 
-		/** CLSID to Class Factory and Dll Filename mapping */
+		/** CLSID to Class Factory and Dll Filename map */
 		ComponentMap m_componentMap;
+
+		static const string componentsMapFilename;				
+		static const string componentsMapPathEnvironmentKey;
+		static const string componentsMapPathDelimiter;
+		static const string directorySeparator;
+		static const string componentsMapCommentIndicator;
+		
+		void populateComponentMap();
+		void populateFromComponentsMapFile(const string filename);
 };
 
 #endif // ComRegistry_h
