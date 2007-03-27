@@ -229,7 +229,7 @@ enum uiAction {
 
 namespace AfUtil
 {
-	bool GetResourceTss(int rid, int wsUser, ITsString ** pptss);
+	bool GetResourceTss(int rid, int wsUser, class ITsString ** pptss);
 }
 
 #endif /*AFHACKS_H_*/
