@@ -251,7 +251,12 @@ typedef unsigned char byte;
 #define STDAPI EXTERN_C HRESULT STDAPICALLTYPE
 
 // Begin UNIXODBC block
+// This could probably be simpler.
 #define ALLREADY_HAVE_WINDOWS_TYPE
+typedef long int SDWORD;
+typedef signed short RETCODE;
+typedef void* SQLHWND;
+#define SQL_API
 typedef signed char SCHAR;
 typedef SCHAR SQLSCHAR;
 #include <sqltypes.h>
