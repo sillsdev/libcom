@@ -304,7 +304,7 @@ void ComRegistry::populateFromComponentsMapFile(const string mapfilename)
 		// Don't print an error if it's just that the file doesn't exist
 		if (ENOENT != errorNumber)
 		{
-			int bufLength=1024;
+			const int bufLength=1024;
 			char errorMessage[bufLength];
 			char *actualErrorMessage = strerror_r(errorNumber, errorMessage, bufLength);
 			fprintf(stderr, 
@@ -390,7 +390,7 @@ void ComRegistry::populateFromComponentsMapFile(const string mapfilename)
 			errorNumber = errno;
 			if (NULL == absoluteDllPath_tmp)
 			{
-				int bufLength = 1024;
+				const int bufLength = 1024;
 				char errorMessage[bufLength];
 				char *actualErrorMessage = strerror_r(errorNumber, errorMessage, bufLength);
 				fprintf(stderr, 
