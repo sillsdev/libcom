@@ -250,4 +250,11 @@ typedef unsigned char byte;
 
 #define STDAPI EXTERN_C HRESULT STDAPICALLTYPE
 
+// Begin UNIXODBC block
+#define ALLREADY_HAVE_WINDOWS_TYPE
+typedef signed char SCHAR;
+typedef SCHAR SQLSCHAR;
+#include <sqltypes.h>
+// End UNIXODBC block
+
 #endif //_TYPES_H_
