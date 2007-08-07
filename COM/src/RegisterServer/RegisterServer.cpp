@@ -28,14 +28,23 @@
 #include <stdlib.h>
 #include <dlfcn.h>
 
+/**
+ * @brief Open DLL files and call DllRegisterServer to obtain data for components.map.
+ * @param argc
+ * @param argv
+ */
 int main(int argc, char const* argv[])
 {
+	
+	// For each DLL file, call DllMain and DllRegisterServer
 	for (int i = 1; i < argc; ++i)
 	{
-		void* handle = dlopen(argv[i], RTLD_LAZY);
+		const char * dllfilename = argv[i];
+
+		void* handle = dlopen(dllfilename, RTLD_LAZY);
 		if (!handle)
 		{
-			std::cerr << argv[i] << ": " << dlerror() << "\n";
+			std::cerr << "RegisterServer: error dlopening file '" << dllfilename << "': " << dlerror() << "\n";
 			exit(EXIT_FAILURE);
 		}
 
@@ -45,22 +54,20 @@ int main(int argc, char const* argv[])
 		*(void **)(&DllMain) = dlsym(handle, "DllMain");
 		if (const char* error = dlerror()) 
 		{
-			std::cerr << "DllMain: " << error << "\n";
+			std::cerr << "RegisterServer: error finding symbol 'DllMain' in library '" << dllfilename << "': " << error << "\n";
 			exit(EXIT_FAILURE);
 		}
-		//std::cerr << "DllMain = " << (void*)DllMain << "\n";
 
 		long (*DllRegisterServer)();
 		*(void **)(&DllRegisterServer) = dlsym(handle, "DllRegisterServer");
 		if (const char* error = dlerror()) 
 		{
-			std::cerr << "DllRegisterServer: " << error << "\n";
+			std::cerr << "RegisterServer: error finding symbol 'DllRegisterServer' in library '" << dllfilename << "': " << error << "\n";
 			exit(EXIT_FAILURE);
 		}
-		//std::cerr << "DllRegisterServer = " << (void*)DllRegisterServer << "\n";
-
-		/*std::cerr << "DllMain(0, 0, 0): returns " <<*/ DllMain(0, 0, 0) /*<< "\n"*/;
-		/*std::cerr << "DllRegisterServer(): returns " <<*/ DllRegisterServer() /*<< "\n"*/;
+		
+		DllMain(0, 0, 0);
+		DllRegisterServer();
 
 		dlclose(handle);
 	}
