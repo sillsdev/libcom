@@ -39,7 +39,7 @@ fi
 
 	for LIB
 	do
-		./RegisterServer "$LIB" | sed "/^[^#]/s'\$' $LIB'"
+		RegisterServer "$LIB" | sed "/^[^#]/s'\$' $LIB'"
 	done
 ) >components.map
 
