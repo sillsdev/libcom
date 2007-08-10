@@ -28,7 +28,8 @@
 #ifndef COMLibrary_h
 #define COMLibrary_h
 
-void RegisterFactory(const CLSID &classID, class IClassFactory* classFactory);
+void RegisterFactory(const CLSID& classID, class IClassFactory* classFactory);
+void CoRegisterClassInfo(const CLSID*, const char*, const char*);
 
 #endif /* !COMLibrary_h */
 
