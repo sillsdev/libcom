@@ -63,9 +63,19 @@
  * @param classFactory class factory to register that can create objects of class ID classID.
  */
 #pragma export on
-void RegisterFactory(const CLSID &classID, LPCLASSFACTORY classFactory)
+void RegisterFactory(const CLSID& classID, LPCLASSFACTORY classFactory)
 {
 	ComRegistry::getInstance()->registerFactory(classID, classFactory);
 }
 #pragma export off
 
+/**
+ * @brief Write class information to stdout. Still needs processed before it's valid components.map syntax.
+ */
+#pragma export on
+void CoRegisterClassInfo(const CLSID* classId, const char* progId, const char* descr)
+{
+	std::cout << "# " << progId << ": " << descr << "\n"
+		<< classId->str() << std::endl;
+}
+#pragma export off
