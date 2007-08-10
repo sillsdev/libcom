@@ -32,5 +32,8 @@ RegisterServer: RegisterServer.o
 
 -include *.d
 
+install: RegisterServer
+	install RegisterServer make-map.sh ../../bin
+
 clean:
 	$(RM) RegisterServer *.[od] *.gch
