@@ -33,6 +33,7 @@ RegisterServer: RegisterServer.o
 -include *.d
 
 install: RegisterServer
+	mkdir ../../bin
 	install RegisterServer make-map.sh ../../bin
 
 clean:
