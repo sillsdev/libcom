@@ -27,13 +27,29 @@
 
 lib_LTLIBRARIES = libcom.la 
 
-libcom_la_SOURCES = COM.cpp COMInterfaces.cpp COMClasses.cpp COMSupport.cpp Registry.cpp GUID.cpp Memory.cpp ComRegistry.cpp
+libcom_la_SOURCES = \
+	COM.cpp \
+	COMInterfaces.cpp \
+	COMClasses.cpp \
+	COMSupport.cpp \
+	Registry.cpp \
+	GUID.cpp \
+	Memory.cpp \
+	ComRegistry.cpp 
 
 # set the include path found by configure
-INCLUDES = $(all_includes) -I$(top_srcdir)/include -I$(top_srcdir)/../Win32Base/include
+INCLUDES = \
+	$(all_includes) \
+	-I$(top_srcdir)/include \
+	-I$(top_srcdir)/../Win32Base/include \
+	$(shell icu-config --cppflags) 
 
 # the library search path.
-libcom_la_LDFLAGS = $(all_libraries) -luuid -ldl $(shell icu-config --ldflags-libsonly)
+libcom_la_LDFLAGS = \
+	$(all_libraries) \
+	-luuid \
+	-ldl \
+	$(shell icu-config --ldflags) 
 
 install-exec-hook:
 	cd $(DESTDIR)/$(libdir) && ln -s libcom.so ole32.dll
