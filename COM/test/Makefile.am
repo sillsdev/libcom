@@ -30,22 +30,32 @@ FieldWorksRootDir = ../../../projects/FieldWorks
 noinst_PROGRAMS = comtest ComClient.exe
 lib_LTLIBRARIES = ball.la
 
-INCLUDES= $(all_includes) \
-	-I$(top_srcdir)/include -I$(top_srcdir)/../Win32Base/include \
-	-I$(FieldWorksRootDir)/Include -I$(FieldWorksRootDir)/Src/Generic
+INCLUDES = \
+	$(all_includes) \
+	-I$(top_srcdir)/include \
+	-I$(top_srcdir)/../Win32Base/include \
+	-I$(FieldWorksRootDir)/Include \
+	-I$(FieldWorksRootDir)/Src/Generic 
 
-ball_la_SOURCES = Ball.cpp IBall_GUIDs.cpp
+ball_la_SOURCES = \
+	Ball.cpp \
+	IBall_GUIDs.cpp 
+
 ball_la_LIBADD = \
 	$(FieldWorksRootDir)/Src/Generic/libGeneric.a \
 	../src/libcom.la \
 	-L../../Win32Base/src -lWin32Base
 ball_la_LDFLAGS = -module $(all_libraries) \
-	-luuid $(shell icu-config --ldflags-libsonly)
+	-luuid \
+	$(shell icu-config --ldflags-libsonly)
 
 comtest_SOURCES = CClient.cc
 comtest_LDADD = IBall_GUIDs.o ../src/libcom.la
-comtest_LDFLAGS = $(all_libraries) \
-	-luuid -ldl $(shell icu-config --ldflags-libsonly)
+comtest_LDFLAGS = \
+	$(all_libraries) \
+	-luuid \
+	-ldl \
+	$(shell icu-config --ldflags)
 
 CSC = gmcs
 CSC_FLAGS = -debug
