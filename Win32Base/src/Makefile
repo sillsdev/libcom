@@ -1,4 +1,8 @@
-CPPFLAGS = -MMD -I../include
+CPPFLAGS = \
+	-MMD \
+	-I../include \
+	$(shell icu-config --cppflags) \
+
 CXXFLAGS = -g -Wall
 ARFLAGS = -rs
 
