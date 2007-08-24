@@ -28,6 +28,7 @@
 FieldWorksRootDir = ../../../projects/FieldWorks
 
 noinst_PROGRAMS = comtest ComClient.exe
+# TODO: ball.so shouldn't be installed, just built.
 lib_LTLIBRARIES = ball.la
 
 INCLUDES = \
@@ -75,6 +76,9 @@ Ball.lo: IBall_idl.h
 
 IBallMetadata.dll:
 	ln -s raw-midl/$@
+
+run-test:
+	sh test.sh
 
 MOSTLYCLEANFILES = IBall_idl.h IBall_GUIDs.cpp ComClient.exe.mdb
 CLEANFILES = IBallMetadata.dll
