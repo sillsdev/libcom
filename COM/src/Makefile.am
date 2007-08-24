@@ -52,4 +52,7 @@ libcom_la_LDFLAGS = \
 	$(shell icu-config --ldflags) 
 
 install-exec-hook:
-	cd $(DESTDIR)/$(libdir) && ln -s libcom.so ole32.dll
+	cd $(DESTDIR)/$(libdir) && ln -sf libcom.so ole32.dll
+
+uninstall-hook:
+	cd $(DESTDIR)/$(libdir) && rm -f ole32.dll
