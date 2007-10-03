@@ -1,11 +1,9 @@
 /*
- *	Ole2.h
+ *	$Id$
  *
  *	This file is for compatibility with the naming of Windows header files.
  *
  *	Neil Mayhew - 14 Jul 2005
- *
- *	$Id$
  *
  * COM Support Library
  * Copyright (C) 2007 SIL International
