@@ -1,0 +1,69 @@
+﻿// Created by Microsoft (R) C/C++ Compiler Version 14.00.50727.762 (89d031b2).
+//
+// c:\cygwin\tmp\mark\jar.tlh
+//
+// C++ source equivalent of Win32 type library Jar.tlb
+// compiler-generated file created 11/13/07 at 12:28:55 - DO NOT EDIT!
+
+#pragma once
+#pragma pack(push, 8)
+
+#include <comdef.h>
+
+namespace Jar {
+
+//
+// Forward references and typedefs
+//
+
+struct __declspec(uuid("bd3e3a20-f839-3460-b3ae-95c9d6816906"))
+/* LIBID */ __Jar;
+struct __declspec(uuid("5e139206-aca8-4530-b2b9-308e16f81bda"))
+/* interface */ IJar;
+struct /* coclass */ Jar;
+
+//
+// Smart pointer typedef declarations
+//
+
+_COM_SMARTPTR_TYPEDEF(IJar, __uuidof(IJar));
+
+//
+// Type library items
+//
+
+struct __declspec(uuid("5e139206-aca8-4530-b2b9-308e16f81bda"))
+IJar : IUnknown
+{
+    //
+    // Wrapper methods for error-handling
+    //
+
+    long GetNumberCookies ( );
+    HRESULT AddCookies (
+        long number );
+
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall raw_GetNumberCookies (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall raw_AddCookies (
+        /*[in]*/ long number ) = 0;
+};
+
+struct __declspec(uuid("b1de8884-c20c-4743-a1b3-851daad6d188"))
+Jar;
+    // interface _Object
+    // [ default ] interface IJar
+
+//
+// Wrapper method implementations
+//
+
+#include "c:\cygwin\tmp\mark\jar.tli"
+
+} // namespace Jar
+
+#pragma pack(pop)
