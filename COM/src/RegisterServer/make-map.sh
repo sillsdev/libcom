@@ -52,4 +52,4 @@ do
 done
 
 rm -f "$TEMPFILE"
-trap EXIT
+trap - EXIT
