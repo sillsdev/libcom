@@ -1,0 +1,71 @@
+/*
+ *	$Id$
+ *
+ *	Bakery COM interface
+ *
+ *	MarkS - 2007-11-05
+ *
+ * COM Support Library Test
+ * Copyright (C) 2007 SIL International
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ * http://www.gnu.org/licenses/lgpl.html
+ */
+
+// To create a .tlb, C++ GUIDs and header code, and C# Interop/Metadata DLL:
+// DOS$ midl /Oicf /env win32 /tlb IBakery.tlb /h IBakery_idl.h IBakery.idl
+// DOS$ tlbimp IBakery.tlb /out:IBakeryMetadata.dll
+// Linux$ mv IBakery_idl.h raw-MIDL/IBakery_idl.h && ./fix-midl.sh raw-MIDL/IBakery_idl.h > IBakery_idl.h
+// Linux$ ./extract_iids.sh IBakery_idl.h > IBakery_GUIDs.cpp
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+	uuid(af4e32b4-93ce-41fc-9ed7-c3b442313152),
+	version(1.0),
+	helpstring("IBakery 1.0 TypeLibrary")
+]
+library IBakeryLib
+{
+	importlib("stdole32.tlb");
+	importlib("stdole2.tlb");
+
+	[
+		object,
+		uuid(cbdb8382-a142-489a-8831-2b60069d2841),
+		helpstring("IBakery interface")
+	]
+	interface IBakery : IUnknown
+	{
+	  [id(1), helpstring("method getNumberCookiesBaked")] HRESULT getNumberCookiesBaked(
+	  	[out, retval] long * number
+	  );
+	  [id(2), helpstring("method bakeCookies")] HRESULT bakeCookies( 
+	    [in] long amount,
+	    [in] IUnknown * jar
+	  );
+	}
+
+	[
+		uuid(01fe1db4-5cfc-482b-9aae-266d94f5ece8),
+		helpstring("Bakery class")
+	]
+	coclass Bakery
+	{
+		[default] interface IBakery;
+	}
+}
