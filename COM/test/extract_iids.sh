@@ -37,12 +37,29 @@ DATE=`date`
 
 for FILE
 do
-	echo "// AUTOMATICALLY GENERATED ON $DATE FROM $FILE by $0"
+	echo "// Automatically generated on $DATE from $FILE by $0"
 	echo "//#include <COM.h>"
 	echo "#include \"$FILE\""
 	echo
 
 	sed -n -e '
+		/struct __declspec(uuid("/{
+			h
+			n
+			# Remove C comments
+			s|/\*.*\*/||g
+			# Remove trailing semi-colons
+			s/;\r$//
+			# Get rid of everything after colons (inheritances)
+			# s/[ \t]*:.*\n//
+			s/:.*//
+			G
+			# Prepend beginning of libcom-style GUID definition
+			s/^[ \t]*/template<> const GUID __uuidof(/
+			s/[ \t]*struct __declspec(uuid/)/
+			s/)\r$/;/
+			p
+		}
 		/MIDL_INTERFACE("/{
 			h
 			n
