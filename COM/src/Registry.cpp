@@ -113,11 +113,8 @@ extern "C" HRESULT CoCreateInstance (
 	*objectInterface = NULL;
 
 	IClassFactory* pIFactory = NULL;
-	HRESULT hr = CoGetClassObject(requestedClassID,
-						static_cast <unsigned long> (CLSCTX_INPROC),
-						(void *)0,
-						IID_IClassFactory,
-						(void **)&pIFactory);
+	HRESULT hr = CoGetClassObject(requestedClassID, static_cast<unsigned long>(CLSCTX_INPROC), 
+		(void *)0, IID_IClassFactory, (void **)&pIFactory);
 	if (SUCCEEDED(hr))
 	{
 		// Create the component
