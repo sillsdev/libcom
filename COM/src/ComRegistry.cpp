@@ -463,7 +463,7 @@ const string ComRegistry::componentsMapPathEnvironmentKey("COMPONENTS_MAP_PATH")
 /** Components-map filename */
 const string ComRegistry::componentsMapFilename("components.map");
 
-/** Components-map path delimiter */
+/** Components-map path delimiter to separate paths in the environment variable */
 const string ComRegistry::componentsMapPathDelimiter(":");
 
 /** Directory separator */
