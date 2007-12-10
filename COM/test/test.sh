@@ -31,5 +31,5 @@ LD_LIBRARY_PATH=../../../projects/FieldWorks/Lib/src/icu/install/lib:../lib:.lib
 export LD_LIBRARY_PATH
 
 (echo Testing ComClient.exe; ./ComClient.exe) &&
-(echo;echo Testing comtest; .libs/comtest)
-
+(echo;echo Testing comtest; .libs/comtest) &&
+(echo;echo Testing CCW; ./BakeryJarTestClient.exe)
