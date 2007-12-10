@@ -26,19 +26,23 @@
 # 
 
 CXXFLAGS = -g -Wall
-CPPFLAGS = -MMD -I..
-LDLIBS = -licucore -luuid
+CPPFLAGS = -MMD -I.. -I../include -I../../COM/include
+LDFLAGS = $(shell icu-config --ldflags) -L../../COM/src/.libs -lcom
+# LDLIBS = -licucore -luuid
 
 PROGS = TestOutputDebugString TestGUID
 
 all: $(PROGS)
 
-$(PROGS): %: %.o ../libWin32SDK.a
+$(PROGS): %: %.o ../src/libWin32Base.a
 	$(LINK.cc) -o $@ $^ $(LDLIBS)
 
-../libWin32SDK.a::
+../src/libWin32Base.a::
 	@$(MAKE) -C $(@D) $(@F) -q || \
 	 $(MAKE) -C $(@D) $(@F)
+
+run-test:
+	sh test.sh
 
 clean:
 	$(RM) $(PROGS) *.[od]
