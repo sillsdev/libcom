@@ -26,6 +26,8 @@
  */
 
 #include <assert.h>
+#include <iostream>
+#include <stdexcept>
 
 // TODO AssertPtr, Assert, and ThrowHr should be pulled in correctly some time, once Generic starts to compile etc better.
 #define AssertPtr(x) assert((x) != 0)
@@ -33,12 +35,12 @@
 #define ThrowHr(ex, msg) throw std::runtime_error("ThrowHr")
 
 #include "Ball.h"
-#include <iostream>
-
 #include "tools.h"
+
+#ifdef USE_FW_GENERIC_FACTORY
 #include "BinTree.h"
-#include <stdexcept>
 #include "GenericFactory.h"
+#endif
 
 // Begin copied code from Wine's winbase.h, modified 2007-02-01 by Neil Mayhew
 
@@ -78,8 +80,7 @@ const wchar_t* g_classDescription = L"A bouncing ball. Fun to play with!";
 const wchar_t* g_threadingModel = L"Apartment";
 
 
-
-#ifdef USE_GENERIC_FACTORY
+#ifdef USE_FW_GENERIC_FACTORY
 // Generic factory to allow creating an instance with CoCreateInstance
 static GenericFactory g_factBall(
 	g_ProgID, // ProgID
@@ -111,7 +112,7 @@ void Ball::CreateCom(IUnknown *outerAggregateIUnknown, REFIID interfaceid, void 
 	}
 }
   
-#else /* non-Generic Factory */
+#else /* !USE_FW_GENERIC_FACTORY */
 
 // Upon being dlopen'ed, this will create our class factory (and as long as RegisterFactory() is still being used, will register a pointer to the class factory (as an IClassFactory))
 static CFactory classFactory;
@@ -223,7 +224,7 @@ HRESULT __stdcall CFactory::LockServer(BOOL shouldLock) {
 	return S_OK;
 }
 
-#endif /* !USE_GENERIC_FACTORY */
+#endif /* !USE_FW_GENERIC_FACTORY */
 
 
 /** Ball constructor.
@@ -247,7 +248,7 @@ HRESULT Ball::bounce(void) {
 /**
  * Roll this ball a distance.
  */
-HRESULT Ball::roll(long distance, long *total) {
+HRESULT Ball::roll(long distance, long* total) {
 	distanceRolled += distance;
 	*total = distanceRolled;
 	return S_OK;
