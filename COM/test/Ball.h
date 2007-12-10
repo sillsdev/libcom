@@ -20,7 +20,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  *
  * http://www.gnu.org/licenses/lgpl.html
  */
@@ -28,9 +28,8 @@
 #ifndef _Ball_h_
 #define _Ball_h_
 
-#include "IBall_idl.h"
-
 #include "COMLibrary.h"
+#include "IBall_idl.h"
 
 /**
  * Ball class.
@@ -63,9 +62,7 @@ private:
 	volatile LONG m_referenceCount; 
 };
 
-#undef USE_GENERIC_FACTORY
-
-#ifndef USE_GENERIC_FACTORY
+#ifndef USE_FW_GENERIC_FACTORY
 // CFactory class
 // TODO: this should probably be in a separate file and should probably be an 
 // interface or inheritable class or something that things like 
@@ -100,6 +97,6 @@ private:
 	volatile LONG m_referenceCount;
 };
 
-#endif /* !USE_GENERIC_FACTORY */
+#endif /* !USE_FW_GENERIC_FACTORY */
 
 #endif /* _Ball_h_ */
