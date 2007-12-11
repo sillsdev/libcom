@@ -1,7 +1,7 @@
 #
 #	$Id$
 #
-#	Delete what gets created by autogen.sh
+#	Delete what gets created by autogen.sh and configure
 #
 #	MarkS - 2007-12-11
 #
@@ -36,4 +36,6 @@ rm -f config.h.in
 rm -f Makefile.in depcomp install-sh missing src/Makefile.in test/Makefile.in
 # autoconf
 rm -f configure 
+# configure
+rm -f Makefile config.log config.status
 
