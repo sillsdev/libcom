@@ -3,7 +3,7 @@
  *
  *	This file is for compatibility with the naming of Windows header files.
  *
- *	Neil Mayhew - 14 Jul 2005
+ *	Neil Mayhew - 2005-07-14
  *
  * COM Support Library
  * Copyright (C) 2007 SIL International
