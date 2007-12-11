@@ -135,4 +135,4 @@ run-test:
 	sh test.sh
 
 MOSTLYCLEANFILES = IBall_idl.h IBall_GUIDs.cpp ComClient.exe.mdb IBakery_idl.h IBakery_GUIDs.cpp
-CLEANFILES = IBallMetadata.dll IBakeryMetadata.dll
+CLEANFILES = IBallMetadata.dll IBakeryMetadata.dll Jar.dll Jar.dll.mdb BakeryJarTestClient.exe.mdb components.map
