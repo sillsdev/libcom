@@ -1,7 +1,7 @@
 #
 #	$Id$
 #
-#	Delete what gets created by autogen.sh and configure
+#	Delete what gets created by autoreconf and configure
 #
 #	MarkS - 2007-12-11
 #
