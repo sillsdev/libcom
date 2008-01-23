@@ -182,6 +182,7 @@ __DECLARE_POINTER_TYPES(RECT)
 
 typedef long SCODE;
 typedef long HRESULT;
+#define _HRESULT_DEFINED // To avoid conflict with our WinError.h
 
 typedef void*		HANDLE;
 typedef HANDLE		HGLOBAL;
