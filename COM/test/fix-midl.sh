@@ -1,5 +1,6 @@
 #!/bin/sh
 
+#
 #	$Id$
 #
 #	Alter the output of MIDL so that it is suitable for use with FieldWorks
