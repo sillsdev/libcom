@@ -36,21 +36,21 @@
 
 int main() {
 
-  void *handle;
+  void* handle;
   const char* error;
 	// variable describing the function that we will want to call
   HRESULT (*CoCreateInstance)(
-		/*IN*/ REFCLSID		requestedClassID,
-		/*IN*/ LPUNKNOWN	outerAggregateIUnknown,
-		/*IN*/ DWORD		dwClsContext,
-		/*IN*/ REFIID		objectInterfaceID,
-		/*OUT*/ LPVOID*		objectInterface);
+		REFCLSID requestedClassID,
+		LPUNKNOWN outerAggregateIUnknown,
+		DWORD dwClsContext,
+		REFIID objectInterfaceID,
+		LPVOID* objectInterface);
 
-  REFCLSID		requestedClassID = CLSID_Ball; // the class id that I'm looking for
-  LPUNKNOWN	outerAggregateIUnknown = NULL;
-  DWORD		dwClsContext = (DWORD)CLSCTX_INPROC_SERVER;
-  REFIID		objectInterfaceID = IID_IBall;
-  LPVOID*		objectInterface = NULL; // we want a pointer to an IUnknown interface
+  REFCLSID requestedClassID = CLSID_Ball; // the class id that I'm looking for
+  LPUNKNOWN outerAggregateIUnknown = NULL;
+  DWORD dwClsContext = (DWORD)CLSCTX_INPROC_SERVER;
+  REFIID objectInterfaceID = IID_IBall;
+  LPVOID* objectInterface = NULL; // we want a pointer to an IUnknown interface
   HRESULT hr;
 
   handle = dlopen("libcom.so", RTLD_LAZY);
@@ -58,7 +58,7 @@ int main() {
 	if (!handle)
   {
     error = dlerror();
-    fprintf (stderr, "ERROR: %s\n", error);
+    fprintf(stderr, "ERROR: %s\n", error);
     exit(1);
   }
 
