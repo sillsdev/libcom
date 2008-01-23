@@ -39,12 +39,11 @@
  * Do nothing, but be here for when Mono wants to call CoInitialize.
  * 
  * (http://msdn.microsoft.com/library/default.asp?url=/library/en-us/com/html/0f171cf4-87b9-43a6-97f2-80ed344fe376.asp)
- * @param pvReserved unused
+ * @param unused NULL
  * @return S_OK
  */
 #pragma export on
-extern "C" HRESULT CoInitialize(
-	LPVOID pvReserved)
+extern "C" HRESULT CoInitialize(LPVOID unused)
 {
 	return S_OK;
 }
@@ -67,12 +66,8 @@ extern "C" HRESULT CoInitialize(
  * @return REGDB_E_CLASSNOTREG if there was an error calling DllGetClassObject and we never registered the factory
  */
 #pragma export on
-HRESULT CoGetClassObject(
-	/*IN*/ REFCLSID		requestedClassID,
-	/*IN*/ DWORD		dwClsContext,
-	/*IN*/ LPVOID		/*pvReserved*/,
-	/*IN*/ REFIID		/*requestedInterfaceID*/,
-	/*OUT*/ LPVOID*		factoryInterface)
+HRESULT CoGetClassObject(REFCLSID requestedClassID, DWORD dwClsContext, LPVOID, 
+	REFIID /*requestedInterfaceID*/, LPVOID* factoryInterface)
 {
 	if (dwClsContext =! CLSCTX_INPROC) {
 		return CO_E_NOT_SUPPORTED;
@@ -103,12 +98,9 @@ HRESULT CoGetClassObject(
  * @return REGDB_E_CLASSNOTREG if there was an error calling DllGetClassObject and we never registered the factory 
  */
 #pragma export on
-extern "C" HRESULT CoCreateInstance (
-	/*IN*/ REFCLSID		requestedClassID,
-	/*IN*/ LPUNKNOWN	outerAggregateIUnknown,
-	/*IN*/ DWORD		/*dwClsContext*/,
-	/*IN*/ REFIID		objectInterfaceID,
-	/*OUT*/ LPVOID*		objectInterface)
+extern "C" HRESULT CoCreateInstance(REFCLSID requestedClassID, 
+	LPUNKNOWN outerAggregateIUnknown, DWORD /*dwClsContext*/, 
+	REFIID objectInterfaceID, LPVOID* objectInterface)
 {
 	*objectInterface = NULL;
 
