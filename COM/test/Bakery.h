@@ -58,9 +58,6 @@ private:
 	volatile LONG m_referenceCount; 
 };
 
-// TODO do this a better way (checking USE_GENERIC_FACTORY)
-#undef USE_GENERIC_FACTORY
-
 #ifndef USE_FW_GENERIC_FACTORY
 // CFactory class
 // TODO: this should probably be in a separate file and should probably be an 
