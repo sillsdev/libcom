@@ -37,6 +37,8 @@ libcom_la_SOURCES = \
 	Memory.cpp \
 	ComRegistry.cpp 
 
+EXTRA_DIST = ComRegistry.h COMSupportInternals.h
+
 # set the include path found by configure
 INCLUDES = \
 	$(all_includes) \
