@@ -96,7 +96,8 @@ static GenericFactory g_factBall(
  * @param objectInterface receives the interface through which to access Ball
  * @throws std::runtime_error if outerAggregateIUnknown is not NULL, or if the QueryInterface on Ball failed.
  */
-void Ball::CreateCom(IUnknown *outerAggregateIUnknown, REFIID interfaceid, void ** objectInterface) {
+void Ball::CreateCom(IUnknown* outerAggregateIUnknown, REFIID interfaceid, 
+	void** objectInterface) {
 //	AssertPtr(objectInterface);
 //	Assert(!*objectInterface);
 	if (outerAggregateIUnknown) {
@@ -186,9 +187,8 @@ ULONG __stdcall CFactory::Release() {
  * @param objectInterface interface to Ball requested by interfaceid, or NULL if Ball doesn't support interfaceid.
  * @return S_OK if successful Ball creation, E_OUTOFMEMORY if we failed to create Ball due to insufficient memory, CLASS_E_NOAGGREGATION if outerAggregateIUnknown is not NULL, or E_NOINTERFACE if Ball does not support the requested interface.
  */
-HRESULT __stdcall CFactory::CreateInstance(IUnknown* outerAggregateIUnknown,
-                                           const IID& interfaceid,
-                                           void** objectInterface) {
+HRESULT __stdcall CFactory::CreateInstance(IUnknown* outerAggregateIUnknown, 
+	const IID& interfaceid, void** objectInterface) {
 	// We don't support aggregation.
 	if (outerAggregateIUnknown != NULL)
 	{
@@ -305,6 +305,3 @@ ULONG __stdcall Ball::Release() {
 	}
 	return m_referenceCount;
 }
-
-
-
