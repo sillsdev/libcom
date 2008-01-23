@@ -52,11 +52,11 @@ library IBakeryLib
 	interface IBakery : IUnknown
 	{
 	  [id(1), helpstring("method getNumberCookiesBaked")] HRESULT getNumberCookiesBaked(
-	  	[out, retval] long * number
+	  	[out, retval] long* number
 	  );
 	  [id(2), helpstring("method bakeCookies")] HRESULT bakeCookies( 
 	    [in] long amount,
-	    [in] IUnknown * jar
+	    [in] IUnknown* jar
 	  );
 	}
 
