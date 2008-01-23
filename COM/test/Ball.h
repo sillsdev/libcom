@@ -48,10 +48,10 @@ public:
 	// Bounce this ball
 	virtual HRESULT bounce(void);
 	// Roll this ball a distance
-	virtual HRESULT roll(long distance, long *total);
+	virtual HRESULT roll(long distance, long* total);
 
 	// Called to create the COM object.
-	static void CreateCom(IUnknown *outerAggregateIUnknown, REFIID interfaceid, void ** objectInterface);
+	static void CreateCom(IUnknown* outerAggregateIUnknown, REFIID interfaceid, void** objectInterface);
 
 private:
 	/** Distance this ball has rolled */
