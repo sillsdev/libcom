@@ -55,7 +55,7 @@ library IBallLib
 	  [id(1), helpstring("method bounce")] HRESULT bounce();
 	  [id(2), helpstring("method roll")] HRESULT roll( 
 	    [in] long distance,
-	    [out, retval] long *ret_distance
+	    [out, retval] long* ret_distance
 	  );
 	}
 
