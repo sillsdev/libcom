@@ -69,7 +69,7 @@ HRESULT WINAPI CLSIDFromString(LPCOLESTR inWideString, LPCLSID outClassID)
  * @return S_OK on successful conversion, E_OUTOFMEMORY if we run out of memory while creating the string, or (despite the spec) E_INVALIDARG if an invalid argument was given.
  */
 #pragma export on
-HRESULT StringFromCLSID(const CLSID &inClassID, LPOLESTR *outWideString)
+HRESULT StringFromCLSID(const CLSID& inClassID, LPOLESTR* outWideString)
 {
 	if (!outWideString) return E_INVALIDARG;
 	
