@@ -86,6 +86,8 @@ comtest_LDFLAGS = \
 	-ldl \
 	$(shell icu-config --ldflags)
 
+EXTRA_DIST = test.sh Jar.cs fix-midl.sh extract_iids.sh Bakery.h jar.tlh jar.tli Ball.h tools.h raw-midl/IBakery_idl.h raw-midl/IBakeryMetadata.dll raw-midl/IBall_idl.h raw-midl/IBall_iid.h raw-midl/IBallMetadata.dll raw-midl/IBall.tlb raw-midl/jar.tlh raw-midl/jar.tli raw-midl/README
+
 CSC = gmcs
 CSC_FLAGS = -debug
 ComClient_exe_SOURCES = ComClient.cs
