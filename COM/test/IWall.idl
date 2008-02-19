@@ -1,0 +1,93 @@
+/*
+ *	$Id$
+ *
+ *	Wall COM interface
+ *
+ *	MarkS - 2008-01-23
+ *
+ * COM Support Library Test
+ * Copyright (C) 2007 SIL International
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ * http://www.gnu.org/licenses/lgpl.html
+ */
+
+// To create a .tlb, C++ GUIDs and header code, and C# Interop/Metadata DLL:
+// DOS$ midl /Oicf /env win32 /tlb IFoo.tlb /h IFoo_idl.h IFoo.idl
+// DOS$ tlbimp IFoo.tlb /out:IFooMetadata.dll
+// Linux$ mv IFoo_idl.h raw-MIDL/IFoo_idl.h && ./fix-midl.sh raw-MIDL/IFoo_idl.h > IFoo_idl.h
+// Linux$ ./extract_iids.sh IFoo_idl.h > IFoo_GUIDs.cpp
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+	uuid(74290d6a-3ef8-45fb-bda7-16810afffa97),
+	version(1.0),
+	helpstring("IWall 1.0 TypeLibrary")
+]
+library IWallLib
+{
+	importlib("stdole32.tlb");
+	importlib("stdole2.tlb");
+
+	[
+		object,
+		uuid(56df7174-bff7-4ae4-96f0-5ab3992769a1),
+		helpstring("IWall interface")
+	]
+	interface IWall : IUnknown
+	{
+	  [id(1), helpstring("method readWall")] HRESULT readWall(
+	  	[in] int maxLength,
+	  	[out, retval, size_is(maxLength)] OLECHAR* text
+	  );
+	  [id(2), helpstring("method writeOnWall")] HRESULT writeOnWall(
+	    [in] int length,
+	    [in, size_is(length)] OLECHAR* text
+	  );
+		[id(3), helpstring("method writeOnWall2")] HRESULT writeOnWall2(
+			[in] int length,
+			[in, size_is(length)] const OLECHAR* text
+		);
+		[id(4), helpstring("")] HRESULT writeCharStarOnWall(
+			[in] char* text
+		);
+		[id(5), helpstring("")] HRESULT writeWcharStarOnWall(
+			[in] wchar* text
+		);
+		[id(6), helpstring("")] HRESULT writeBSTROnWall(
+			[in] BSTR text
+		);
+		/*[id(7), helpstring("")] HRESULT writeWstringOnWall(
+			[in] wstring text
+		);*/
+		[id(8), helpstring("")] HRESULT readWallBSTR(
+	  	[out, retval] BSTR* text
+	  );
+
+		
+	}
+	
+	[
+		uuid(f350519c-2a5f-4c65-a13f-73679cbf171f),
+		helpstring("Wall class")
+	]
+	coclass Wall
+	{
+		[default] interface IWall;
+	}
+}

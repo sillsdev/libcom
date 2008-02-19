@@ -1,0 +1,59 @@
+#!/bin/bash
+
+#
+#	$Id$
+#
+#	Execute midl on remote win32 machine
+#
+#	Neil Mayhew - 2007-11-19
+# 
+# COM Support Library helper script
+# Copyright (C) 2007 SIL International
+# 
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+# 
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+# 
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+#
+# http://www.gnu.org/licenses/lgpl.html
+# 
+
+if [ $# -lt 2 ]; then
+	echo Usage: $0 remote_host [midl args] input.idl
+	exit 1
+fi
+
+REMOTE_HOST=$1
+shift
+
+# Choose temporary directory on remote machine
+DIR=$(ssh $REMOTE_HOST "mktemp -dt")
+if [ -z "$DIR" ]
+  then echo $(basename "$0"): Error choosing temporary directory on remote host.
+  exit 1
+fi
+
+CMD="cd \"$DIR\" && midl"
+
+for ARG
+do
+	CMD="$CMD \"$ARG\""
+	LAST="$ARG"
+done
+
+STEM=$(echo "$LAST" | sed 's/\.idl$//')
+INFILE=$LAST
+
+scp "$INFILE" "$REMOTE_HOST:$DIR"/ && 
+	ssh $REMOTE_HOST "$CMD" && 
+	scp "$REMOTE_HOST:$DIR"/$STEM{.h,.tlb} . ||
+	(echo $(basename "$0"): Error communicating with remote host.; exit 1)
