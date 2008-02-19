@@ -1,7 +1,7 @@
 #
 #	$Id$
 #
-#	Ball test script
+#	COM test script
 #
 #	MarkS - 2007-08-24
 #
@@ -32,4 +32,6 @@ export LD_LIBRARY_PATH
 
 (echo Testing ComClient.exe; ./ComClient.exe) &&
 (echo;echo Testing comtest; .libs/comtest) &&
-(echo;echo Testing CCW; ./BakeryJarTestClient.exe)
+(echo;echo Testing CCW; ./BakeryJarTestClient.exe) &&
+(echo;echo Testing Tester.exe; ./Tester.exe)
+
