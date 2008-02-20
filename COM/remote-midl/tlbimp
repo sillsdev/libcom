@@ -37,7 +37,7 @@ INFILE="$2"
 shift
 
 # Choose temporary directory on remote machine
-DIR=$(ssh $REMOTE_HOST "mktemp -dt")
+DIR=$(ssh "$REMOTE_HOST" "mktemp -dt")
 if [ -z "$DIR" ]
   then echo $(basename "$0"): Error choosing temporary directory on remote host.
   exit 1
@@ -47,6 +47,6 @@ CMD="cd \"$DIR\" && tlbimp $*"
 STEM=$(basename "$INFILE" .tlb)
 
 scp "$INFILE" "$REMOTE_HOST:$DIR"/ && 
-	ssh $REMOTE_HOST "$CMD" && 
+	ssh "$REMOTE_HOST" "$CMD" && 
 	scp "$REMOTE_HOST:$DIR"/${STEM}Interop.dll . ||
 	(echo $(basename "$0"): Error communicating with remote host.; exit 1)

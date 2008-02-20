@@ -36,7 +36,7 @@ REMOTE_HOST=$1
 shift
 
 # Choose temporary directory on remote machine
-DIR=$(ssh $REMOTE_HOST "mktemp -dt")
+DIR=$(ssh "$REMOTE_HOST" "mktemp -dt")
 if [ -z "$DIR" ]
   then echo $(basename "$0"): Error choosing temporary directory on remote host.
   exit 1
@@ -54,6 +54,6 @@ STEM=$(echo "$LAST" | sed 's/\.idl$//')
 INFILE=$LAST
 
 scp "$INFILE" "$REMOTE_HOST:$DIR"/ && 
-	ssh $REMOTE_HOST "$CMD" && 
+	ssh "$REMOTE_HOST" "$CMD" && 
 	scp "$REMOTE_HOST:$DIR"/$STEM{.h,.tlb} . ||
 	(echo $(basename "$0"): Error communicating with remote host.; exit 1)

@@ -167,24 +167,24 @@ IBag_GUIDs.cpp: IBag.h extract_iids.sh
 	./extract_iids.sh $< >$@
 
 IWall.h: IWall.idl fix-midl.sh
-	$(MIDL) $(REMOTE_WIN32_DEV_HOST) /I "C:\Program Files\Microsoft Visual Studio 8\VC\PlatformSDK\Include" /Oicf /env win32 /tlb IWall.tlb /h IWall.h IWall.idl
+	$(MIDL) "$(REMOTE_WIN32_DEV_HOST)" /I "C:\Program Files\Microsoft Visual Studio 8\VC\PlatformSDK\Include" /Oicf /env win32 /tlb IWall.tlb /h IWall.h IWall.idl
 	TMPFILE="$(shell mktemp -t)" && \
 	mv IWall.h "$$TMPFILE" && \
 	./fix-midl.sh "$$TMPFILE" > IWall.h
 
 # IWallInterop.dll actually depends on IWall.tlb, not IWall.h
 IWallInterop.dll: IWall.idl IWall.h
-	$(TLBIMP) $(REMOTE_WIN32_DEV_HOST) IWall.tlb /out:IWallInterop.dll
+	$(TLBIMP) "$(REMOTE_WIN32_DEV_HOST)" IWall.tlb /out:IWallInterop.dll
 
 IBag.h: IBag.idl fix-midl.sh
-	$(MIDL) $(REMOTE_WIN32_DEV_HOST) /I "C:\Program Files\Microsoft Visual Studio 8\VC\PlatformSDK\Include" /Oicf /env win32 /tlb IBag.tlb /h IBag.h IBag.idl
+	$(MIDL) "$(REMOTE_WIN32_DEV_HOST)" /I "C:\Program Files\Microsoft Visual Studio 8\VC\PlatformSDK\Include" /Oicf /env win32 /tlb IBag.tlb /h IBag.h IBag.idl
 	TMPFILE="$(shell mktemp -t)" && \
 	mv IBag.h "$$TMPFILE" && \
 	./fix-midl.sh "$$TMPFILE" > IBag.h
 
 # IBagInterop.dll actually depends on IBag.tlb, not IBag.h
 IBagInterop.dll: IBag.idl IBag.h
-	$(TLBIMP) $(REMOTE_WIN32_DEV_HOST) IBag.tlb /out:IBagInterop.dll
+	$(TLBIMP) "$(REMOTE_WIN32_DEV_HOST)" IBag.tlb /out:IBagInterop.dll
 
 
 # Auto-generate Jar_GUIDs.cpp when the script handles it properly
