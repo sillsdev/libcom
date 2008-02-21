@@ -30,7 +30,7 @@ using System.Runtime.InteropServices;
 using System.Reflection;
 using IWallInterop;
 using IBagInterop;
-using IBallMetadata;
+//using IBallMetadata;
 
 /**
  * Tester

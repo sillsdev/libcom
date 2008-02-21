@@ -238,7 +238,7 @@ Bag::Bag(void) : m_referenceCount((LONG)1) {
 Bag::~Bag(void) {
 }
 
-HRESULT Bag::ProvideBall(IUnknown** iball) {
+HRESULT Bag::ProvideBall(IBall** iball) {
 /*	Ball* ball = new Ball; // TODO create the ball a COM way probably instead
 	*iball = dynamic_cast<IBall*> (ball);
 	return S_OK;
@@ -252,7 +252,7 @@ HRESULT Bag::ProvideBall(IUnknown** iball) {
 
 }
 
-HRESULT Bag::InspectBall(IUnknown* iball) {
+HRESULT Bag::InspectBall(IBall* iball) {
 	long distance_rolled;
 	/*(dynamic_cast<Ball*> (iball))->roll(3, &distance_rolled);
 	return S_OK; */

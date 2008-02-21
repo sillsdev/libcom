@@ -45,27 +45,6 @@ library IBallLib
 	importlib("stdole32.tlb");
 	importlib("stdole2.tlb");
 
-	[
-		object,
-		uuid(304e42cb-e6d8-40c0-a09f-a362f12b428d),
-		helpstring("IBall interface")
-	]
-	interface IBall : IUnknown
-	{
-	  [id(1), helpstring("method bounce")] HRESULT bounce();
-	  [id(2), helpstring("method roll")] HRESULT roll( 
-	    [in] long distance,
-	    [out, retval] long* ret_distance
-	  );
-	}
+#include "IBall.idh"
 
-	[
-		uuid(261509ac-86a4-488e-af54-c81cac39bce6),
-		helpstring("Ball class")
-	]
-	coclass Ball
-	{
-		[default] interface IBall;
-	}
 };
-

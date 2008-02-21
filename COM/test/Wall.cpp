@@ -244,6 +244,8 @@ HRESULT Wall::readWallBSTR(BSTR* text) {
 
 HRESULT Wall::writeBSTROnWall(BSTR text) {
 	// TODO
+	
+	
 	return S_OK;
 }
 

@@ -26,7 +26,7 @@
 # 
 
 if USE_FW_GENERIC_FACTORY
-AM_CPPFLAGS = -DUSE_FW_GENERIC_FACTORY -DUSE_FW_MODULE_ENTRY
+AM_CPPFLAGS = -DUSE_FW_GENERIC_FACTORY -DUSE_FW_MODULE_ENTRY -DCOM_NO_WINDOWS_H
 endif
 
 FieldWorksRootDir = ../../../projects/FieldWorks
@@ -128,7 +128,9 @@ EXTRA_DIST = test.sh Jar.cs fix-midl.sh extract_iids.sh Bakery.h Wall.h Bag.h ja
 CSC = gmcs
 CSC_FLAGS = -debug
 Tester_exe_SOURCES = Tester.cs
-Tester_exe_REFERENCES = IWallInterop.dll IBagInterop.dll IBallMetadata.dll
+Tester_exe_REFERENCES = IWallInterop.dll IBagInterop.dll 
+#IBallMetadata.dll
+
 ComClient_exe_SOURCES = ComClient.cs
 ComClient_exe_REFERENCES = IBallMetadata.dll
 BakeryJarTestClient_exe_SOURCES = BakeryJarTestClient.cs
@@ -163,8 +165,12 @@ IBakery_GUIDs.cpp: IBakery_idl.h extract_iids.sh
 IWall_GUIDs.cpp: IWall.h extract_iids.sh
 	./extract_iids.sh $< >$@
 
+# TODO do in a way that isn't a dirty hack with manually removing IBall,Ball GUID definitions from IBag_GUIDs.cpp since IBag.idh #includes IBall.idh
 IBag_GUIDs.cpp: IBag.h extract_iids.sh
 	./extract_iids.sh $< >$@
+	TMPFILE="$(shell mktemp -t)" && \
+	mv IBag_GUIDs.cpp "$$TMPFILE" && \
+	grep -v -e "__uuidof(IBall)" -e "__uuidof(Ball)" "$$TMPFILE" > IBag_GUIDs.cpp
 
 IWall.h: IWall.idl fix-midl.sh
 	$(MIDL) "$(REMOTE_WIN32_DEV_HOST)" /I "C:\Program Files\Microsoft Visual Studio 8\VC\PlatformSDK\Include" /Oicf /env win32 /tlb IWall.tlb /h IWall.h IWall.idl
@@ -176,16 +182,21 @@ IWall.h: IWall.idl fix-midl.sh
 IWallInterop.dll: IWall.idl IWall.h
 	$(TLBIMP) "$(REMOTE_WIN32_DEV_HOST)" IWall.tlb /out:IWallInterop.dll
 
-IBag.h: IBag.idl fix-midl.sh
-	$(MIDL) "$(REMOTE_WIN32_DEV_HOST)" /I "C:\Program Files\Microsoft Visual Studio 8\VC\PlatformSDK\Include" /Oicf /env win32 /tlb IBag.tlb /h IBag.h IBag.idl
+# TODO not dirty hack
+IBag.h: IBagLib_.idl fix-midl.sh
+	$(MIDL) "$(REMOTE_WIN32_DEV_HOST)" /I "C:\Program Files\Microsoft Visual Studio 8\VC\PlatformSDK\Include" /Oicf /env win32 /tlb IBagLib_.tlb /h IBagLib_.h IBagLib_.idl
+	mv IBagLib_.tlb IBag.tlb
+	mv IBagLib_.h IBag.h
 	TMPFILE="$(shell mktemp -t)" && \
 	mv IBag.h "$$TMPFILE" && \
 	./fix-midl.sh "$$TMPFILE" > IBag.h
 
 # IBagInterop.dll actually depends on IBag.tlb, not IBag.h
-IBagInterop.dll: IBag.idl IBag.h
+IBagInterop.dll: IBagLib_.idl IBag.h
 	$(TLBIMP) "$(REMOTE_WIN32_DEV_HOST)" IBag.tlb /out:IBagInterop.dll
 
+IBagLib_.idl: IBagLib.idl IBag.idh IBall.idh
+	gcc -E -P -x c -o $@ IBagLib.idl
 
 # Auto-generate Jar_GUIDs.cpp when the script handles it properly
 #Jar_GUIDs.cpp: jar.tlh extract_iids.sh
@@ -205,8 +216,8 @@ IBakeryMetadata.dll:
 components.map: bakery.la ball.la wall.la bag.la
 	LD_LIBRARY_PATH=$(FieldWorksRootDir)/Lib/src/icu/install/lib:$(FieldWorksRootDir)/../../libraries/COM/src/.libs PATH=$(PATH):$(FieldWorksRootDir)/../../libraries/COM/bin make-map.sh .libs/bakery.so .libs/ball.so .libs/wall.so .libs/bag.so
 
-run-test:
+check:
 	sh test.sh
 
 MOSTLYCLEANFILES = IBall_idl.h IBall_GUIDs.cpp ComClient.exe.mdb Tester.exe.mdb IBakery_idl.h IBakery_GUIDs.cpp IWall_GUIDs.cpp IBag_GUIDs.cpp
-CLEANFILES = IBallMetadata.dll IBakeryMetadata.dll Jar.dll Jar.dll.mdb BakeryJarTestClient.exe.mdb components.map IWall.h IWall.tlb IWallInterop.dll IBag.h IBag.tlb IBagInterop.dll
+CLEANFILES = IBallMetadata.dll IBakeryMetadata.dll Jar.dll Jar.dll.mdb BakeryJarTestClient.exe.mdb components.map IWall.h IWall.tlb IWallInterop.dll IBag.h IBag.tlb IBagInterop.dll IBag.idl

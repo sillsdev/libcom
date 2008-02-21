@@ -46,8 +46,8 @@ public:
 	virtual ULONG __stdcall AddRef();
 	virtual ULONG __stdcall Release();
 	
-	virtual HRESULT ProvideBall(IUnknown** iball);
-	virtual HRESULT InspectBall(IUnknown* iball);
+	virtual HRESULT ProvideBall(IBall** iball);
+	virtual HRESULT InspectBall(IBall* iball);
 	
 	/** Called to create the COM object. */
 	static void CreateCom(IUnknown* outerAggregateIUnknown, REFIID interfaceid, void** objectInterface);
