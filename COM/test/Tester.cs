@@ -47,9 +47,11 @@ public class Tester {
 		wall.writeBSTROnWall("Brrrrr!");
 		System.Console.WriteLine("Reading wall:");
 		string wallContents = "overwrite me";
-//		wallContents = wall.readWallBSTR();
+		wallContents = wall.readWallBSTR();
+		System.Console.WriteLine("Wall says: " + wallContents);
+		System.Console.WriteLine("Again, Wall says: '" + wall.readWallBSTR() + "'.");
 		
-		System.Console.WriteLine("Doing Bag-Ball test");
+		System.Console.WriteLine("\n\nDoing Bag-Ball test");
 		//TODO What if I create it something like: IBag bag = (IBall) Factory.BagClass();  Eberhard might have said I was supposed to be doing this sort of thing that way.
 		Bag bag = new Bag();
 		Ball ball = (Ball) bag.ProvideBall(); // TODO what if I cast it as an IBall rather than Ball
