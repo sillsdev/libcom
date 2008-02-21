@@ -1,0 +1,60 @@
+/*
+ *	$Id$
+ *
+ *	Bag COM interface
+ *
+ *	MarkS - 2008-02-15
+ *
+ * COM Support Library Test
+ * Copyright (C) 2007 SIL International
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ * http://www.gnu.org/licenses/lgpl.html
+ */
+
+// To create a .tlb, C++ GUIDs and header code, and C# Interop/Metadata DLL:
+// DOS$ midl /Oicf /env win32 /tlb IFoo.tlb /h IFoo_idl.h IFoo.idl
+// DOS$ tlbimp IFoo.tlb /out:IFooMetadata.dll
+// Linux$ mv IFoo_idl.h raw-MIDL/IFoo_idl.h && ./fix-midl.sh raw-MIDL/IFoo_idl.h > IFoo_idl.h
+// Linux$ ./extract_iids.sh IFoo_idl.h > IFoo_GUIDs.cpp
+
+//import "oaidl.idl";
+//import "ocidl.idl";
+
+
+	[
+		object,
+		uuid(40579c81-c86d-491a-bcca-cf8d728c58b2),
+		helpstring("IBag interface")
+	]
+	interface IBag : IUnknown
+	{
+	  [id(1), helpstring("")] HRESULT ProvideBall(
+	  	[out, retval] IBall** iball
+	  );
+	  [id(2), helpstring("")] HRESULT InspectBall(
+	    [in] IBall* iball
+	  );
+	}
+	
+	[
+		uuid(1495a75d-018a-43ab-a9cd-1012e5636d52),
+		helpstring("Bag class")
+	]
+	coclass Bag
+	{
+		[default] interface IBag;
+	}
