@@ -40,7 +40,10 @@
 #ifdef USE_FW_GENERIC_FACTORY
 #include "BinTree.h"
 #include "GenericFactory.h"
-#endif // USE_FW_GENERIC_FACTORY
+#include "UnicodeString8.h"
+#else // !USE_FW_GENERIC_FACTORY
+#define UnicodeString8(x) "Error: no UnicodeString8 implementation"
+#endif // !USE_FW_GENERIC_FACTORY
 
 
 // Begin copied code from Wine's winbase.h, modified 2007-02-01 by Neil Mayhew
@@ -237,14 +240,49 @@ Wall::Wall(void) : contents("Mene, Mene, Tekel, Parsin\n"), m_referenceCount((LO
 Wall::~Wall(void) {
 }
 
+/**
+ * Get contents of wall as a BSTR.
+ * @param text Caller (or possibly COM itself http://msdn2.microsoft.com/en-us/library/ms221069.aspx ) is responsible for freeing the memory we allocate for this variable. Will point to a new location of newly allocated memory containing data in a BSTR. 
+ */
 HRESULT Wall::readWallBSTR(BSTR* text) {
-//TODO	text = contents; // er, no. actually copy the data. er, maybe malloc and pass a pointer to the BSTR? er.. TODO
+	
+	std::cout << "readWallBSTR(). We will return the contents of wall, which are basically (length of "<<contents.length()<<"): '"<<UnicodeString8(contents.getTerminatedBuffer())<<"'" << std::endl;
+
+	
+	*text = SysAllocString(contents.getTerminatedBuffer());
+	(*text)[contents.length()] = 0;
+	
+	
+	/*
+	UChar* foo;	
+	
+	// TODO allocate memory for foo the right way. malloc surely isn't the "right way".
+	foo = static_cast<UChar*>(malloc(contents.length()*2+2));
+	if (NULL == foo)
+		exit(1);
+	foo[contents.length()] = 0;
+	
+	contents.extract(0,contents.length(),foo);
+	*text = SysAllocString(foo);
+	
+	free(foo);
+	*/
+	
 	return S_OK;
 }
 
+/**
+ * Append text to the wall.
+ * @param text text to append to the wall. 
+ */
 HRESULT Wall::writeBSTROnWall(BSTR text) {
-	// TODO
-	
+
+
+	std::cout << "writeBSTROnWall(). Before, wall contains '"<< UnicodeString8(contents.getTerminatedBuffer()) <<"'" << std::endl;
+	std::cout << "writeBSTROnWall(). appending string of length '"<<SysStringLen(text)<<"'/2" << std::endl;
+	contents.append(text,SysStringLen(text)/2);
+	std::cout << "writeBSTROnWall().  After, wall contains '"<< UnicodeString8(contents.getTerminatedBuffer()) <<"'" << std::endl;
+
 	
 	return S_OK;
 }
