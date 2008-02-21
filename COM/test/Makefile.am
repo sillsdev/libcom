@@ -128,9 +128,7 @@ EXTRA_DIST = test.sh Jar.cs fix-midl.sh extract_iids.sh Bakery.h Wall.h Bag.h ja
 CSC = gmcs
 CSC_FLAGS = -debug
 Tester_exe_SOURCES = Tester.cs
-Tester_exe_REFERENCES = IWallInterop.dll IBagInterop.dll 
-#IBallMetadata.dll
-
+Tester_exe_REFERENCES = IWallInterop.dll IBagInterop.dll
 ComClient_exe_SOURCES = ComClient.cs
 ComClient_exe_REFERENCES = IBallMetadata.dll
 BakeryJarTestClient_exe_SOURCES = BakeryJarTestClient.cs
@@ -165,7 +163,7 @@ IBakery_GUIDs.cpp: IBakery_idl.h extract_iids.sh
 IWall_GUIDs.cpp: IWall.h extract_iids.sh
 	./extract_iids.sh $< >$@
 
-# TODO do in a way that isn't a dirty hack with manually removing IBall,Ball GUID definitions from IBag_GUIDs.cpp since IBag.idh #includes IBall.idh
+# TODO do in a way that isn't a dirty hack with manually removing IBall,Ball GUID definitions from IBag_GUIDs.cpp since IBagLib.idl #includes IBall.idh
 IBag_GUIDs.cpp: IBag.h extract_iids.sh
 	./extract_iids.sh $< >$@
 	TMPFILE="$(shell mktemp -t)" && \
@@ -220,4 +218,4 @@ check:
 	sh test.sh
 
 MOSTLYCLEANFILES = IBall_idl.h IBall_GUIDs.cpp ComClient.exe.mdb Tester.exe.mdb IBakery_idl.h IBakery_GUIDs.cpp IWall_GUIDs.cpp IBag_GUIDs.cpp
-CLEANFILES = IBallMetadata.dll IBakeryMetadata.dll Jar.dll Jar.dll.mdb BakeryJarTestClient.exe.mdb components.map IWall.h IWall.tlb IWallInterop.dll IBag.h IBag.tlb IBagInterop.dll IBag.idl
+CLEANFILES = IBallMetadata.dll IBakeryMetadata.dll Jar.dll Jar.dll.mdb BakeryJarTestClient.exe.mdb components.map IWall.h IWall.tlb IWallInterop.dll IBag.h IBag.tlb IBagInterop.dll IBagLib_.idl
