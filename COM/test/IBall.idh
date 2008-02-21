@@ -1,0 +1,60 @@
+/*
+ *	$Id$
+ *
+ *	Ball COM interface
+ *
+ *	MarkS - 2006-11-16
+ *
+ * Ball COM Support Library Test
+ * Copyright (C) 2007 SIL International
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ * http://www.gnu.org/licenses/lgpl.html
+ */
+
+// To create a .tlb, C++ GUIDs and header code, and C# Interop/Metadata DLL:
+// DOS$ midl /Oicf /env win32 /tlb IBall.tlb /dlldata IBall_d.c /h IBall_idl.h /iid IBall_iid.h IBall.idl
+// DOS$ tlbimp IBall.tlb /out:IBallMetadata.dll
+// Linux$ mv IBall_idl.h raw-MIDL/IBall_idl.h && ./fix-midl.sh raw-MIDL/IBall_idl.h > IBall_idl.h
+//(Linux$ mv IBall_idl.h raw-MIDL/IBall_idl.h && sed -e 's/EXTERN_C const \(IID\|CLSID\|LIBID\|DIID\) \(IID\|CLSID\|LIBID\|DIID\)_\(..*\);/#define \2_\3 __uuidof(\3)/' raw-MIDL/IBall_idl.h >IBall_idl.h
+// Linux$ ./extract_iids.sh IBall_idl.h > IBall_GUIDs.cpp
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+	[
+		object,
+		uuid(304e42cb-e6d8-40c0-a09f-a362f12b428d),
+		helpstring("IBall interface")
+	]
+	interface IBall : IUnknown
+	{
+	  [id(1), helpstring("method bounce")] HRESULT bounce();
+	  [id(2), helpstring("method roll")] HRESULT roll( 
+	    [in] long distance,
+	    [out, retval] long* ret_distance
+	  );
+	}
+
+	[
+		uuid(261509ac-86a4-488e-af54-c81cac39bce6),
+		helpstring("Ball class")
+	]
+	coclass Ball
+	{
+		[default] interface IBall;
+	}
+
