@@ -78,7 +78,7 @@ static volatile LONG g_serverLockCount = 0;
 const wchar_t g_versionIndependentProgID[] = L"Yup.Bag";
 /** ProgID */
 const wchar_t* g_ProgID = L"Yup.Bag.1";
-const wchar_t* g_classDescription = L"A Bag. Can be written on.";
+const wchar_t* g_classDescription = L"A Bag. Holds things.";
 const wchar_t* g_threadingModel = L"Apartment";
 
 #ifdef USE_FW_GENERIC_FACTORY
