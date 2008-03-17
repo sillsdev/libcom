@@ -1,0 +1,6 @@
+libcom
+
+The build system inappropriately installs these files into lib:
+bag.a bag.la bag.so bag.so.0 bag.so.0.0.0 bakery.a bakery.la bakery.so bakery.so.0 bakery.so.0.0.0 ball.a ball.la ball.so ball.so.0 ball.so.0.0.0 wall.a wall.la wall.so wall.so.0 wall.so.0.0.0
+
+
