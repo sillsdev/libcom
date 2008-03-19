@@ -126,11 +126,6 @@ struct CONTEXT;
 int GetFullPathName(const char*, int, char*, const char**);
 int GetFullPathName(const OLECHAR*, int, OLECHAR*, const OLECHAR**);
 
-#define __RPC_USER
-#define __RPC_STUB
-#define __RPC_FAR
-typedef int PRPC_MESSAGE;
-typedef void* RPC_IF_HANDLE;
 typedef unsigned char boolean;
 
 #define RGB(r,g,b)          ((COLORREF)(((BYTE)(r)|((WORD)((BYTE)(g))<<8))|(((DWORD)(BYTE)(b))<<16)))
