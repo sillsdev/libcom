@@ -58,16 +58,16 @@ private:
 };
 
 #ifndef USE_FW_GENERIC_FACTORY
-// CFactory class
+// BagCFactory class
 // TODO: this should probably be in a separate file and should probably be an 
 // interface or inheritable class or something that things like 
 // Bag implement. (??)
 //
 
 /**
- * Class CFactory
+ * Class BagCFactory
  */
-class CFactory : public IClassFactory
+class BagCFactory : public IClassFactory
 {
 
 public:
@@ -80,11 +80,11 @@ public:
 	virtual HRESULT __stdcall CreateInstance(IUnknown* outerAggregateIUnknown, const IID& interfaceid, void** objectInterface);
 	virtual HRESULT __stdcall LockServer(BOOL shouldLock);
 
-	CFactory() : m_referenceCount((LONG)1) {
+	BagCFactory() : m_referenceCount((LONG)1) {
 		// RegisterFactory(CLSID_Bag, static_cast<IClassFactory*>(this));
 	}
 
-	~CFactory() 
+	~BagCFactory() 
 	{
 	}
 
