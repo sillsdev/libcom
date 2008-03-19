@@ -28,6 +28,10 @@
 #ifndef WinError_h
 #define WinError_h
 
+// Force definition of HRESULT as long
+typedef long HRESULT;
+#define _HRESULT_DEFINED
+
 enum {
   STG_E_PROPSETMISMATCHED = (HRESULT)0x800300f0L,
   STG_E_BADBASEADDRESS = (HRESULT)0x80030110L,
@@ -41,6 +45,7 @@ enum {
   PERSIST_E_SIZEDEFINITE = (HRESULT)0x800b0009L,
   PERSIST_E_SIZEINDEFINITE = (HRESULT)0x800b000aL,
   PERSIST_E_NOTSELFSIZING = (HRESULT)0x800b000bL,
+  /* These are actually defined in WinError.h already.
   CERT_E_EXPIRED = (HRESULT)0x800b0101L,
   CERT_E_VALIDITYPERIODNESTING = (HRESULT)0x800b0102L,
   CERT_E_ROLE = (HRESULT)0x800b0103L,
@@ -51,6 +56,7 @@ enum {
   CERT_E_MALFORMED = (HRESULT)0x800b0108L,
   CERT_E_UNTRUSTEDROOT = (HRESULT)0x800b0109L,
   CERT_E_CHAINING = (HRESULT)0x800b010aL,
+  */
 };
 
 // Begin copied code from Wine's winerror.h from git on 2008-01-15
