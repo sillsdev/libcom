@@ -42,6 +42,8 @@
 #include "GenericFactory.h"
 #endif
 
+#include <WinError.h>
+
 // Begin copied code from Wine's winbase.h, modified 2007-02-01 by Neil Mayhew
 
 /* Copyright (C) the Wine project */

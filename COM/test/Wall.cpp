@@ -45,6 +45,7 @@
 #define UnicodeString8(x) "Error: no UnicodeString8 implementation"
 #endif // !USE_FW_GENERIC_FACTORY
 
+#include <WinError.h>
 
 // Begin copied code from Wine's winbase.h, modified 2007-02-01 by Neil Mayhew
 

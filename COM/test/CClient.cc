@@ -34,6 +34,8 @@
 #include "IBall_idl.h"
 #include "Ball.h"
 
+#include <WinError.h>
+
 int main() {
 
   void* handle;
