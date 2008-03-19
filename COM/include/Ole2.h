@@ -25,4 +25,4 @@
  * http://www.gnu.org/licenses/lgpl.html
  */
 
-#include "COMClasses.h"
+#include "WinError.h"
