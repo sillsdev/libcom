@@ -123,7 +123,7 @@ comtest_LDFLAGS = \
 	-ldl \
 	$(shell icu-config --ldflags)
 
-EXTRA_DIST = test.sh Jar.cs fix-midl.sh extract_iids.sh Bakery.h Wall.h Bag.h jar.tlh jar.tli Ball.h tools.h raw-midl/IBakery_idl.h raw-midl/IBakeryMetadata.dll raw-midl/IBall_idl.h raw-midl/IBall_iid.h raw-midl/IBallMetadata.dll raw-midl/IBall.tlb raw-midl/jar.tlh raw-midl/jar.tli raw-midl/README
+EXTRA_DIST = test.sh Jar.cs fix-midl.sh extract_iids.sh Bakery.h Wall.h Bag.h jar.tlh jar.tli Ball.h tools.h raw-midl/IBakery_idl.h raw-midl/IBakeryMetadata.dll raw-midl/IBall_idl.h raw-midl/IBall_iid.h raw-midl/IBallMetadata.dll raw-midl/IBall.tlb raw-midl/jar.tlh raw-midl/jar.tli raw-midl/README IWall.idl IBagLib.idl IBag.idh IBall.idh
 
 CSC = gmcs
 CSC_FLAGS = -debug
@@ -218,4 +218,8 @@ check:
 	sh test.sh
 
 MOSTLYCLEANFILES = IBall_idl.h IBall_GUIDs.cpp ComClient.exe.mdb Tester.exe.mdb IBakery_idl.h IBakery_GUIDs.cpp IWall_GUIDs.cpp IBag_GUIDs.cpp
-CLEANFILES = IBallMetadata.dll IBakeryMetadata.dll Jar.dll Jar.dll.mdb BakeryJarTestClient.exe.mdb components.map IWall.h IWall.tlb IWallInterop.dll IBag.h IBag.tlb IBagInterop.dll IBagLib_.idl
+CLEANFILES = IBallMetadata.dll IBakeryMetadata.dll Jar.dll Jar.dll.mdb BakeryJarTestClient.exe.mdb IWall.h IWall.tlb IWallInterop.dll IBag.h IBag.tlb IBagInterop.dll IBagLib_.idl
+if USE_FW_GENERIC_FACTORY
+# Don't clean components.map if the pieces aren't available to regenerate it.
+CLEANFILES += components.map
+endif
