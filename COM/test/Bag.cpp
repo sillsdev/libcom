@@ -43,6 +43,7 @@
 #include "GenericFactory.h"
 #endif // USE_FW_GENERIC_FACTORY
 
+#include <WinError.h>
 
 // Begin copied code from Wine's winbase.h, modified 2007-02-01 by Neil Mayhew
 
@@ -108,7 +109,7 @@ void Bag::CreateCom(IUnknown* outerAggregateIUnknown, REFIID interfaceid, void**
 
 	Bag* bag = new Bag; 
 	if (S_OK != bag->QueryInterface(interfaceid, objectInterface)) {
-		bag->Release(); // Um, shouldn't we NOT be doing this? If we SHOULD be, then update the CFactory::CreateInstance function to do likewise. 
+		bag->Release(); // Um, shouldn't we NOT be doing this? If we SHOULD be, then update the BagCFactory::CreateInstance function to do likewise. 
 		throw std::runtime_error("Bag createcom queryinterface failed in Bag.cpp.");
 	}
 }
@@ -116,7 +117,7 @@ void Bag::CreateCom(IUnknown* outerAggregateIUnknown, REFIID interfaceid, void**
 #else /* !USE_FW_GENERIC_FACTORY */
 
 // Upon being dlopen'ed, this will create our class factory (and as long as RegisterFactory() is still being used, will register a pointer to the class factory (as an IClassFactory)). TODO yeah, probably not any more, right? Or did we leave support for that in?
-static CFactory classFactory;
+static BagCFactory classFactory;
 
 /** DllGetClassObject */
 EXTERN_C HRESULT DllGetClassObject(REFCLSID requestedClassID, REFIID requestedInterfaceID, LPVOID * objectInterface)
@@ -127,7 +128,7 @@ EXTERN_C HRESULT DllGetClassObject(REFCLSID requestedClassID, REFIID requestedIn
 	if (requestedClassID != IID_Bag)
 		return CLASS_E_CLASSNOTAVAILABLE;
 
-	CFactory* factory = new CFactory();
+	BagCFactory* factory = new BagCFactory();
 	if (NULL == factory)
 		return E_OUTOFMEMORY;
 	
@@ -142,9 +143,9 @@ EXTERN_C HRESULT DllGetClassObject(REFCLSID requestedClassID, REFIID requestedIn
 // Bag's Class Factory's implementation of IUnknown.
 
 /**
- * CFactory::QueryInterface
+ * BagCFactory::QueryInterface
  */
-HRESULT __stdcall CFactory::QueryInterface(const IID& interfaceid, void** objectInterface) {    
+HRESULT __stdcall BagCFactory::QueryInterface(const IID& interfaceid, void** objectInterface) {    
 	if ((IID_IUnknown      == interfaceid) || 
 	    (IID_IClassFactory == interfaceid)) {
 		*objectInterface = static_cast<IClassFactory*>(this); 
@@ -159,16 +160,16 @@ HRESULT __stdcall CFactory::QueryInterface(const IID& interfaceid, void** object
 }
 
 /**
- * CFactory::AddRef
+ * BagCFactory::AddRef
  */
-ULONG __stdcall CFactory::AddRef() {
+ULONG __stdcall BagCFactory::AddRef() {
 	return InterlockedIncrement(&m_referenceCount);
 }
 
 /** 
- * CFactory::Release
+ * BagCFactory::Release
  */
-ULONG __stdcall CFactory::Release() {
+ULONG __stdcall BagCFactory::Release() {
 	if (0 == InterlockedDecrement(&m_referenceCount)) {
 		delete this; // TODO This might cause trouble like in the past.
 		return 0;
@@ -180,7 +181,7 @@ ULONG __stdcall CFactory::Release() {
 // http://msdn2.microsoft.com/en-us/library/ms694364.aspx
 
 /**
- * CFactory::CreateInstance
+ * BagCFactory::CreateInstance
  * http://msdn2.microsoft.com/en-us/library/ms682215.aspx
  * We don't call a CoRegisterClassObject, like the MSDN API says we are supposed to.
  * @param outerAggregateIUnknown Must be NULL since we don't support aggregation
@@ -188,7 +189,7 @@ ULONG __stdcall CFactory::Release() {
  * @param objectInterface interface to Bag requested by interfaceid, or NULL if Bag doesn't support interfaceid.
  * @return S_OK if successful Bag creation, E_OUTOFMEMORY if we failed to create Bag due to insufficient memory, CLASS_E_NOAGGREGATION if outerAggregateIUnknown is not NULL, or E_NOINTERFACE if Bag does not support the requested interface.
  */
-HRESULT __stdcall CFactory::CreateInstance(IUnknown* outerAggregateIUnknown, 
+HRESULT __stdcall BagCFactory::CreateInstance(IUnknown* outerAggregateIUnknown, 
 	const IID& interfaceid, void** objectInterface) {
 	// We don't support aggregation.
 	if (outerAggregateIUnknown != NULL)
@@ -212,11 +213,11 @@ HRESULT __stdcall CFactory::CreateInstance(IUnknown* outerAggregateIUnknown,
 }
 
 /**
- * CFactory::LockServer
+ * BagCFactory::LockServer
  * 
  * http://msdn2.microsoft.com/en-us/library/ms682332.aspx
  */
-HRESULT __stdcall CFactory::LockServer(BOOL shouldLock) {
+HRESULT __stdcall BagCFactory::LockServer(BOOL shouldLock) {
 	if (shouldLock) {
 		InterlockedIncrement(&g_serverLockCount); 
 	} else {
