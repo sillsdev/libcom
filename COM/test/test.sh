@@ -5,7 +5,7 @@
 #
 #	MarkS - 2007-08-24
 #
-# Ball COM Support Library Test
+# COM Support Library Test
 # Copyright (C) 2007 SIL International
 # 
 # This library is free software; you can redistribute it and/or
@@ -27,6 +27,7 @@
 
 COMPONENTS_MAP_PATH=.
 export COMPONENTS_MAP_PATH
+# TODO use icu-config --libdir possibly?
 LD_LIBRARY_PATH=../../../projects/FieldWorks/Lib/src/icu/install/lib:../lib:.libs
 export LD_LIBRARY_PATH
 
