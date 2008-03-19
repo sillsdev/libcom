@@ -31,4 +31,4 @@ AUTOMAKE_OPTIONS = foreign 1.4
 
 SUBDIRS = src test
 
-EXTRA_DIST = include/COM.h include/COMInterfaces.h include/COMLibrary.h include/COMPointers.h  include/oaidl.h include/ocidl.h include/Ole2.h include/Oleacc.h include/OleCtl.h include/rpc.h include/rpcndr.h
+EXTRA_DIST = include/COM.h include/COMInterfaces.h include/COMLibrary.h include/COMPointers.h  include/oaidl.h include/ocidl.h include/Ole2.h include/Oleacc.h include/OleCtl.h include/rpc.h include/rpcndr.h remote-midl/midl remote-midl/tlbimp
