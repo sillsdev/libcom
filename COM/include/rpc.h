@@ -1,7 +1,7 @@
 /*
  *	$Id$
  *
- *	This file is for compatibility with the naming of Windows header files.
+ *	This file is for compatibility with the naming and use of Windows header files.
  *
  *	MarkS - 2007-02-05
  *
@@ -25,5 +25,10 @@
  * http://www.gnu.org/licenses/lgpl.html
  */
 
-#include "Hacks.h"
 #include "COMInterfaces.h"
+
+#define __RPC_USER
+#define __RPC_STUB
+#define __RPC_FAR
+typedef int PRPC_MESSAGE;
+typedef void* RPC_IF_HANDLE;
