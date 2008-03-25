@@ -52,15 +52,5 @@ _DEFINE_PTR(IRecordInfo);
 _DEFINE_PTR(IEnumFORMATETC);
 _DEFINE_PTR(IShellFolder);
 
-_DEFINE_PTR(IErrorInfo);
-_DEFINE_PTR(ICreateErrorInfo);
-_DEFINE_PTR(ISupportErrorInfo);
-_DEFINE_PTR(ISequentialStream);
-_DEFINE_PTR(IStream);
-_DEFINE_PTR(IPicture);
-_DEFINE_PTR(IAccessible);
-_DEFINE_PTR(IServiceProvider);
-_DEFINE_PTR(IEnumVARIANT);
-_DEFINE_PTR(ITypeInfo);
 
 #endif //_COMPOINTERS_H_
