@@ -31,6 +31,12 @@
 
 #include <cwchar>
 #include <vector>
+#include <BasicTypes.h>
+
+// TODO not a hack
+#define DECLARE_HANDLE(NAME) typedef struct NAME##__ *NAME;
+DECLARE_HANDLE(HINSTANCE);
+typedef HINSTANCE HMODULE;
 
 static wchar_t module_name[] = L"Unknown Module";
 
@@ -48,4 +54,3 @@ unsigned long GetModuleFileName(HMODULE h, OLECHAR* buf, unsigned long max)
 	std::copy(tmp.begin(), tmp.end(), buf);
 	return count;
 }
-
