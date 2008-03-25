@@ -27,9 +27,12 @@
 
 if USE_FW_GENERIC_FACTORY
 AM_CPPFLAGS = -DUSE_FW_GENERIC_FACTORY -DUSE_FW_MODULE_ENTRY -DCOM_NO_WINDOWS_H
-endif
-
 FieldWorksRootDir = ../../../projects/FieldWorks
+Win32BaseDir = ../../Win32Base
+Win32MoreDir = ../../Win32More
+else
+AM_CPPFLAGS = -DNO_FW
+endif
 
 noinst_PROGRAMS = comtest ComClient.exe BakeryJarTestClient.exe Tester.exe
 # TODO: ball.so shouldn't be installed, just built.
@@ -37,12 +40,13 @@ lib_LTLIBRARIES = ball.la bakery.la wall.la bag.la
 
 INCLUDES = \
 	$(all_includes) \
-	-I$(top_srcdir)/include \
-	-I$(top_srcdir)/../Win32Base/include \
-	-I$(FieldWorksRootDir)/Include 
+	-I$(top_srcdir)/include 
 if USE_FW_GENERIC_FACTORY
 INCLUDES += \
-	-I$(FieldWorksRootDir)/Src/Generic 
+	-I$(FieldWorksRootDir)/Include \
+	-I$(FieldWorksRootDir)/Src/Generic \
+	-I$(Win32BaseDir)/include \
+	-I$(Win32MoreDir)/include 
 endif
 
 MIDL = $(top_srcdir)/remote-midl/midl
@@ -55,12 +59,13 @@ bag_la_SOURCES = \
 
 #.libs/ball.o 
 bag_la_LIBADD = \
-	-L../src/.libs -lcom \
-	-L../../Win32Base/src -lWin32Base
+	-L../src/.libs -lcom 
 if USE_FW_GENERIC_FACTORY
 bag_la_LIBADD += \
 	$(FieldWorksRootDir)/Src/Generic/libGeneric.a \
-	$(FieldWorksRootDir)/Src/Generic/ModuleEntry.o 
+	$(FieldWorksRootDir)/Src/Generic/ModuleEntry.o \
+	-L$(Win32BaseDir)/src -lWin32Base \
+	-L$(Win32MoreDir)/src -lWin32More 
 endif
 bag_la_LDFLAGS = -module $(all_libraries) \
 	-luuid \
@@ -71,12 +76,13 @@ wall_la_SOURCES = \
 	Wall.cpp \
 	IWall_GUIDs.cpp
 wall_la_LIBADD = \
-	-L../src/.libs -lcom \
-	-L../../Win32Base/src -lWin32Base
+	-L../src/.libs -lcom 
 if USE_FW_GENERIC_FACTORY
 wall_la_LIBADD += \
 	$(FieldWorksRootDir)/Src/Generic/libGeneric.a \
-	$(FieldWorksRootDir)/Src/Generic/ModuleEntry.o 
+	$(FieldWorksRootDir)/Src/Generic/ModuleEntry.o \
+	-L$(Win32BaseDir)/src -lWin32Base \
+	-L$(Win32MoreDir)/src -lWin32More 
 endif
 wall_la_LDFLAGS = -module $(all_libraries) \
 	-luuid \
@@ -87,12 +93,13 @@ bakery_la_SOURCES = \
 	IBakery_GUIDs.cpp \
 	Jar_GUIDs.cpp
 bakery_la_LIBADD = \
-	../src/libcom.la \
-	-L../../Win32Base/src -lWin32Base 
+	../src/libcom.la 
 if USE_FW_GENERIC_FACTORY
 bakery_la_LIBADD += \
 	$(FieldWorksRootDir)/Src/Generic/libGeneric.a \
-	$(FieldWorksRootDir)/Src/Generic/ModuleEntry.o 
+	$(FieldWorksRootDir)/Src/Generic/ModuleEntry.o \
+	-L$(Win32BaseDir)/src -lWin32Base \
+	-L$(Win32MoreDir)/src -lWin32More 
 endif
 bakery_la_LDFLAGS = -module $(all_libraries) \
 	-luuid \
@@ -104,12 +111,13 @@ ball_la_SOURCES = \
 	IBall_GUIDs.cpp 
 
 ball_la_LIBADD = \
-	../src/libcom.la \
-	-L../../Win32Base/src -lWin32Base
+	../src/libcom.la 
 if USE_FW_GENERIC_FACTORY
 ball_la_LIBADD += \
 	$(FieldWorksRootDir)/Src/Generic/libGeneric.a \
-	$(FieldWorksRootDir)/Src/Generic/ModuleEntry.o 
+	$(FieldWorksRootDir)/Src/Generic/ModuleEntry.o \
+	-L$(Win32BaseDir)/src -lWin32Base \
+	-L$(Win32MoreDir)/src -lWin32More 
 endif
 ball_la_LDFLAGS = -module $(all_libraries) \
 	-luuid \
@@ -123,7 +131,32 @@ comtest_LDFLAGS = \
 	-ldl \
 	$(shell icu-config --ldflags)
 
-EXTRA_DIST = test.sh Jar.cs fix-midl.sh extract_iids.sh Bakery.h Wall.h Bag.h jar.tlh jar.tli Ball.h tools.h raw-midl/IBakery_idl.h raw-midl/IBakeryMetadata.dll raw-midl/IBall_idl.h raw-midl/IBall_iid.h raw-midl/IBallMetadata.dll raw-midl/IBall.tlb raw-midl/jar.tlh raw-midl/jar.tli raw-midl/README IWall.idl IBagLib.idl IBag.idh IBall.idh
+EXTRA_DIST = \
+	test.sh \
+	Jar.cs \
+	fix-midl.sh \
+	extract_iids.sh \
+	Bakery.h \
+	Wall.h \
+	Bag.h \
+	jar.tlh \
+	jar.tli \
+	Ball.h \
+	tools.h \
+	raw-midl/IBakery_idl.h \
+	raw-midl/IBakeryMetadata.dll \
+	raw-midl/IBall_idl.h \
+	raw-midl/IBall_iid.h \
+	raw-midl/IBallMetadata.dll \
+	raw-midl/IBall.tlb \
+	raw-midl/jar.tlh \
+	raw-midl/jar.tli \
+	raw-midl/README \
+	IWall.idl \
+	IBagLib.idl \
+	IBag.idh \
+	IBall.idh \
+	example_components.map 
 
 CSC = gmcs
 CSC_FLAGS = -debug
