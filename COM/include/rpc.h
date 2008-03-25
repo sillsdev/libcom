@@ -26,6 +26,9 @@
  */
 
 #include "COMInterfaces.h"
+#ifndef NO_FW
+#include <COMInterfacesMore.h>
+#endif
 
 #define __RPC_USER
 #define __RPC_STUB
