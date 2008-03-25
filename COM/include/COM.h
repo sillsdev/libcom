@@ -28,7 +28,7 @@
 #ifndef _COM_H_
 #define _COM_H_
 
-#include "Types.h"
+#include "BasicTypes.h"
 
 #include <cstring>		// For memcmp
 #include <string>		// For GUID conversion

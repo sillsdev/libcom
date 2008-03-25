@@ -25,7 +25,7 @@
  * http://www.gnu.org/licenses/lgpl.html
  */
 
-#include "Types.h"
+#include "BasicTypes.h"
 #include <cstdlib>
 
 /**
