@@ -25,17 +25,18 @@
 # http://www.gnu.org/licenses/lgpl.html
 # 
 
-lib_LTLIBRARIES = libcom.la 
+lib_LTLIBRARIES = libcom.la
 
+# TODO Don't compile Util.cpp into libcom
 libcom_la_SOURCES = \
 	COM.cpp \
 	COMInterfaces.cpp \
-	COMClasses.cpp \
 	COMSupport.cpp \
 	Registry.cpp \
 	GUID.cpp \
 	Memory.cpp \
-	ComRegistry.cpp 
+	ComRegistry.cpp \
+	Util.cpp
 
 EXTRA_DIST = ComRegistry.h COMSupportInternals.h
 
@@ -43,7 +44,6 @@ EXTRA_DIST = ComRegistry.h COMSupportInternals.h
 INCLUDES = \
 	$(all_includes) \
 	-I$(top_srcdir)/include \
-	-I$(top_srcdir)/../Win32Base/include \
 	$(shell icu-config --cppflags) 
 
 # the library search path.
