@@ -28,9 +28,7 @@
 #ifndef WinError_h
 #define WinError_h
 
-// Force definition of HRESULT as long
-typedef long HRESULT;
-#define _HRESULT_DEFINED
+#include <BasicTypes.h>
 
 enum {
   STG_E_PROPSETMISMATCHED = (HRESULT)0x800300f0L,
