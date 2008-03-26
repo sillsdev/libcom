@@ -153,4 +153,8 @@ typedef unsigned char byte;
 
 #define STDAPI EXTERN_C HRESULT STDAPICALLTYPE
 
+// Force definition of HRESULT as long
+typedef long HRESULT;
+#define _HRESULT_DEFINED
+
 #endif //_BASICTYPES_H_
