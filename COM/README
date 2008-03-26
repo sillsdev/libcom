@@ -1,6 +1,27 @@
-libcom
+libcom, by SIL International <http://www.sil.org/>
 
-The build system inappropriately installs these files into PREFIX/lib:
+libcom implements a subset of Microsoft COM.
+
+Version 0.4.0 Development Preview, 2008-03-26
+
+In many ways, libcom functions well. But it isn't necessarily finished yet. This release is a development preview. The examples in the test directory may not build or run properly the way they are currently set up for this release.
+
+When invoking an application that is a COM client, make sure LD_LIBRARY_PATH can find libcom.so, make a components.map file (probably in the directory of the COM server .so file), and set COMPONENTS_MAP_PATH to point to the locations of any components.map files you need to use. 
+The test directory contains examples of COM client programs and how to run them.
+
+components.map files are in the format:
+01774e93-09f6-4370-847a-a2a697bbadaf ../lib/mylibrary.so
+# Comment lines start with hash
+Each line tells libcom what so-file can provide an object or interface of a given GUID. After the GUID is a single space, and then after the single space everything is treated as the so-file path until the end of line.
+
+Installation notes:
+
+The build system might inappropriately install these files into PREFIX/lib:
 bag.a bag.la bag.so bag.so.0 bag.so.0.0.0 bakery.a bakery.la bakery.so bakery.so.0 bakery.so.0.0.0 ball.a ball.la ball.so ball.so.0 ball.so.0.0.0 wall.a wall.la wall.so wall.so.0 wall.so.0.0.0
+They won't hurt anything, but they don't need to be there.
+The build system does not yet install header files into PREFIX/include so that applications can use them.
 
+More information:
 
+Development team <http://linux.lsdev.sil.org/>
+SIL International <http://www.sil.org/>
