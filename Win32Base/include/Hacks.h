@@ -9,7 +9,8 @@
 #ifndef HACKS_H
 #define HACKS_H
 
-#include "Types.h"
+#include "BasicTypes.h"
+#include "ExtendedTypes.h"
 #include "DateTime.h"
 #include "WinError.h"
 
