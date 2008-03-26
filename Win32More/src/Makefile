@@ -29,7 +29,10 @@ CPPFLAGS = -MMD -I../include -I../../COM/include -I../../Win32Base/include
 CXXFLAGS = -g -Wall
 ARFLAGS = -rs
 
-OBJS = TextServices.o
+OBJS = \
+	TextServices.o \
+	COMInterfacesMore.o \
+
 SRCS = $(OBJS:%.o=%.cpp)
 DEPS = $(OBJS:%.o=%.d)
 
