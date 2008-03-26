@@ -9,6 +9,9 @@
 #ifndef _DATETIME_H_
 #define _DATETIME_H_
 
+#include <BasicTypes.h>
+#include <ExtendedTypes.h>
+
 typedef double DATE;
 
 struct FILETIME
