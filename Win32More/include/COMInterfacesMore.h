@@ -28,6 +28,10 @@
 #ifndef COMInterfacesMore_h
 #define COMInterfacesMore_h
 
+#include "DateTime.h"
+#include <ExtendedTypes.h>
+#include <COMInterfaces.h>
+
 class IErrorInfo : public IUnknown
 {
 public:
