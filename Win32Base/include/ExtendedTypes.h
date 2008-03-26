@@ -28,6 +28,8 @@
 #ifndef ExtendedTypes_h
 #define ExtendedTypes_h
 
+#include <BasicTypes.h>
+
 union LARGE_INTEGER
 {
 	struct
