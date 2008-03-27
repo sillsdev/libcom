@@ -245,7 +245,7 @@ IBakeryMetadata.dll:
 	ln -s raw-midl/$@
 
 components.map: bakery.la ball.la wall.la bag.la
-	LD_LIBRARY_PATH=$(FieldWorksRootDir)/Lib/src/icu/install/lib:$(FieldWorksRootDir)/../../libraries/COM/src/.libs PATH=$(PATH):$(FieldWorksRootDir)/../../libraries/COM/bin make-map.sh .libs/bakery.so .libs/ball.so .libs/wall.so .libs/bag.so
+	LD_LIBRARY_PATH=$(FieldWorksRootDir)/Lib/src/icu/install/lib:$(FieldWorksRootDir)/../../libraries/COM/src/.libs PATH=$(PATH):"$$(cd $(top_srcdir)&&pwd)/bin" make-map.sh .libs/bakery.so .libs/ball.so .libs/wall.so .libs/bag.so
 
 check:
 	sh test.sh
@@ -253,6 +253,6 @@ check:
 MOSTLYCLEANFILES = IBall_idl.h IBall_GUIDs.cpp ComClient.exe.mdb Tester.exe.mdb IBakery_idl.h IBakery_GUIDs.cpp IWall_GUIDs.cpp IBag_GUIDs.cpp
 CLEANFILES = IBallMetadata.dll IBakeryMetadata.dll Jar.dll Jar.dll.mdb BakeryJarTestClient.exe.mdb IWall.h IWall.tlb IWallInterop.dll IBag.h IBag.tlb IBagInterop.dll IBagLib_.idl
 if USE_FW_GENERIC_FACTORY
-# Don't clean components.map if the pieces aren't available to regenerate it.
+# Only clean components.map if the pieces are available to regenerate it.
 CLEANFILES += components.map
 endif
