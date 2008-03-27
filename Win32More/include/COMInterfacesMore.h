@@ -109,11 +109,9 @@ struct STATSTG
 	LPOLESTR pwcsName;
 	DWORD type;
 	ULARGE_INTEGER cbSize;
-#if 0
 	FILETIME mtime;
 	FILETIME ctime;
 	FILETIME atime;
-#endif
 	DWORD grfMode;
 	DWORD grfLocksSupported;
 	CLSID clsid;
@@ -366,9 +364,7 @@ struct VARIANT
 	//			_VARIANT_BOOL bool;
 				SCODE scode;
 				CY cyVal;
-#if 0
 				DATE date;
-#endif
 				BSTR bstrVal;
 				IUnknown *punkVal;
 				IDispatch *pdispVal;
@@ -383,9 +379,7 @@ struct VARIANT
 	//			_VARIANT_BOOL *pbool;
 				SCODE *pscode;
 				CY *pcyVal;
-#if 0
 				DATE *pdate;
-#endif
 				BSTR *pbstrVal;
 				IUnknown **ppunkVal;
 				IDispatch **ppdispVal;
