@@ -38,7 +38,12 @@ libcom_la_SOURCES = \
 	ComRegistry.cpp \
 	Util.cpp
 
-EXTRA_DIST = ComRegistry.h COMSupportInternals.h
+EXTRA_DIST = \
+	ComRegistry.h \
+	COMSupportInternals.h \
+	RegisterServer/make-map.sh \
+	RegisterServer/RegisterServer.cpp \
+	RegisterServer/Makefile 
 
 # set the include path found by configure
 INCLUDES = \
