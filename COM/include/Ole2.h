@@ -25,4 +25,9 @@
  * http://www.gnu.org/licenses/lgpl.html
  */
 
+#ifndef Ole2_h_included
+#define Ole2_h_included
+
 #include "WinError.h"
+
+#endif // Ole2_h_included

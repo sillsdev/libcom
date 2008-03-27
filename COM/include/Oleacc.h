@@ -24,3 +24,8 @@
  *
  * http://www.gnu.org/licenses/lgpl.html
  */
+
+#ifndef Oleacc_h_included
+#define Oleacc_h_included
+
+#endif // Oleacc_h_included

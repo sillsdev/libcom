@@ -1,3 +1,5 @@
+#ifndef OleDb_h_INCLUDED
+#define OleDb_h_INCLUDED
 
 typedef struct tagDBDATE
     {
@@ -105,4 +107,4 @@ enum DBPARAMFLAGSENUM
 	DBPARAMFLAGS_ISLONG	= 0x80
     } ;
 
-
+#endif // OleDb_h_INCLUDED

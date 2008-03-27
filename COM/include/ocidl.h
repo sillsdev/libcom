@@ -24,3 +24,8 @@
  *
  * http://www.gnu.org/licenses/lgpl.html
  */
+
+#ifndef ocidl_h_included
+#define ocidl_h_included
+
+#endif // ocidl_h_included

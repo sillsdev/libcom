@@ -25,6 +25,9 @@
  * http://www.gnu.org/licenses/lgpl.html
  */
 
+#ifndef rpc_h_included
+#define rpc_h_included
+
 #include "COMInterfaces.h"
 #ifndef NO_FW
 #include <COMInterfacesMore.h>
@@ -35,3 +38,5 @@
 #define __RPC_FAR
 typedef int PRPC_MESSAGE;
 typedef void* RPC_IF_HANDLE;
+
+#endif //rpc_h_included

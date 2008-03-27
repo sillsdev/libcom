@@ -25,6 +25,11 @@
  * http://www.gnu.org/licenses/lgpl.html
  */
 
+#ifndef comdef_h_included
+#define comdef_h_included
+
 #include "Ole2.h"
 #include "BasicTypes.h"
 #include "COMInterfaces.h"
+
+#endif // comdef_h_included

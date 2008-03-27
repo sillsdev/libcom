@@ -31,6 +31,9 @@
 // * Adjust values of certain enumerators to match the standard.
 // * Added 7 enumerators that weren't in Util.cpp.
 
+#ifndef oledberr_h_included
+#define oledberr_h_included
+
 enum OleDbErrCodes {
 	DB_E_BADACCESSORHANDLE = (HRESULT)0x80040e00L,
 	DB_E_ROWLIMITEXCEEDED,
@@ -197,3 +200,5 @@ enum OleDbErrCodes {
 	DB_E_NOCONSTRAINT,
 	DB_E_COLUMNUNAVAILABLE = (HRESULT)0x80040ea0L,
 };
+
+#endif // oledberr_h_included

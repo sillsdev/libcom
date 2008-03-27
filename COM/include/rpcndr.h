@@ -25,4 +25,9 @@
  * http://www.gnu.org/licenses/lgpl.html
  */
 
+#ifndef rpcndr_h_included
+#define rpcndr_h_included
+
 #define __RPCNDR_H_VERSION__ 1
+
+#endif // rpcndr_h_included

@@ -24,3 +24,8 @@
  *
  * http://www.gnu.org/licenses/lgpl.html
  */
+
+#ifndef oaidl_h_included
+#define oaidl_h_included
+
+#endif // oaidl_h_included
