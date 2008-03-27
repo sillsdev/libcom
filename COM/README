@@ -1,27 +1,57 @@
-libcom, by SIL International <http://www.sil.org/>
+libcom COM Support Library, by SIL International <http://www.sil.org/>
 
 libcom implements a subset of Microsoft COM.
 
-Version 0.4.0 Development Preview, 2008-03-26
+Version 0.4.0, 2008-03-27
+ 
+Release Notes:
 
-In many ways, libcom functions well. But it isn't necessarily finished yet. This release is a development preview. The examples in the test directory may not build or run properly the way they are currently set up for this release.
+In many ways, libcom functions well. But it isn't necessarily finished yet. This is the first release.
 
-When invoking an application that is a COM client, make sure LD_LIBRARY_PATH can find libcom.so, make a components.map file (probably in the directory of the COM server .so file), and set COMPONENTS_MAP_PATH to point to the locations of any components.map files you need to use. 
-The test directory contains examples of COM client programs and how to run them.
+When invoking an application that is a COM client, make sure LD_LIBRARY_PATH can find libcom.so and/or ole32.dll (Note that ole32.dll is created as a symlink to libcom.so after you install libcom), make a components.map file (probably in the directory of the COM server .so file), and set COMPONENTS_MAP_PATH to point to the locations of any components.map files you need to use. 
+
+The test directory contains examples of COM servers and COM client programs and how to run them.
 
 components.map files are in the format:
 01774e93-09f6-4370-847a-a2a697bbadaf ../lib/mylibrary.so
 # Comment lines start with hash
 Each line tells libcom what so-file can provide an object or interface of a given GUID. After the GUID is a single space, and then after the single space everything is treated as the so-file path until the end of line.
+It is desired to make components.map files autogeneratable using COM/src/RegisterServer in a future release of libcom.
+
+The examples in test/ will not be compiled by default, partly because the way they are currently set up requires a remote machine with midl. The remote machine can be set up with Visual Studio 2003, cygwin, and ssh key authentication. You can then compile the examples by entering the test directory and typing:
+$ REMOTE_WIN32_DEV_HOST=remoteHostnameHere make
+When executing the examples, make sure COMPONENTS_MAP_PATH=. (to point to the components.map in the test directory), and LD_LIBRARY_PATH is set to the location of ole32.dll and/or libcom.so. For example:
+$ COMPONENTS_MAP_PATH=. LD_LIBRARY_PATH=/tmp/usr/lib ./ComClient.exe
+Tester.exe isn't written quite right yet, so you will see some garbage characters on your screen. If you corrupt your terminal, try typing "reset" to fix it.
 
 Installation notes:
 
-The build system might inappropriately install these files into PREFIX/lib:
-bag.a bag.la bag.so bag.so.0 bag.so.0.0.0 bakery.a bakery.la bakery.so bakery.so.0 bakery.so.0.0.0 ball.a ball.la ball.so ball.so.0 ball.so.0.0.0 wall.a wall.la wall.so wall.so.0 wall.so.0.0.0
-They won't hurt anything, but they don't need to be there.
-The build system does not yet install header files into PREFIX/include so that applications can use them.
+The build system is not yet set up to install the appropriate headers into PREFIX/include for COM servers and clients to be built using them.
 
 More information:
 
 Development team <http://linux.lsdev.sil.org/>
 SIL International <http://www.sil.org/>
+
+Legal:
+
+ * The libcom COM Support Library is 
+ * Copyright (C) 2001, 2007, 2008 SIL International
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ *
+ * http://www.gnu.org/licenses/lgpl.html
+
+See also LICENSE.
