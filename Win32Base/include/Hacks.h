@@ -413,6 +413,8 @@ inline void OutputDebugStr(const OLECHAR* str)
 
 // FieldWorks-specific
 
+#ifndef NO_ASM
 #define NO_ASM 1
+#endif
 
 #endif //HACKS_H
