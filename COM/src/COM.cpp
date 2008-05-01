@@ -135,6 +135,23 @@ BSTR SysAllocStringLen(const OLECHAR* pch, unsigned int cch)
 	return buf + 2;
 }
 
+// This function takes an ANSI string as input, and returns a BSTR that contains
+//  an ANSI string. This function does not perform any ANSI to Unicode translation.
+// If psz is NULL will returns uninitialized string.
+// Allocates a new string of len bytes, copies len bytes from the passed string
+//  into it, and then appends a null character. Valid only for 32-bit systems.
+BSTR SysAllocStringByteLen(LPCSTR psz, UINT len)
+{
+	OLECHAR* buf = new OLECHAR[len +1];
+	if (psz != NULL)
+	{
+		memcpy(buf, psz, len);
+		buf[len] = NULL;
+		
+	}
+	
+}
+
 BSTR SysAllocString(const OLECHAR *sz) // Zero-terminated
 {
 	const OLECHAR* end = std::find(sz, sz + 99999, 0);
