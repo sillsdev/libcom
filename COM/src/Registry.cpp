@@ -49,13 +49,18 @@ extern "C" HRESULT CoInitialize(LPVOID unused)
 }
 #pragma export off
 
-// Initizlizes the COM library from the current Apartment and sets the concurrency model as single-threaded apartment
+/**
+ * @brief Initializes the COM library from the current Apartment and sets the concurrency model as single-threaded apartment.
+ * @param pvReserved unused
+ */
 HRESULT OleInitialize(LPVOID pvReserved)
 {
 	return CoInitialize(NULL);
 }
 
-// Closes the COM library on the apartment.
+/** 
+ * @brief Closes the COM library on the apartment.
+ */
 void OleUninitialize()
 {
 	
