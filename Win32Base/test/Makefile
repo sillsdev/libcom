@@ -26,7 +26,7 @@
 # 
 
 CXXFLAGS = -g -Wall
-CPPFLAGS = -MMD -I.. -I../include -I../../COM/include
+CPPFLAGS = -MMD -I.. -I../include -I../../COM/include $(shell icu-config --cppflags)
 LDFLAGS = $(shell icu-config --ldflags) -L../../COM/src/.libs -lcom
 # LDLIBS = -licucore -luuid
 
