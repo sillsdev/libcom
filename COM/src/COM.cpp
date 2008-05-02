@@ -142,14 +142,15 @@ BSTR SysAllocStringLen(const OLECHAR* pch, unsigned int cch)
 //  into it, and then appends a null character. Valid only for 32-bit systems.
 BSTR SysAllocStringByteLen(LPCSTR psz, UINT len)
 {
-	OLECHAR* buf = new OLECHAR[len +1];
+	OLECHAR* buf = new OLECHAR[len + 3];
 	if (psz != NULL)
 	{
-		memcpy(buf, psz, len);
+	 	*(int*)buf = len;	
+		memcpy(buf + 2, psz, len);
 		buf[len] = NULL;
-		
 	}
-	
+
+	return buf + 2;
 }
 
 BSTR SysAllocString(const OLECHAR *sz) // Zero-terminated
