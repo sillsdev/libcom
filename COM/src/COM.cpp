@@ -138,7 +138,7 @@ BSTR SysAllocStringLen(const OLECHAR* pch, unsigned int cch)
 /**
  * @brief Create an ANSI BSTR from an ANSI char*
  * Note that there is no ANSI to Unicode translation.
- * Valid only for 32-bit systems.
+ * This implementation will work only for little-endian systems.
  * @param psz input null-terminated string. If NULL, the BSTR string will be uninitialized.
  * @param len Number of bytes to copy from input string to output string. Most likely should be the length of psz, not including null-terminator. 
  * @return pointer to the BSTR string, or NULL if not enough memory. The BSTR string will have len bytes copied from psz as well as a null-terminator appended. Possibly contrary to spec, NULL will be returned if len<0.
