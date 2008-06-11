@@ -33,7 +33,7 @@ CPPFLAGS = \
 CXXFLAGS = -g -Wall
 ARFLAGS = -rs
 
-OBJS = Hacks.o
+OBJS = Hacks.o WinBase.o
 SRCS = $(OBJS:%.o=%.cpp)
 DEPS = $(OBJS:%.o=%.d)
 
