@@ -27,6 +27,10 @@
 
 #include <COMInterfacesMore.h>
 
+#include "ThreadLocalStorage.h"
+#include <WinError.h>
+#include "ErrorObjects.h"
+
 // Define GUIDs
 
 #define DEFINE_INTERFACE_GUID(N, G)	\
@@ -46,3 +50,45 @@ DEFINE_INTERFACE_GUID(IEnumVARIANT, "00020404-0000-0000-C000-000000000046");
 DEFINE_INTERFACE_GUID(ITypeInfo, "00020401-0000-0000-C000-000000000046");
 
 #undef DEFINE_INTERFACE_GUID
+
+// Globel Thread local storage object
+ThreadLocalStorage g_ErrorInfo;
+
+/* Store the passed IErrorInfo* into Thrad local storage g_ErrorInfo
+   if IerrorInfo* not null increment ref count.
+   If g_ErrorInfo already contains a non null value decrement existing 
+   values ref count.
+ */
+STDAPI SetErrorInfo(ULONG dwReserved, IErrorInfo* perrinfo)
+{
+	IErrorInfo* pErrorInfoOld = NULL;
+	
+	// g_ErrorInfo stores void** ptr value hence need to reinterpret_cast.
+	void **pvoidTemp = reinterpret_cast<void **>(&pErrorInfoOld);
+	
+	if (g_ErrorInfo.Get(pvoidTemp) && pErrorInfoOld != NULL)
+	{
+		pErrorInfoOld->Release();
+	}
+
+	if (perrinfo != NULL)
+	{
+		perrinfo->AddRef();
+	}
+	
+	return (g_ErrorInfo.Set(perrinfo)?S_OK:S_FALSE);		
+}
+
+STDAPI GetErrorInfo(ULONG dwReserved, IErrorInfo** pperrinfo)
+{	
+	// g_ErrorInfo stores void** ptr value hence need to reinterpret_cast.
+	return (g_ErrorInfo.Get(reinterpret_cast<void**>(pperrinfo))?S_OK:S_FALSE);	
+}
+
+STDAPI CreateErrorInfo(ICreateErrorInfo** pperrinfo)
+{
+	*pperrinfo = new ErrorObjects::ErrorInfo();
+	return *pperrinfo?S_OK:E_OUTOFMEMORY;
+}
+
+
