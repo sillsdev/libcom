@@ -32,6 +32,7 @@ ARFLAGS = -rs
 OBJS = \
 	TextServices.o \
 	COMInterfacesMore.o \
+	ErrorObjects.o \
 
 SRCS = $(OBJS:%.o=%.cpp)
 DEPS = $(OBJS:%.o=%.d)
