@@ -173,6 +173,15 @@ enum REGCLS
 extern "C" HRESULT CoInitialize(LPVOID pvReserved);
 extern "C" HRESULT CoCreateInstance(REFCLSID rclsid, class IUnknown* pUnkOuter, DWORD dwClsContext, REFIID riid, LPVOID FAR* ppv); 
 
+// Closes the COM Library on the current apartment.
+extern "C" HRESULT CoUninitialize();
+
+// Initizlizes the COM library from the current Apartment and sets the concurrency model as single-threaded apartment
+extern "C" HRESULT OleInitialize(LPVOID pvReserved);
+
+// Closes the COM library on the apartment.
+extern "C" void	OleUninitialize();
+
 HRESULT CoRegisterClassObject(REFCLSID rclsid, class IUnknown* pObj, DWORD dwClsContext, DWORD flags, LPDWORD lpdwRegister);
 HRESULT CoRevokeClassObject(DWORD dwRegister);
 
