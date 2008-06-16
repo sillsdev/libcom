@@ -92,7 +92,7 @@ __DECLARE_POINTER_TYPES(POINT)
 
 struct RECT
 {
-	long left, right, top, bottom;
+	long left, top, right, bottom;
 };
 
 __DECLARE_POINTER_TYPES(RECT)
