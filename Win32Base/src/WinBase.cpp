@@ -93,6 +93,7 @@ BOOL CopyFileW(const WCHAR* lpExistingFileName, const WCHAR* lpNewFileName, BOOL
 
 // REVIEW can this method map any other unix permistions to windows file attribues
 // Retuns INVALID_FILE_ATTRIBUTES if the functions fails
+// TODO REVIEW GetFileAttributes should not use the WCHAR but char *
 DWORD GetFileAttributes( const WCHAR* lpFileName )
 {
 	if (lpFileName == NULL)
@@ -116,19 +117,122 @@ DWORD GetFileAttributes( const WCHAR* lpFileName )
 	switch(sb.st_mode & S_IFMT)
 	{
 		case S_IFDIR:
-			rv |= FILE_ATTRIBUTE_DIRECTORY; 	break;
+			rv |= FILE_ATTRIBUTE_DIRECTORY; break;
 		case S_IFREG: 
 			rv |= FILE_ATTRIBUTE_NORMAL; break;
 		default: // The file exists but it not normal file or directoy
-			rv |= FILE_ATTRIBUTE_NORMAL; 	break; 
+			rv |= FILE_ATTRIBUTE_NORMAL; break; 
 	}
 
 	// if owner doesn't have write permistion then we count this a readonly
 	if (sb.st_mode & S_IWUSR)
+		rv &= ~FILE_ATTRIBUTE_READONLY;
+	else
 		rv |= FILE_ATTRIBUTE_READONLY;
 	
 	delete[] buffer;
 	return rv;
+}
+
+// returns non zero if the function succeeds
+// Currently only have a W implementation
+DWORD GetFileAttributesW( const WCHAR* lpFileName )
+{
+	return GetFileAttributes(lpFileName);
+}
+
+// returns non zero if the function succeeds
+// Only actually does anything for the readonly or lack of readonly attribute
+BOOL SetFileAttributesW( const WCHAR* lpFileName, DWORD dwFileAttributes)
+{
+	BOOL rv = false;
+	
+	if (lpFileName == NULL)
+		return rv;
+
+	// Convert to UTF8
+	UErrorCode status = U_ZERO_ERROR;
+	int32_t nSrcLen = u_strlen(lpFileName);
+	int32_t nDestLen = nSrcLen + 1;
+	char *buffer = new char[nSrcLen +1]; // and 1 for null term
+	u_strToUTF8(buffer, nDestLen, &nDestLen, lpFileName, nSrcLen, &status);
+	
+	if (dwFileAttributes & FILE_ATTRIBUTE_ARCHIVE)
+	{
+	 	rv = true;
+	}
+	
+	if (dwFileAttributes & FILE_ATTRIBUTE_HIDDEN)
+	{
+		rv = true;	
+	}
+	
+	if (dwFileAttributes & FILE_ATTRIBUTE_NORMAL)
+	{
+		rv = true;
+	}
+	
+	if (dwFileAttributes & FILE_ATTRIBUTE_NOT_CONTENT_INDEXED)
+	{
+		rv = true;
+	}
+
+	if (dwFileAttributes & FILE_ATTRIBUTE_OFFLINE)
+	{
+		rv = true;
+	}
+
+	if (dwFileAttributes & FILE_ATTRIBUTE_SYSTEM)
+	{
+		rv = true;
+	}
+
+	if (dwFileAttributes & FILE_ATTRIBUTE_TEMPORARY)
+	{
+		rv = true;
+	}
+	
+	if (dwFileAttributes & FILE_ATTRIBUTE_READONLY)
+	{
+		struct stat sb;
+		if (stat(buffer, &sb) == -1)
+		{
+			rv = false;
+		}
+		else
+		{
+			// remove write permistions for user,group,others
+			sb.st_mode = sb.st_mode & ~S_IWUSR & ~S_IWGRP & ~S_IWOTH;
+			if (chmod(buffer, sb.st_mode) == -1)
+			{
+				rv = false;	
+			}
+			
+			rv = true;
+		}
+	}
+	else
+	{
+		struct stat sb;
+		if (stat(buffer, &sb) == -1)
+		{
+			rv = false;
+		}
+		else
+		{
+			// add user and group write permistions.
+			sb.st_mode = sb.st_mode & S_IWUSR & S_IWGRP;
+			if (chmod(buffer, sb.st_mode) == -1)
+			{
+				rv = false;	
+			}
+			
+			rv = true;
+		}
+	}
+	
+	delete[] buffer;
+	return rv;	
 }
 
 // returns non zero if the function succeeds
@@ -141,7 +245,7 @@ BOOL DeleteFile(const WCHAR* lpFileName)
 	UErrorCode status = U_ZERO_ERROR;
 	int32_t nSrcLen = u_strlen(lpFileName);
 	int32_t nDestLen = nSrcLen +1;
-	char *buffer = new char[ 3+ nSrcLen +1]; // 3 for "rm " and 1 for null term
+	char *buffer = new char[ 3 + nSrcLen +1]; // 3 for "rm " and 1 for null term
 	strcpy(buffer, "rm ");
 	
 	u_strToUTF8(buffer + strlen(buffer), nDestLen, &nDestLen, lpFileName, nSrcLen, &status);

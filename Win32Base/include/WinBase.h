@@ -45,7 +45,14 @@ BOOL CopyFileW(const WCHAR* lpExistingFileName, const WCHAR* lpNewFileName, BOOL
 // returns non zero if the function succeeds
 BOOL DeleteFile(const WCHAR* lpFileName);
 
+// returns non zero if the function succeeds
 DWORD GetFileAttributes( const WCHAR* lpFileName );
+
+// returns non zero if the function succeeds
+DWORD GetFileAttributesW( const WCHAR* lpFileName );
+
+// returns non zero if the function succeeds
+BOOL SetFileAttributesW( const WCHAR* lpFileName, DWORD dwFileAttributes );
 
 #endif
 
