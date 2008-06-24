@@ -1,4 +1,4 @@
-// WinBase.h Win32 Complatiablity file 
+// WinBase.h Win32 Compatibility file 
 //TODO REVIEW Add header
 #ifndef _WINBASE_H_
 #define _WINBASE_H
