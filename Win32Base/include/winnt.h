@@ -28,7 +28,7 @@
 #ifndef win32base_winnt_h
 #define win32base_winnt_h
 
-static const int KEY_WRITE = ((0x00020000| 0x00000002| 0x00000004) & (~0x00100000) )
-static const int KEY_READ  = ((0x00020000| 0x00000001| 0x00000008| 0x00000010) & (~0x00100000) )
+static const int KEY_WRITE = ((0x00020000| 0x00000002| 0x00000004) & (~0x00100000) );
+static const int KEY_READ  = ((0x00020000| 0x00000001| 0x00000008| 0x00000010) & (~0x00100000) );
 
 #endif // !win32base_winnt_h
