@@ -13,6 +13,7 @@
 #include "ExtendedTypes.h"
 #include "DateTime.h"
 #include "WinError.h"
+#include "winuser.h"
 
 #include <stddef.h>
 #include <ctype.h>
@@ -286,7 +287,6 @@ enum
 	MB_DEFBUTTON2		= ~0,
 	MB_TASKMODAL		= ~0,
 };
-const int IDYES = ~0;
 
 bool MessageBeep(unsigned int);
 int MessageBox(HWND, LPCTSTR, LPCTSTR, UINT);
