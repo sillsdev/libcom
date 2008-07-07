@@ -41,7 +41,7 @@ enum {
 	IDHELP = 9,
 	IDTRYAGAIN = 10,
 	IDCONTINUE = 11
-}
+};
 
 #endif // !win32base_winuser_h
 
