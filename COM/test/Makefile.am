@@ -51,6 +51,7 @@ endif
 
 MIDL = $(top_srcdir)/remote-midl/midl
 TLBIMP = $(top_srcdir)/remote-midl/tlbimp
+midlIncludeDir = "C:\Program Files\Microsoft Visual Studio 8\VC\PlatformSDK\Include"
 
 bag_la_SOURCES = \
 	Bag.cpp \
@@ -204,7 +205,7 @@ IBag_GUIDs.cpp: IBag.h extract_iids.sh
 	grep -v -e "__uuidof(IBall)" -e "__uuidof(Ball)" "$$TMPFILE" > IBag_GUIDs.cpp
 
 IWall.h: IWall.idl fix-midl.sh
-	$(MIDL) "$(REMOTE_WIN32_DEV_HOST)" /I "C:\Program Files\Microsoft Visual Studio 8\VC\PlatformSDK\Include" /Oicf /env win32 /tlb IWall.tlb /h IWall.h IWall.idl
+	$(MIDL) "$(REMOTE_WIN32_DEV_HOST)" /I $(midlIncludeDir) /Oicf /env win32 /tlb IWall.tlb /h IWall.h IWall.idl
 	TMPFILE="$(shell mktemp -t)" && \
 	mv IWall.h "$$TMPFILE" && \
 	./fix-midl.sh "$$TMPFILE" > IWall.h
@@ -215,7 +216,7 @@ IWallInterop.dll: IWall.idl IWall.h
 
 # TODO not dirty hack
 IBag.h: IBagLib_.idl fix-midl.sh
-	$(MIDL) "$(REMOTE_WIN32_DEV_HOST)" /I "C:\Program Files\Microsoft Visual Studio 8\VC\PlatformSDK\Include" /Oicf /env win32 /tlb IBagLib_.tlb /h IBagLib_.h IBagLib_.idl
+	$(MIDL) "$(REMOTE_WIN32_DEV_HOST)" /I $(midlIncludeDir) /Oicf /env win32 /tlb IBagLib_.tlb /h IBagLib_.h IBagLib_.idl
 	mv IBagLib_.tlb IBag.tlb
 	mv IBagLib_.h IBag.h
 	TMPFILE="$(shell mktemp -t)" && \
