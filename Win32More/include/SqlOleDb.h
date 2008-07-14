@@ -1,3 +1,4 @@
+#error Do not use SqlOleDb.h, Copyright MS
 //--------------------------------------------------------------------
 // Microsoft OLE DB Provider for SQL Server
 // (C) Copyright 1997 By Microsoft Corporation.
