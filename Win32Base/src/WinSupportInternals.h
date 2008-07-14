@@ -1,3 +1,4 @@
+#error using WinSupportInternals.h ?
 /*----------------------------------------------------------------------------
 Copyright 2001, SIL International. All rights reserved.
 
