@@ -1,3 +1,4 @@
+#error using WinSupport.cpp ?
 /*----------------------------------------------------------------------------------------------
 Copyright 2001, SIL International. All rights reserved.
 
