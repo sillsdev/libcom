@@ -1,3 +1,4 @@
+#error Should not be using WinSupport.h MS
 /*----------------------------------------------------------------------------------------------
 Copyright 2001, SIL International. All rights reserved.
 
