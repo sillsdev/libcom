@@ -306,18 +306,18 @@ enum
 
 enum
 { 	
-	VK_PRIOR,
-	VK_NEXT,
-	VK_END,
-	VK_HOME,
-	VK_LEFT,
-	VK_UP,
-	VK_RIGHT,
-	VK_DOWN,
-	VK_INSERT,
+	VK_PRIOR = 0,
+	VK_NEXT = 1,
+	VK_END = 2,
+	VK_HOME = 3,
+	VK_LEFT = 4,
+	VK_UP = 5,
+	VK_RIGHT = 6,
+	VK_DOWN = 7,
+	VK_INSERT = 8,
 	VK_DELETE = 46,
-	VK_TAB,
-	VK_RETURN,
+	VK_TAB = 47,
+	VK_RETURN = 48,
 };		
 HKL GetKeyboardLayout(DWORD);
 #define LANGIDFROMLCID(localeIdentifier) ((WORD)localeIdentifier)
@@ -416,5 +416,12 @@ inline void OutputDebugStr(const OLECHAR* str)
 #ifndef NO_ASM
 #define NO_ASM 1
 #endif
+
+
+// TODO-P4CL23677-Merge
+// These functions defines don't account for specified length
+#define strcpy_s(DST, SRC) strcpy(DST, SRC)
+#define strcpy_s(DST, NUM, SRC) strcpy(DST, SRC)
+#define wcscpy_s(DST, NUM, SRC) u_strcpy(DST, SRC)
 
 #endif //HACKS_H
