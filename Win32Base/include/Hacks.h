@@ -426,7 +426,6 @@ inline void OutputDebugStr(const OLECHAR* str)
 #define wcsncpy_s(DST, SRC, NUM) u_strncpy(DST, SRC, NUM)
 #define wcscmp(LEFT, RIGHT) u_strcmp(LEFT, RIGHT)
 #define wcscpy(DST, SRC) u_strcpy(DST, SRC)
-#define wcslen(STR) u_strlen(STR)
 
 // Not done as a macro because use of elipsis..
 int sprintf_s(char *buffer, size_t sizeOfBuffer, const char *format, ...);
