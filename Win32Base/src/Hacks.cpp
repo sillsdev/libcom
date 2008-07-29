@@ -186,3 +186,13 @@ void OutputDebugString(const OLECHAR* str)
 
 	std::wcerr.flush();
 }
+
+// TODO-P4CL23677-Merge
+// TODO - maybe add assert if char* longer that sizeOfBuffer?
+int sprintf_s(char *buffer, size_t sizeOfBuffer, const char *format ,...)
+{
+	va_list argList;
+	va_start(argList, format)
+	return sprintf(buffer, format, argList);
+	va_end(argList);
+}
