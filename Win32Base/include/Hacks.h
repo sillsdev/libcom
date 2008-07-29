@@ -420,8 +420,12 @@ inline void OutputDebugStr(const OLECHAR* str)
 
 // TODO-P4CL23677-Merge
 // These functions defines don't account for specified length
-#define strcpy_s(DST, SRC) strcpy(DST, SRC)
 #define strcpy_s(DST, NUM, SRC) strcpy(DST, SRC)
+
 #define wcscpy_s(DST, NUM, SRC) u_strcpy(DST, SRC)
+#define wcsncpy_s(DST, SRC, NUM) u_strncpy(DST, SRC, NUM)
+#define wcscmp(LEFT, RIGHT) u_strcmp(LEFT, RIGHT)
+#define wcscpy(DST, SRC) u_strcpy(DST, SRC)
+
 
 #endif //HACKS_H
