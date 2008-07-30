@@ -25,15 +25,16 @@
 // http://www.gnu.org/licenses/lgpl.html
 // 
 
+#include <wchar.h>
 #include "Hacks.h"
 
+#include <cwchar>
 #include <iostream>
 #include <vector>
 #include <stdexcept>
-#include <cwchar>
 #include <cassert>
 #include <unicode/ustring.h>
-
+#include <stdarg.h>
 
 // Begin copied code from Wine's uitools.c, Modified 2007-02-12 MarkS.
 
