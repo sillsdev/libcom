@@ -91,19 +91,42 @@ BOOL CopyFileW(const WCHAR* lpExistingFileName, const WCHAR* lpNewFileName, BOOL
 	return rv != -1;
 }
 
-// REVIEW can this method map any other unix permistions to windows file attribues
-// Retuns INVALID_FILE_ATTRIBUTES if the functions fails
-// TODO REVIEW GetFileAttributes should not use the WCHAR but char *
-DWORD GetFileAttributes( const WCHAR* lpFileName )
+// returns non zero of the function succeeds
+BOOL CopyFileA(const char* lpExistingFileName, const char* lpNewFileName, BOOL bFailIfExists)
 {
-	if (lpFileName == NULL)
-		return INVALID_FILE_ATTRIBUTES;
+	if (lpExistingFileName == NULL || lpNewFileName == NULL)
+               return FALSE;
+
+	mode_t uMaskNew = 0;
+        mode_t uMaskOld = umask(uMaskNew); // set the new umask so file copies dumplicate permistions
 
 	UErrorCode status = U_ZERO_ERROR;
-	int32_t nSrcLen = u_strlen(lpFileName);
-	int32_t nDestLen = nSrcLen + 1;
-	char *buffer = new char[nSrcLen +1]; // and 1 for null term
-	u_strToUTF8(buffer, nDestLen, &nDestLen, lpFileName, nSrcLen, &status);
+        int nSrc1Len = strlen(lpExistingFileName);
+        int nSrc2Len = strlen(lpNewFileName);
+        int nDestLen = nSrc1Len + nSrc2Len +1 + 6;
+        int tmp;
+        char *buffer = new char[ 6 + nSrc1Len + nSrc2Len + 1]; // +1 for null term + 6 for the cmd
+        if (bFailIfExists)
+                strcpy(buffer, "cp ");
+        else
+                strcpy(buffer, "cp -f ");
+	strcat(buffer, lpExistingFileName);
+        strcat(buffer, " ");
+	strcat(buffer, lpNewFileName);
+        int rv = system(buffer);
+        delete[] buffer;
+
+        umask(uMaskOld); // set the old new mask
+
+        return rv != -1;
+}
+
+
+
+DWORD GetFileAttributes( const char *buffer)
+{
+	if (buffer == NULL)
+                return INVALID_FILE_ATTRIBUTES;
 
 	struct stat sb;
 	if (stat(buffer, &sb) == -1)
@@ -132,6 +155,28 @@ DWORD GetFileAttributes( const WCHAR* lpFileName )
 	
 	delete[] buffer;
 	return rv;
+}
+
+// REVIEW can this method map any other unix permistions to windows file attribues
+// Retuns INVALID_FILE_ATTRIBUTES if the functions fails
+// TODO REVIEW GetFileAttributes should not use the WCHAR but char * depending
+// on if the UNICO macro is set.
+DWORD GetFileAttributes( const WCHAR* lpFileName )
+{
+	if (lpFileName == NULL)
+		return INVALID_FILE_ATTRIBUTES;
+
+	UErrorCode status = U_ZERO_ERROR;
+	int32_t nSrcLen = u_strlen(lpFileName);
+	int32_t nDestLen = nSrcLen + 1;
+	char *buffer = new char[nSrcLen +1]; // and 1 for null term
+	u_strToUTF8(buffer, nDestLen, &nDestLen, lpFileName, nSrcLen, &status);
+
+	DWORD rv =  GetFileAttributesA(buffer);
+
+	delete[] buffer;
+	return rv;
+
 }
 
 // returns non zero if the function succeeds
@@ -233,6 +278,14 @@ BOOL SetFileAttributesW( const WCHAR* lpFileName, DWORD dwFileAttributes)
 	
 	delete[] buffer;
 	return rv;	
+}
+
+// return non zero if the function succeeds
+// TODO-P4CL23677-Merge
+BOOL CreateDirectoryA( const char * lpPathName, LPSECURITY_ATTRIBUTES secAttrib)
+{
+// TODO-P4CL23677-Merge
+	return false;	
 }
 
 // returns non zero if the function succeeds

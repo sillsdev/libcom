@@ -29,12 +29,20 @@ enum Win32FileAttributes
 	
 };
 
-// Retuns INVALID_FILE_ATTRIBUTES if the functions fails
+
+
 
 //TODO REVIEW include type definitions...
 #define WCHAR short unsigned int
 #define BOOL long
 #define DWORD long int
+
+// Emulations of WIN32 _SECURITY_ATTRIBUTES struct
+typedef struct _SECURITY_ATTRIBUTES {
+	DWORD nLength;
+	void* lpSecurityDescriptor;
+	BOOL bInheritHandle;
+} SECURITY_ATTRIBUTES, *PSECURITY_ATTRIBUTES, *LPSECURITY_ATTRIBUTES;
 
 // returns non zero if the function succeeds
 BOOL MoveFileW(const WCHAR* lpExistingFileName, const WCHAR* lpNewFileName);
@@ -42,17 +50,28 @@ BOOL MoveFileW(const WCHAR* lpExistingFileName, const WCHAR* lpNewFileName);
 // returns non zero if the function succeeds.
 BOOL CopyFileW(const WCHAR* lpExistingFileName, const WCHAR* lpNewFileName, BOOL bFailIfExists);
 
+// returns non zero of the function succeeds
+BOOL CopyFileA(const char* lpExistingFileNAme, const char* lpNewFileName, BOOL bFailIfExists);
+
 // returns non zero if the function succeeds
 BOOL DeleteFile(const WCHAR* lpFileName);
 
+// TODO REVIEW this function should really be macroed depending if the WIN32 UNICODE
+// macro is set.
 // returns non zero if the function succeeds
 DWORD GetFileAttributes( const WCHAR* lpFileName );
 
 // returns non zero if the function succeeds
 DWORD GetFileAttributesW( const WCHAR* lpFileName );
 
+// return non zero if the function succeeds
+DWORD GetFileAttributesA(const char* lpFileName );
+
 // returns non zero if the function succeeds
 BOOL SetFileAttributesW( const WCHAR* lpFileName, DWORD dwFileAttributes );
+
+// return non zero if the function succeeds
+BOOL CreateDirectoryA( const char * lpPathName, LPSECURITY_ATTRIBUTES secAttrib);
 
 #endif
 

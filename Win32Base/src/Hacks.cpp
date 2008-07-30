@@ -192,7 +192,7 @@ void OutputDebugString(const OLECHAR* str)
 int sprintf_s(char *buffer, size_t sizeOfBuffer, const char *format ,...)
 {
 	va_list argList;
-	va_start(argList, format)
+	va_start(argList, format);
 	return sprintf(buffer, format, argList);
 	va_end(argList);
 }
