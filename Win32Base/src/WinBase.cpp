@@ -123,7 +123,7 @@ BOOL CopyFileA(const char* lpExistingFileName, const char* lpNewFileName, BOOL b
 
 
 
-DWORD GetFileAttributes( const char *buffer)
+DWORD GetFileAttributesA( const char *buffer)
 {
 	if (buffer == NULL)
                 return INVALID_FILE_ATTRIBUTES;
