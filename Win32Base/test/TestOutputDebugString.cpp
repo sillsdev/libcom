@@ -25,6 +25,7 @@
 // http://www.gnu.org/licenses/lgpl.html
 // 
 
+#include <wchar.h>
 #include "Hacks.h"
 #include <iostream>
 #include <cstdlib>
