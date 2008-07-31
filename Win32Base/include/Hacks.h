@@ -318,6 +318,14 @@ enum
 	VK_DELETE = 46,
 	VK_TAB = 47,
 	VK_RETURN = 48,
+	VK_F1 = 112,
+	VK_F2 = 113,
+	VK_F3 = 114,
+	VK_F4 = 115,
+	VK_F5 = 116,
+	VK_F6 = 117,
+	VK_F7 = 118,
+	VK_F8 = 119, 
 };		
 HKL GetKeyboardLayout(DWORD);
 #define LANGIDFROMLCID(localeIdentifier) ((WORD)localeIdentifier)
