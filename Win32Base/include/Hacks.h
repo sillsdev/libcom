@@ -21,6 +21,8 @@
 #include <alloca.h>
 #include <algorithm>
 
+#include <unicode/ustring.h>
+
 enum { CP_ACP, CP_UTF8 };
 
 int WideCharToMultiByte(int, int, const OLECHAR*, int, char*, int, char*, char*);
@@ -428,15 +430,25 @@ inline void OutputDebugStr(const OLECHAR* str)
 
 // TODO-P4CL23677-Merge
 // These functions defines don't account for specified length
+// TODO Replace these macros with multiple functions
 #define strcpy_s(DST, NUM, SRC) strcpy(DST, SRC)
 
-#define wcscpy_s(DST, NUM, SRC) u_strcpy(DST, SRC)
-#define wcsncpy_s(DST, SRC, NUM) u_strncpy(DST, SRC, NUM)
 #define wcscmp(LEFT, RIGHT) u_strcmp(LEFT, RIGHT)
 #define _wcsicmp(LEFT, RIGHT) u_strcasecmp(LEFT, RIGHT, 0)
 #define wcscpy(DST, SRC) u_strcpy(DST, SRC)
 
 #define fopen_s(FH, FILE, MODE) *FH = fopen(FILE, MODE)
+
+int wcslen_s(const OLECHAR *str);
+int wcslen_s(const OLECHAR *str, const int size);
+
+int wcscpy_s(OLECHAR *dst, const int size, const OLECHAR *src);
+int wcscpy_s(OLECHAR *dst, const OLECHAR *src);
+
+
+int wcsncpy_s(OLECHAR* dst, const int dsize, const OLECHAR* src, const int size);
+int wcsncpy_s(OLECHAR* dst, const OLECHAR* src, const int size);
+		
 
 // Not done as a macro because use of elipsis..
 int sprintf_s(char *buffer, size_t sizeOfBuffer, const char *format, ...);

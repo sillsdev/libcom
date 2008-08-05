@@ -197,3 +197,47 @@ int sprintf_s(char *buffer, size_t sizeOfBuffer, const char *format ,...)
 	return sprintf(buffer, format, argList);
 	va_end(argList);
 }
+
+int wcslen_s(const OLECHAR *str)
+{
+	return u_strlen(str);
+}
+
+int wcslen_s(const OLECHAR *str, const int size)
+{
+	return u_strlen(str);
+}
+
+// TODO return EINVAL on error
+// return 0 on success
+int wcscpy_s(OLECHAR *dst, const int size, const OLECHAR *src)
+{
+	u_strcpy(dst, src);
+	return 0;
+}
+
+// TOOD return EINVAL on error
+// return 0 on success
+int wcscpy_s(OLECHAR *dst, const OLECHAR *src)
+{
+	u_strcpy(dst, src);
+	return 0;
+}
+
+// TODO return EINVAL on error
+// returns 0 on success
+int wcsncpy_s(	OLECHAR* dst, const int dsize,
+			const OLECHAR* src, const int size)
+{
+	u_strncpy(dst, src, size);
+	return 0;
+}
+
+// TODO return EINVAL on error
+// returns 0 on success
+int wcsncpy_s(	OLECHAR* dst, const OLECHAR* src, const int size)
+{
+	u_strncpy(dst, src, size);
+	return 0;
+}
+
