@@ -59,7 +59,9 @@ SmartGUID::SmartGUID(const char* text)
 {
 	if (uuid_parse(text, buf()))
 	{
-		throw std::runtime_error("Failed to parse GUID string");
+		std::string s("Failed to parse GUID string: ");
+		s+= text;
+		throw std::runtime_error(s);
 	}
 
 	Data1 = ntohl(Data1);
