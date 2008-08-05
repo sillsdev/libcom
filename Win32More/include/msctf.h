@@ -1,4 +1,4 @@
-#error What is code origin and license?
+#warning What is code origin and license?
 #include "COM.h"
 
 typedef	WPARAM wParam;
