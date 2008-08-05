@@ -35,6 +35,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#include <time.h>
+
 // returns non zero on success
 // REVIEW Possible implement this propertly without using system calls
 BOOL MoveFileW(const WCHAR* lpExistingFileName, const WCHAR* lpNewFileName)
@@ -305,4 +307,10 @@ BOOL DeleteFile(const WCHAR* lpFileName)
 	int rv = system(buffer);	
 	delete[] buffer;
 	return rv != -1;
+}
+
+// TODO-P4CL23677-Merge
+DWORD GetTickCount()
+{
+	return (time(NULL) * 1000);
 }
