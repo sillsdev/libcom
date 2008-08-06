@@ -29,6 +29,7 @@
 #define COMPointersMore_h
 
 #include <COMPointers.h>
+#include "COMInterfacesMore.h"
 
 _DEFINE_PTR(IErrorInfo);
 _DEFINE_PTR(ICreateErrorInfo);
