@@ -133,7 +133,6 @@ DWORD GetFileAttributesA( const char *buffer)
 	struct stat sb;
 	if (stat(buffer, &sb) == -1)
 	{
-		delete[] buffer; // can't auto ptr primitive array.
 		return INVALID_FILE_ATTRIBUTES;
 	}
 
@@ -155,7 +154,6 @@ DWORD GetFileAttributesA( const char *buffer)
 	else
 		rv |= FILE_ATTRIBUTE_READONLY;
 	
-	delete[] buffer;
 	return rv;
 }
 
