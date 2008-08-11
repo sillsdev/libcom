@@ -436,7 +436,7 @@ inline void OutputDebugStr(const OLECHAR* str)
 #define wcscmp(LEFT, RIGHT) u_strcmp(LEFT, RIGHT)
 #define _wcsicmp(LEFT, RIGHT) u_strcasecmp(LEFT, RIGHT, 0)
 
-#define fopen_s(FH, FILE, MODE) *FH = fopen(FILE, MODE)
+#define fopen_s(FH, FILE, MODE) (*FH = fopen(FILE, MODE)) == NULL
 
 int wcslen_s(const OLECHAR *str);
 int wcslen_s(const OLECHAR *str, const int size);
