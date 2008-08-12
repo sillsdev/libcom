@@ -434,6 +434,7 @@ inline void OutputDebugStr(const OLECHAR* str)
 #define strcpy_s(DST, NUM, SRC) strcpy(DST, SRC)
 
 #define wcscmp(LEFT, RIGHT) u_strcmp(LEFT, RIGHT)
+#define wcsncmp_s(LEFT, RIGHT, NUM) u_strncmp(LEFT, RIGHT, NUM)
 #define _wcsicmp(LEFT, RIGHT) u_strcasecmp(LEFT, RIGHT, 0)
 
 #define fopen_s(FH, FILE, MODE) (*FH = fopen(FILE, MODE)) == NULL
