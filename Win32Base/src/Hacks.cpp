@@ -241,3 +241,23 @@ int wcsncpy_s(	OLECHAR* dst, const OLECHAR* src, const int size)
 	return 0;
 }
 
+void InitializeCriticalSection(CRITICAL_SECTION*)
+{
+	// TOODLinux
+}
+
+void DeleteCriticalSection(CRITICAL_SECTION*)
+{
+	// TOODLinux
+}
+
+void EnterCriticalSection(CRITICAL_SECTION*)
+{
+	// TOODLinux
+}
+
+void LeaveCriticalSection(CRITICAL_SECTION*)
+{
+	// TOODLinux
+}
+
