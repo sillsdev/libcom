@@ -213,7 +213,7 @@ typedef struct tagTEXTMETRIC
 } TEXTMETRIC, *PTEXTMETRIC;
 bool GetTextMetrics(HDC, PTEXTMETRIC);
 
-typedef enum nIndex
+enum nIndex
 {
 	COLOR_3DDKSHADOW	= 21,
 	COLOR_3DFACE		= 15,
@@ -332,7 +332,7 @@ enum
 HKL GetKeyboardLayout(DWORD);
 #define LANGIDFROMLCID(localeIdentifier) ((WORD)localeIdentifier)
 
-typedef enum dwStyle
+enum dwStyle
 {
 	CFS_DEFAULT,
 	CFS_FORCE_POSITION,
@@ -350,7 +350,7 @@ bool ImmGetCompositionWindow(HIMC, PCOMPOSITIONFORM);
 HIMC ImmGetContext(HWND);
 bool ImmSetCompositionWindow(HIMC, PCOMPOSITIONFORM);
 
-typedef enum dwRop
+enum dwRop
 {
 	BLACKNESS,
 	CAPTUREBLT,
