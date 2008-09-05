@@ -28,7 +28,7 @@
 # 
 
 if [ $# -lt 2 ]; then
-	echo Usage: $0 remote_host [midl args] input.idl
+	echo Usage: $0 remote_host [midl args] /h foo.h input.idl
 	exit 1
 fi
 
@@ -42,18 +42,36 @@ if [ -z "$DIR" ]
   exit 1
 fi
 
-CMD="cd \"$DIR\" && midl"
+# Remove extra path information from the last and second last argument since it won't be helpful on Windows
+arguments=($@)
+arguments_size=${#arguments[@]}
+INFILE=${arguments[$arguments_size-1]}
+arguments[$arguments_size-1]=$(basename ${arguments[$arguments_size-1]})
+OUTFILE_ORIG=${arguments[$arguments_size-2]}
+arguments[$arguments_size-2]=$(basename ${arguments[$arguments_size-2]})
 
-for ARG
-do
-	CMD="$CMD \"$ARG\""
-	LAST="$ARG"
-done
-
+LAST=${arguments[$arguments_size-1]}
 STEM=$(echo "$LAST" | sed 's/\.idl$//')
-INFILE=$LAST
 
-scp "$INFILE" "$REMOTE_HOST:$DIR"/ && 
+CMD="cd \"$DIR\" && midl"
+CMD="$CMD ${arguments[@]}"
+
+LOCAL_TMPDIR=$(mktemp -dt)
+
+# Hack to avoid rewriting script in python to be more robust and happily handle commandline arguments:
+# (eg could run: remote-midl.py --send ../input.idl --send ../fooDependency.tlb midl_arguments_here --get-back /foo/out.h --get-back ../output/out.tlb)
+# If FwCellarTlb.idl or ViewsTlb.idl are to be processed, then we need to send over FwKernelTlb.tlb
+# There are probably other dependencies but they aren't necessarily used yet in the files in the IDLMakefile.
+FILES_TO_SEND_TO_REMOTE_HOST=("$(dirname "$INFILE")/$LAST")
+if [ "x$LAST" = "xFwCellarTlb.idl" ]; then
+	FILES_TO_SEND_TO_REMOTE_HOST=("${FILES_TO_SEND_TO_REMOTE_HOST[@]}" "$(dirname "$INFILE")/FwKernelTlb.tlb")
+fi
+if [ "x$LAST" = "xViewsTlb.idl" ]; then
+	FILES_TO_SEND_TO_REMOTE_HOST=("${FILES_TO_SEND_TO_REMOTE_HOST[@]}" "$(dirname "$INFILE")/FwKernelTlb.tlb")
+fi
+
+scp "${FILES_TO_SEND_TO_REMOTE_HOST[@]}" "$REMOTE_HOST:$DIR"/ && 
 	ssh "$REMOTE_HOST" "$CMD" && 
-	scp "$REMOTE_HOST:$DIR"/$STEM{.h,.tlb} . ||
+	scp "$REMOTE_HOST:$DIR"/$STEM{.h,.tlb} "$LOCAL_TMPDIR" &&
+	cp -a "$LOCAL_TMPDIR/$STEM"{.h,.tlb} $(dirname "$OUTFILE_ORIG") ||
 	(echo $(basename "$0"): Error communicating with remote host.; exit 1)
