@@ -100,27 +100,27 @@ BOOL CopyFileA(const char* lpExistingFileName, const char* lpNewFileName, BOOL b
                return FALSE;
 
 	mode_t uMaskNew = 0;
-        mode_t uMaskOld = umask(uMaskNew); // set the new umask so file copies dumplicate permistions
+	mode_t uMaskOld = umask(uMaskNew); // set the new umask so file copies dumplicate permistions
 
 	UErrorCode status = U_ZERO_ERROR;
-        int nSrc1Len = strlen(lpExistingFileName);
-        int nSrc2Len = strlen(lpNewFileName);
-        int nDestLen = nSrc1Len + nSrc2Len +1 + 6;
-        int tmp;
-        char *buffer = new char[ 6 + nSrc1Len + nSrc2Len + 1]; // +1 for null term + 6 for the cmd
-        if (bFailIfExists)
-                strcpy(buffer, "cp ");
-        else
-                strcpy(buffer, "cp -f ");
+	int nSrc1Len = strlen(lpExistingFileName);
+	int nSrc2Len = strlen(lpNewFileName);
+	int nDestLen = nSrc1Len + nSrc2Len +1 + 6;
+	int tmp;
+	char *buffer = new char[ 6 + nSrc1Len + nSrc2Len + 1]; // +1 for null term + 6 for the cmd
+	if (bFailIfExists)
+		    strcpy(buffer, "cp ");
+	else
+		    strcpy(buffer, "cp -f ");
 	strcat(buffer, lpExistingFileName);
-        strcat(buffer, " ");
+	strcat(buffer, " ");
 	strcat(buffer, lpNewFileName);
-        int rv = system(buffer);
-        delete[] buffer;
+	int rv = system(buffer);
+	delete[] buffer;
 
-        umask(uMaskOld); // set the old new mask
+	umask(uMaskOld); // set the old new mask
 
-        return rv != -1;
+	return rv != -1;
 }
 
 
