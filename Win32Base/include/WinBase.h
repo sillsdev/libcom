@@ -56,6 +56,9 @@ BOOL CopyFileA(const char* lpExistingFileNAme, const char* lpNewFileName, BOOL b
 // returns non zero if the function succeeds
 BOOL DeleteFile(const WCHAR* lpFileName);
 
+// returns non zero if the function succeeds
+BOOL DeleteFileA(const char* pFileName);
+
 // TODO REVIEW this function should really be macroed depending if the WIN32 UNICODE
 // macro is set.
 // returns non zero if the function succeeds

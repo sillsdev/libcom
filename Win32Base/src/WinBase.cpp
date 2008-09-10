@@ -49,7 +49,7 @@ BOOL MoveFileW(const WCHAR* lpExistingFileName, const WCHAR* lpNewFileName)
 	int32_t nSrc2Len = u_strlen(lpNewFileName);
 	int32_t nDestLen = nSrc1Len + nSrc2Len +1 + 6;
 	int32_t tmp;
-	char *buffer = new char[ 3+ nSrc1Len + nSrc2Len +1]; // +1 for null term +3 for the cmd
+	char *buffer = new char[ 3+ nSrc1Len + nSrc2Len +1 + 1]; // +1 for null term +3 for the cmd +1 for the space between files
 	strcpy(buffer, "mv ");
 	u_strToUTF8(buffer + strlen(buffer), nDestLen - strlen(buffer), &tmp, lpExistingFileName, nSrc1Len, &status);
 	strcat(buffer, " ");
@@ -77,7 +77,7 @@ BOOL CopyFileW(const WCHAR* lpExistingFileName, const WCHAR* lpNewFileName, BOOL
 	int32_t nSrc2Len = u_strlen(lpNewFileName);
 	int32_t nDestLen = nSrc1Len + nSrc2Len +1 + 6;
 	int32_t tmp;
-	char *buffer = new char[ 6 + nSrc1Len + nSrc2Len + 1]; // +1 for null term + 6 for the cmd
+	char *buffer = new char[ 6 + nSrc1Len + nSrc2Len + 1 + 1]; // +1 for null term + 6 for the cmd +1 for the space between files
 	if (bFailIfExists)
 		strcpy(buffer, "cp ");
 	else
@@ -107,7 +107,7 @@ BOOL CopyFileA(const char* lpExistingFileName, const char* lpNewFileName, BOOL b
 	int nSrc2Len = strlen(lpNewFileName);
 	int nDestLen = nSrc1Len + nSrc2Len +1 + 6;
 	int tmp;
-	char *buffer = new char[ 6 + nSrc1Len + nSrc2Len + 1]; // +1 for null term + 6 for the cmd
+	char *buffer = new char[ 6 + nSrc1Len + nSrc2Len + 1 + 1]; // +1 for null term + 6 for the cmd +1 for space
 	if (bFailIfExists)
 		    strcpy(buffer, "cp ");
 	else
@@ -290,6 +290,7 @@ BOOL CreateDirectoryA( const char * lpPathName, LPSECURITY_ATTRIBUTES secAttrib)
 
 // returns non zero if the function succeeds
 // REVIEW Possible implement this propertly without using system calls
+// TODO - use remove instead
 BOOL DeleteFile(const WCHAR* lpFileName)
 {		
 	if (lpFileName == NULL )
@@ -305,6 +306,11 @@ BOOL DeleteFile(const WCHAR* lpFileName)
 	int rv = system(buffer);	
 	delete[] buffer;
 	return rv != -1;
+}
+
+BOOL DeleteFileA(const char* pFileName)
+{
+	return (0 == remove(pFileName));
 }
 
 // TODO-P4CL23677-Merge
