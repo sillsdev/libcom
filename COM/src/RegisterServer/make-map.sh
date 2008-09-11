@@ -27,5 +27,5 @@
 # http://www.gnu.org/licenses/lgpl.html
 # 
 
-generate-map.sh > components.map
+generate-map.sh "$@" > components.map
 

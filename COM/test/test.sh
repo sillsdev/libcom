@@ -28,7 +28,7 @@
 COMPONENTS_MAP_PATH=.
 export COMPONENTS_MAP_PATH
 # TODO use icu-config --libdir possibly?
-LD_LIBRARY_PATH=../../../projects/FieldWorks/Lib/src/icu/install/lib:../lib:.libs
+LD_LIBRARY_PATH=../../FieldWorks/Lib/src/icu/install/lib:../lib:.libs
 export LD_LIBRARY_PATH
 
 (echo Testing ComClient.exe; ./ComClient.exe) &&

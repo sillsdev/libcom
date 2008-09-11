@@ -27,9 +27,13 @@
 
 if USE_FW_GENERIC_FACTORY
 AM_CPPFLAGS = -DUSE_FW_GENERIC_FACTORY -DUSE_FW_MODULE_ENTRY -DCOM_NO_WINDOWS_H
-FieldWorksRootDir = ../../../projects/FieldWorks
+FieldWorksRootDir = ../../FieldWorks
+FieldWorksOutputDebugDir = $(FieldWorksRootDir)/Output/Debug
+FieldWorksObjDebugDir = $(FieldWorksRootDir)/Obj/Debug
 Win32BaseDir = ../../Win32Base
 Win32MoreDir = ../../Win32More
+BUILD_ROOT = $(FieldWorksRootDir)
+include $(BUILD_ROOT)/Bld/_user.mak.lnx
 else
 AM_CPPFLAGS = -DNO_FW
 endif
@@ -40,7 +44,9 @@ lib_LTLIBRARIES = ball.la bakery.la wall.la bag.la
 
 INCLUDES = \
 	$(all_includes) \
-	-I$(top_srcdir)/include 
+	-I$(top_srcdir)/include \
+	$(shell icu-config --cppflags) 
+	
 if USE_FW_GENERIC_FACTORY
 INCLUDES += \
 	-I$(FieldWorksRootDir)/Include \
@@ -51,7 +57,7 @@ endif
 
 MIDL = $(top_srcdir)/remote-midl/midl
 TLBIMP = $(top_srcdir)/remote-midl/tlbimp
-midlIncludeDir = "C:\Program Files\Microsoft Visual Studio 8\VC\PlatformSDK\Include"
+midlIncludeDir = "C:/MicrosoftPlatformSDKforWindowsServer2003R2/Include"
 
 bag_la_SOURCES = \
 	Bag.cpp \
@@ -63,14 +69,14 @@ bag_la_LIBADD = \
 	-L../src/.libs -lcom 
 if USE_FW_GENERIC_FACTORY
 bag_la_LIBADD += \
-	$(FieldWorksRootDir)/Src/Generic/libGeneric.a \
-	$(FieldWorksRootDir)/Src/Generic/ModuleEntry.o \
+	$(FieldWorksOutputDebugDir)/libGeneric.a \
+	$(FieldWorksObjDebugDir)/Generic/ModuleEntry.o \
 	-L$(Win32BaseDir)/src -lWin32Base \
 	-L$(Win32MoreDir)/src -lWin32More 
 endif
 bag_la_LDFLAGS = -module $(all_libraries) \
 	-luuid \
-	$(shell icu-config --ldflags-libsonly)
+	$(shell icu-config --ldflags)
 
 
 wall_la_SOURCES = \
@@ -80,14 +86,14 @@ wall_la_LIBADD = \
 	-L../src/.libs -lcom 
 if USE_FW_GENERIC_FACTORY
 wall_la_LIBADD += \
-	$(FieldWorksRootDir)/Src/Generic/libGeneric.a \
-	$(FieldWorksRootDir)/Src/Generic/ModuleEntry.o \
+	$(FieldWorksOutputDebugDir)/libGeneric.a \
+	$(FieldWorksObjDebugDir)/Generic/ModuleEntry.o \
 	-L$(Win32BaseDir)/src -lWin32Base \
 	-L$(Win32MoreDir)/src -lWin32More 
 endif
 wall_la_LDFLAGS = -module $(all_libraries) \
 	-luuid \
-	$(shell icu-config --ldflags-libsonly)
+	$(shell icu-config --ldflags)
 
 bakery_la_SOURCES = \
 	Bakery.cpp \
@@ -97,14 +103,14 @@ bakery_la_LIBADD = \
 	../src/libcom.la 
 if USE_FW_GENERIC_FACTORY
 bakery_la_LIBADD += \
-	$(FieldWorksRootDir)/Src/Generic/libGeneric.a \
-	$(FieldWorksRootDir)/Src/Generic/ModuleEntry.o \
+	$(FieldWorksOutputDebugDir)/libGeneric.a \
+	$(FieldWorksObjDebugDir)/Generic/ModuleEntry.o \
 	-L$(Win32BaseDir)/src -lWin32Base \
 	-L$(Win32MoreDir)/src -lWin32More 
 endif
 bakery_la_LDFLAGS = -module $(all_libraries) \
 	-luuid \
-	$(shell icu-config --ldflags-libsonly)
+	$(shell icu-config --ldflags)
 
 
 ball_la_SOURCES = \
@@ -115,14 +121,14 @@ ball_la_LIBADD = \
 	../src/libcom.la 
 if USE_FW_GENERIC_FACTORY
 ball_la_LIBADD += \
-	$(FieldWorksRootDir)/Src/Generic/libGeneric.a \
-	$(FieldWorksRootDir)/Src/Generic/ModuleEntry.o \
+	$(FieldWorksOutputDebugDir)/libGeneric.a \
+	$(FieldWorksObjDebugDir)/Generic/ModuleEntry.o \
 	-L$(Win32BaseDir)/src -lWin32Base \
 	-L$(Win32MoreDir)/src -lWin32More 
 endif
 ball_la_LDFLAGS = -module $(all_libraries) \
 	-luuid \
-	$(shell icu-config --ldflags-libsonly)
+	$(shell icu-config --ldflags)
 
 comtest_SOURCES = CClient.cc
 comtest_LDADD = IBall_GUIDs.o ../src/libcom.la
