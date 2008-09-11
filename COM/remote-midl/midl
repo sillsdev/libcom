@@ -60,7 +60,7 @@ LOCAL_TMPDIR=$(mktemp -dt)
 
 # Hack to avoid rewriting script in python to be more robust and happily handle commandline arguments:
 # (eg could run: remote-midl.py --send ../input.idl --send ../fooDependency.tlb midl_arguments_here --get-back /foo/out.h --get-back ../output/out.tlb)
-# If FwCellarTlb.idl or ViewsTlb.idl are to be processed, then we need to send over FwKernelTlb.tlb
+# If FwCellarTlb.idl, ViewsTlb.idl, or WorldPadTlb.idl are to be processed, then we need to send over FwKernelTlb.tlb
 # There are probably other dependencies but they aren't necessarily used yet in the files in the IDLMakefile.
 FILES_TO_SEND_TO_REMOTE_HOST=("$(dirname "$INFILE")/$LAST")
 if [ "x$LAST" = "xFwCellarTlb.idl" ]; then
@@ -68,6 +68,9 @@ if [ "x$LAST" = "xFwCellarTlb.idl" ]; then
 fi
 if [ "x$LAST" = "xViewsTlb.idl" ]; then
 	FILES_TO_SEND_TO_REMOTE_HOST=("${FILES_TO_SEND_TO_REMOTE_HOST[@]}" "$(dirname "$INFILE")/FwKernelTlb.tlb")
+fi
+if [ "x$LAST" = "xWorldPadTlb.idl" ]; then
+	FILES_TO_SEND_TO_REMOTE_HOST=("${FILES_TO_SEND_TO_REMOTE_HOST[@]}" "$(dirname "$INFILE")/FwKernelTlb.tlb" "$(dirname "$INFILE")/ViewsTlb.tlb")
 fi
 
 scp "${FILES_TO_SEND_TO_REMOTE_HOST[@]}" "$REMOTE_HOST:$DIR"/ && 
