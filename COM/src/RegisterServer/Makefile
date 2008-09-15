@@ -39,6 +39,7 @@ install: RegisterServer
 uninstall:
 	rm -f ../../bin/RegisterServer
 	rm -f ../../bin/make-map.sh
+	rm -f ../../bin/generate-map.sh
 
 clean:
 	$(RM) RegisterServer *.[od] *.gch
