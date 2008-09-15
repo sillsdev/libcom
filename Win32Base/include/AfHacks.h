@@ -89,7 +89,7 @@ typedef struct tagLOGBRUSH {
   LONG     lbHatch; 
 } LOGBRUSH, *PLOGBRUSH;
 
-typedef enum fnObject
+enum fnObject
 {
 	DEFAULT_GUI_FONT,
 };
