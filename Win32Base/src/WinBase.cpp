@@ -102,11 +102,8 @@ BOOL CopyFileA(const char* lpExistingFileName, const char* lpNewFileName, BOOL b
 	mode_t uMaskNew = 0;
 	mode_t uMaskOld = umask(uMaskNew); // set the new umask so file copies dumplicate permistions
 
-	UErrorCode status = U_ZERO_ERROR;
 	int nSrc1Len = strlen(lpExistingFileName);
 	int nSrc2Len = strlen(lpNewFileName);
-	int nDestLen = nSrc1Len + nSrc2Len +1 + 6;
-	int tmp;
 	char *buffer = new char[ 6 + nSrc1Len + nSrc2Len + 1 + 1]; // +1 for null term + 6 for the cmd +1 for space
 	if (bFailIfExists)
 		    strcpy(buffer, "cp ");
