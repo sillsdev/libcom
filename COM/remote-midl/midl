@@ -72,6 +72,10 @@ fi
 if [ "x$LAST" = "xWorldPadTlb.idl" ]; then
 	FILES_TO_SEND_TO_REMOTE_HOST=("${FILES_TO_SEND_TO_REMOTE_HOST[@]}" "$(dirname "$INFILE")/FwKernelTlb.tlb" "$(dirname "$INFILE")/ViewsTlb.tlb")
 fi
+if [ "x$LAST" = "xCmnFwDlgsTlb.idl" ]; then
+	FILES_TO_SEND_TO_REMOTE_HOST=("${FILES_TO_SEND_TO_REMOTE_HOST[@]}" "$(dirname "$INFILE")/FwKernelTlb.tlb" "$(dirname "$INFILE")/ViewsTlb.tlb" "$(dirname "$INFILE")/LanguageTlb.tlb")
+fi
+
 
 scp "${FILES_TO_SEND_TO_REMOTE_HOST[@]}" "$REMOTE_HOST:$DIR"/ && 
 	ssh "$REMOTE_HOST" "$CMD" && 
