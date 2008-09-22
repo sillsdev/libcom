@@ -1,7 +1,7 @@
 // WinBase.h Win32 Compatibility file 
 //TODO REVIEW Add header
 #ifndef _WINBASE_H_
-#define _WINBASE_H
+#define _WINBASE_H_
 
 #pragma once
 
@@ -76,5 +76,5 @@ BOOL SetFileAttributesW( const WCHAR* lpFileName, DWORD dwFileAttributes );
 // return non zero if the function succeeds
 BOOL CreateDirectoryA( const char * lpPathName, LPSECURITY_ATTRIBUTES secAttrib);
 
-#endif
+#endif //_WINBASE_H_
 
