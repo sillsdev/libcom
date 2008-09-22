@@ -3,8 +3,6 @@
 #ifndef _WINBASE_H_
 #define _WINBASE_H_
 
-#pragma once
-
 #include <sys/types.h>
 
 // needs to be included above WinSupport
