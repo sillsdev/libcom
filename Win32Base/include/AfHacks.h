@@ -47,7 +47,6 @@ public:
 	virtual bool ValidKeyUp(UINT wp);
 };
 
-void	FillSolidRect(HDC hdc, Rect &rc, COLORREF clr, BOOL fUsePalette = true);
 COLORREF SetBkColor(HDC hdc, COLORREF clr);
 COLORREF SetTextColor(HDC hdc, COLORREF clr);
 
