@@ -29,6 +29,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
+#include <string>
+#include <vector>
 #include <unicode/ustring.h>
 
 #include <sys/types.h>
@@ -37,98 +40,166 @@
 
 #include <time.h>
 
-// returns non zero on success
+namespace
+{
+	// Local convenience functions
+
+	inline int system(std::string cmd)
+	{
+		//fprintf(stderr, "%s: system(\"%s\")\n", __FILE__, cmd.c_str());
+		int result = ::system(cmd.c_str());
+		//fprintf(stderr, "%s: result: %d\n", __FILE__, result);
+		return result;
+	}
+
+	bool convertToUtf8(const WCHAR* strIn, std::string& strOut)
+	{
+		if (strIn == 0)
+			return false;
+
+		std::vector<char> buffer;
+		UErrorCode status;	
+
+		do
+		{
+			status = U_ZERO_ERROR;
+			int32_t requiredLen = buffer.size();
+			u_strToUTF8(&buffer[0], buffer.size(), &requiredLen, strIn, -1, &status);
+			buffer.resize(requiredLen);
+		}
+		while (status == U_BUFFER_OVERFLOW_ERROR);
+
+		if (U_FAILURE(status))
+			return false;
+
+		strOut.assign(&buffer[0], buffer.size());
+		return true;
+	}
+	
+	inline bool fileExists(const char* name)
+	{
+		return ::access(name, R_OK) == 0;
+	}
+	
+	inline bool fileExists(const WCHAR* lpName)
+	{
+		std::string name;
+		if (!convertToUtf8(lpName, name))
+			return false;
+		return fileExists(name.c_str());
+	}
+}
+
+// returns TRUE on success
 // REVIEW Possible implement this propertly without using system calls
-BOOL MoveFileW(const WCHAR* lpExistingFileName, const WCHAR* lpNewFileName)
+BOOL MoveFile(const char* lpExistingFileName, const char* lpNewFileName)
 {
 	if (lpExistingFileName == NULL || lpNewFileName == NULL)
 		return FALSE;
 
-	UErrorCode status = U_ZERO_ERROR;	
-	int32_t nSrc1Len = u_strlen(lpExistingFileName);
-	int32_t nSrc2Len = u_strlen(lpNewFileName);
-	int32_t nDestLen = nSrc1Len + nSrc2Len +1 + 6;
-	int32_t tmp;
-	char *buffer = new char[ 3+ nSrc1Len + nSrc2Len +1 + 1]; // +1 for null term +3 for the cmd +1 for the space between files
-	strcpy(buffer, "mv ");
-	u_strToUTF8(buffer + strlen(buffer), nDestLen - strlen(buffer), &tmp, lpExistingFileName, nSrc1Len, &status);
-	strcat(buffer, " ");
-	u_strToUTF8(buffer + strlen(buffer), nDestLen - strlen(buffer), &tmp, lpNewFileName, nSrc2Len, &status);
-	int rv = system(buffer);	
-	delete[] buffer;	
+	if (!fileExists(lpExistingFileName))
+		return FALSE;
+
+	std::string cmd("mv ");
+
+	cmd += "'";
+	cmd += lpExistingFileName;
+	cmd += "' '";
+	cmd += lpNewFileName;
+	cmd += "'";
+
+	int rv = system(cmd);	
 
 	return rv != -1;
 }	
 
+// returns TRUE on success
+BOOL MoveFile(const WCHAR* lpExistingFileName, const WCHAR* lpNewFileName)
+{
+	std::string existingFileName;
+	std::string newFileName;
 
-// returns non zero on success
+	if (!convertToUtf8(lpExistingFileName, existingFileName))
+		return FALSE;
+	if (!convertToUtf8(lpNewFileName, newFileName))
+		return FALSE;
+
+	return MoveFile(existingFileName.c_str(), newFileName.c_str());
+}
+
+BOOL MoveFileA(const char* lpExistingFileName, const char* lpNewFileName)
+{
+	return MoveFile(lpExistingFileName, lpNewFileName);
+}
+
+BOOL MoveFileW(const WCHAR* lpExistingFileName, const WCHAR* lpNewFileName)
+{
+	return MoveFile(lpExistingFileName, lpNewFileName);
+}
+
+// returns TRUE if the function succeeds
 // REVIEW Possible implement this propertly without using system calls
-// Currently Ignores bFailIfExists
-BOOL CopyFileW(const WCHAR* lpExistingFileName, const WCHAR* lpNewFileName, BOOL bFailIfExists)
+BOOL CopyFile(const char* lpExistingFileName, const char* lpNewFileName, BOOL bFailIfExists)
 {
 	if (lpExistingFileName == NULL || lpNewFileName == NULL)
 		return FALSE;
 
-	mode_t uMaskNew = 0;
-	mode_t uMaskOld = umask(uMaskNew); // set the new umask so file copies dumplicate permistions
+	if (!fileExists(lpExistingFileName))
+		return FALSE;
 
-	UErrorCode status = U_ZERO_ERROR;	
-	int32_t nSrc1Len = u_strlen(lpExistingFileName);
-	int32_t nSrc2Len = u_strlen(lpNewFileName);
-	int32_t nDestLen = nSrc1Len + nSrc2Len +1 + 6;
-	int32_t tmp;
-	char *buffer = new char[ 6 + nSrc1Len + nSrc2Len + 1 + 1]; // +1 for null term + 6 for the cmd +1 for the space between files
-	if (bFailIfExists)
-		strcpy(buffer, "cp ");
-	else
-		strcpy(buffer, "cp -f ");
-	u_strToUTF8(buffer + strlen(buffer), nDestLen - strlen(buffer), &tmp, lpExistingFileName, nSrc1Len, &status);
-	strcat(buffer, " ");
-	u_strToUTF8(buffer + strlen(buffer), nDestLen - strlen(buffer), &tmp, lpNewFileName, nSrc2Len, &status);
-	int rv = system(buffer);	
-	delete[] buffer;
+	mode_t uMaskNew = 0;
+	mode_t uMaskOld = umask(uMaskNew); // set the new umask so file copies duplicate permissions
+
+	std::string cmd("cp ");
+	if (!bFailIfExists)
+		cmd += "-f ";
+
+	cmd += "'";
+	cmd += lpExistingFileName;
+	cmd += "' '";
+	cmd += lpNewFileName;
+	cmd += "'";
+
+	int rv = system(cmd);
 
 	umask(uMaskOld); // set the old new mask
 
 	return rv != -1;
 }
 
-// returns non zero of the function succeeds
+// returns TRUE on success
+BOOL CopyFile(const WCHAR* lpExistingFileName, const WCHAR* lpNewFileName, BOOL bFailIfExists)
+{
+	std::string existingFileName;
+	std::string newFileName;
+
+	if (!convertToUtf8(lpExistingFileName, existingFileName))
+		return FALSE;
+	if (!convertToUtf8(lpNewFileName, newFileName))
+		return FALSE;
+
+	return CopyFile(existingFileName.c_str(), newFileName.c_str(), bFailIfExists);
+}
+
 BOOL CopyFileA(const char* lpExistingFileName, const char* lpNewFileName, BOOL bFailIfExists)
 {
-	if (lpExistingFileName == NULL || lpNewFileName == NULL)
-               return FALSE;
-
-	mode_t uMaskNew = 0;
-	mode_t uMaskOld = umask(uMaskNew); // set the new umask so file copies dumplicate permistions
-
-	int nSrc1Len = strlen(lpExistingFileName);
-	int nSrc2Len = strlen(lpNewFileName);
-	char *buffer = new char[ 6 + nSrc1Len + nSrc2Len + 1 + 1]; // +1 for null term + 6 for the cmd +1 for space
-	if (bFailIfExists)
-		    strcpy(buffer, "cp ");
-	else
-		    strcpy(buffer, "cp -f ");
-	strcat(buffer, lpExistingFileName);
-	strcat(buffer, " ");
-	strcat(buffer, lpNewFileName);
-	int rv = system(buffer);
-	delete[] buffer;
-
-	umask(uMaskOld); // set the old new mask
-
-	return rv != -1;
+	return CopyFile(lpExistingFileName, lpNewFileName, bFailIfExists);
 }
 
-
-
-DWORD GetFileAttributesA( const char *buffer)
+BOOL CopyFileW(const WCHAR* lpExistingFileName, const WCHAR* lpNewFileName, BOOL bFailIfExists)
 {
-	if (buffer == NULL)
-                return INVALID_FILE_ATTRIBUTES;
+	return CopyFile(lpExistingFileName, lpNewFileName, bFailIfExists);
+}
+
+// Retuns INVALID_FILE_ATTRIBUTES if the functions fails
+// REVIEW can this method map any other unix permistions to windows file attribues
+DWORD GetFileAttributes(const char *lpFileName)
+{
+	if (lpFileName == NULL)
+		return INVALID_FILE_ATTRIBUTES;
 
 	struct stat sb;
-	if (stat(buffer, &sb) == -1)
+	if (stat(lpFileName, &sb) == -1)
 	{
 		return INVALID_FILE_ATTRIBUTES;
 	}
@@ -154,54 +225,40 @@ DWORD GetFileAttributesA( const char *buffer)
 	return rv;
 }
 
-// REVIEW can this method map any other unix permistions to windows file attribues
-// Retuns INVALID_FILE_ATTRIBUTES if the functions fails
-// TODO REVIEW GetFileAttributes should not use the WCHAR but char * depending
-// on if the UNICO macro is set.
-DWORD GetFileAttributes( const WCHAR* lpFileName )
+DWORD GetFileAttributes(const WCHAR* lpFileName)
 {
-	if (lpFileName == NULL)
+	std::string fileName;
+
+	if (!convertToUtf8(lpFileName, fileName))
 		return INVALID_FILE_ATTRIBUTES;
 
-	UErrorCode status = U_ZERO_ERROR;
-	int32_t nSrcLen = u_strlen(lpFileName);
-	int32_t nDestLen = nSrcLen + 1;
-	char *buffer = new char[nSrcLen +1]; // and 1 for null term
-	u_strToUTF8(buffer, nDestLen, &nDestLen, lpFileName, nSrcLen, &status);
+	DWORD rv = GetFileAttributes(fileName.c_str());
 
-	DWORD rv =  GetFileAttributesA(buffer);
-
-	delete[] buffer;
 	return rv;
-
 }
 
-// returns non zero if the function succeeds
-// Currently only have a W implementation
-DWORD GetFileAttributesW( const WCHAR* lpFileName )
+DWORD GetFileAttributesA(const char *lpFileName)
 {
 	return GetFileAttributes(lpFileName);
 }
 
-// returns non zero if the function succeeds
+DWORD GetFileAttributesW(const WCHAR* lpFileName)
+{
+	return GetFileAttributes(lpFileName);
+}
+
+// returns TRUE if the function succeeds
 // Only actually does anything for the readonly or lack of readonly attribute
-BOOL SetFileAttributesW( const WCHAR* lpFileName, DWORD dwFileAttributes)
+BOOL SetFileAttributes(const char* lpFileName, DWORD dwFileAttributes)
 {
 	BOOL rv = false;
 	
 	if (lpFileName == NULL)
 		return rv;
-
-	// Convert to UTF8
-	UErrorCode status = U_ZERO_ERROR;
-	int32_t nSrcLen = u_strlen(lpFileName);
-	int32_t nDestLen = nSrcLen + 1;
-	char *buffer = new char[nSrcLen +1]; // and 1 for null term
-	u_strToUTF8(buffer, nDestLen, &nDestLen, lpFileName, nSrcLen, &status);
 	
 	if (dwFileAttributes & FILE_ATTRIBUTE_ARCHIVE)
 	{
-	 	rv = true;
+		rv = true;
 	}
 	
 	if (dwFileAttributes & FILE_ATTRIBUTE_HIDDEN)
@@ -237,7 +294,7 @@ BOOL SetFileAttributesW( const WCHAR* lpFileName, DWORD dwFileAttributes)
 	if (dwFileAttributes & FILE_ATTRIBUTE_READONLY)
 	{
 		struct stat sb;
-		if (stat(buffer, &sb) == -1)
+		if (stat(lpFileName, &sb) == -1)
 		{
 			rv = false;
 		}
@@ -245,7 +302,7 @@ BOOL SetFileAttributesW( const WCHAR* lpFileName, DWORD dwFileAttributes)
 		{
 			// remove write permistions for user,group,others
 			sb.st_mode = sb.st_mode & ~S_IWUSR & ~S_IWGRP & ~S_IWOTH;
-			if (chmod(buffer, sb.st_mode) == -1)
+			if (chmod(lpFileName, sb.st_mode) == -1)
 			{
 				rv = false;	
 			}
@@ -256,7 +313,7 @@ BOOL SetFileAttributesW( const WCHAR* lpFileName, DWORD dwFileAttributes)
 	else
 	{
 		struct stat sb;
-		if (stat(buffer, &sb) == -1)
+		if (stat(lpFileName, &sb) == -1)
 		{
 			rv = false;
 		}
@@ -264,7 +321,7 @@ BOOL SetFileAttributesW( const WCHAR* lpFileName, DWORD dwFileAttributes)
 		{
 			// add user and group write permistions.
 			sb.st_mode = sb.st_mode & S_IWUSR & S_IWGRP;
-			if (chmod(buffer, sb.st_mode) == -1)
+			if (chmod(lpFileName, sb.st_mode) == -1)
 			{
 				rv = false;	
 			}
@@ -273,41 +330,84 @@ BOOL SetFileAttributesW( const WCHAR* lpFileName, DWORD dwFileAttributes)
 		}
 	}
 	
-	delete[] buffer;
 	return rv;	
 }
 
-// return non zero if the function succeeds
-// TODO-P4CL23677-Merge
-BOOL CreateDirectoryA( const char * lpPathName, LPSECURITY_ATTRIBUTES secAttrib)
+BOOL SetFileAttributes(const WCHAR* lpFileName, DWORD dwFileAttributes)
 {
-// TODO-P4CL23677-Merge
-	return false;	
-}
+	std::string fileName;
 
-// returns non zero if the function succeeds
-// REVIEW Possible implement this propertly without using system calls
-// TODO - use remove instead
-BOOL DeleteFile(const WCHAR* lpFileName)
-{		
-	if (lpFileName == NULL )
+	if (!convertToUtf8(lpFileName, fileName))
 		return FALSE;
 
-	UErrorCode status = U_ZERO_ERROR;
-	int32_t nSrcLen = u_strlen(lpFileName);
-	int32_t nDestLen = nSrcLen +1;
-	char *buffer = new char[ 3 + nSrcLen +1]; // 3 for "rm " and 1 for null term
-	strcpy(buffer, "rm ");
-	
-	u_strToUTF8(buffer + strlen(buffer), nDestLen, &nDestLen, lpFileName, nSrcLen, &status);
-	int rv = system(buffer);	
-	delete[] buffer;
-	return rv != -1;
+	return SetFileAttributes(fileName.c_str(), dwFileAttributes);
 }
 
-BOOL DeleteFileA(const char* pFileName)
+BOOL SetFileAttributesA(const char* lpFileName, DWORD dwFileAttributes)
+{
+	return SetFileAttributes(lpFileName, dwFileAttributes);
+}
+
+BOOL SetFileAttributesW(const WCHAR* lpFileName, DWORD dwFileAttributes)
+{
+	return SetFileAttributes(lpFileName, dwFileAttributes);
+}
+
+// return TRUE if the function succeeds
+// TODO-P4CL23677-Merge
+BOOL CreateDirectory(const char* lpPathName, LPSECURITY_ATTRIBUTES secAttrib)
+{
+// TODO-P4CL23677-Merge
+	assert("CreateDirectory");
+	return FALSE;	
+}
+
+// return TRUE if the function succeeds
+BOOL CreateDirectory(const WCHAR* lpPathName, LPSECURITY_ATTRIBUTES secAttrib)
+{
+	std::string pathName;
+
+	if (!convertToUtf8(lpPathName, pathName))
+		return FALSE;
+
+	return CreateDirectory(pathName.c_str(), secAttrib);
+}
+
+BOOL CreateDirectoryA(const char* lpPathName, LPSECURITY_ATTRIBUTES secAttrib)
+{
+	return CreateDirectory(lpPathName, secAttrib);
+}
+
+BOOL CreateDirectoryW(const WCHAR* lpPathName, LPSECURITY_ATTRIBUTES secAttrib)
+{
+	return CreateDirectory(lpPathName, secAttrib);
+}
+
+// returns TRUE if the function succeeds
+BOOL DeleteFile(const char* pFileName)
 {
 	return (0 == remove(pFileName));
+}
+
+// returns TRUE if the function succeeds
+BOOL DeleteFile(const WCHAR* lpFileName)
+{		
+	std::string fileName;
+
+	if (!convertToUtf8(lpFileName, fileName))
+		return FALSE;
+
+	return DeleteFile(fileName.c_str());
+}
+
+BOOL DeleteFileA(const char* lpFileName)
+{
+	return DeleteFile(lpFileName);
+}
+
+BOOL DeleteFileW(const WCHAR* lpFileName)
+{
+	return DeleteFile(lpFileName);
 }
 
 // TODO-P4CL23677-Merge

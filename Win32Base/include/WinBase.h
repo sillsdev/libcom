@@ -42,37 +42,40 @@ typedef struct _SECURITY_ATTRIBUTES {
 	BOOL bInheritHandle;
 } SECURITY_ATTRIBUTES, *PSECURITY_ATTRIBUTES, *LPSECURITY_ATTRIBUTES;
 
-// returns non zero if the function succeeds
+// returns TRUE if the function succeeds
+BOOL MoveFile(const char*  lpExistingFileName, const char*  lpNewFileName);
+BOOL MoveFile(const WCHAR* lpExistingFileName, const WCHAR* lpNewFileName);
+BOOL MoveFileA(const char*  lpExistingFileName, const char*  lpNewFileName);
 BOOL MoveFileW(const WCHAR* lpExistingFileName, const WCHAR* lpNewFileName);
 
-// returns non zero if the function succeeds.
+// returns TRUE if the function succeeds.
+BOOL CopyFile(const char*  lpExistingFileNAme, const char*  lpNewFileName, BOOL bFailIfExists);
+BOOL CopyFile(const WCHAR* lpExistingFileName, const WCHAR* lpNewFileName, BOOL bFailIfExists);
+BOOL CopyFileA(const char*  lpExistingFileNAme, const char*  lpNewFileName, BOOL bFailIfExists);
 BOOL CopyFileW(const WCHAR* lpExistingFileName, const WCHAR* lpNewFileName, BOOL bFailIfExists);
 
-// returns non zero of the function succeeds
-BOOL CopyFileA(const char* lpExistingFileNAme, const char* lpNewFileName, BOOL bFailIfExists);
-
 // returns non zero if the function succeeds
+DWORD GetFileAttributes(const char*  lpFileName);
+DWORD GetFileAttributes(const WCHAR* lpFileName);
+DWORD GetFileAttributesA(const char*  lpFileName);
+DWORD GetFileAttributesW(const WCHAR* lpFileName);
+
+// returns TRUE if the function succeeds
+BOOL SetFileAttributes(const char*  lpFileName, DWORD dwFileAttributes);
+BOOL SetFileAttributes(const WCHAR* lpFileName, DWORD dwFileAttributes);
+BOOL SetFileAttributesA(const char*  lpFileName, DWORD dwFileAttributes);
+BOOL SetFileAttributesW(const WCHAR* lpFileName, DWORD dwFileAttributes);
+
+// return TRUE if the function succeeds
+BOOL CreateDirectory(const char*  lpPathName, LPSECURITY_ATTRIBUTES secAttrib);
+BOOL CreateDirectory(const WCHAR* lpPathName, LPSECURITY_ATTRIBUTES secAttrib);
+BOOL CreateDirectoryA(const char*  lpPathName, LPSECURITY_ATTRIBUTES secAttrib);
+BOOL CreateDirectoryW(const WCHAR* lpPathName, LPSECURITY_ATTRIBUTES secAttrib);
+
+// returns TRUE if the function succeeds
+BOOL DeleteFile(const char*  lpFileName);
 BOOL DeleteFile(const WCHAR* lpFileName);
-
-// returns non zero if the function succeeds
-BOOL DeleteFileA(const char* pFileName);
-
-// TODO REVIEW this function should really be macroed depending if the WIN32 UNICODE
-// macro is set.
-// returns non zero if the function succeeds
-DWORD GetFileAttributes( const WCHAR* lpFileName );
-
-// returns non zero if the function succeeds
-DWORD GetFileAttributesW( const WCHAR* lpFileName );
-
-// return non zero if the function succeeds
-DWORD GetFileAttributesA(const char* lpFileName );
-
-// returns non zero if the function succeeds
-BOOL SetFileAttributesW( const WCHAR* lpFileName, DWORD dwFileAttributes );
-
-// return non zero if the function succeeds
-BOOL CreateDirectoryA( const char * lpPathName, LPSECURITY_ATTRIBUTES secAttrib);
+BOOL DeleteFileA(const char*  lpFileName);
+BOOL DeleteFileW(const WCHAR* lpFileName);
 
 #endif //_WINBASE_H_
-
