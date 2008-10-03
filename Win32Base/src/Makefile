@@ -31,7 +31,7 @@ CPPFLAGS = \
 	-I../include \
 
 CXXFLAGS = -Wall -g -O0 -fvisibility=hidden
-ARFLAGS = -rs
+ARFLAGS = -crs
 
 OBJS = Hacks.o WinBase.o
 SRCS = $(OBJS:%.o=%.cpp)
