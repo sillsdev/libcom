@@ -30,7 +30,7 @@ CPPFLAGS = \
 	$(shell icu-config --cppflags) \
 	-I../include \
 
-CXXFLAGS = -g -Wall
+CXXFLAGS = -Wall -g -O0 -fvisibility=hidden
 ARFLAGS = -rs
 
 OBJS = Hacks.o WinBase.o
