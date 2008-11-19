@@ -129,9 +129,9 @@ enum {
     ((HRESULT) (((unsigned long)(sev)<<31) | ((unsigned long)(fac)<<16) | ((unsigned long)(code))) )
 #define MAKE_SCODE(sev,fac,code) \
         ((SCODE) (((unsigned long)(sev)<<31) | ((unsigned long)(fac)<<16) | ((unsigned long)(code))) )
-#define SUCCEEDED(stat) ((HRESULT)(stat)>=0)
-#define FAILED(stat) ((HRESULT)(stat)<0)
-#define IS_ERROR(stat) (((unsigned long)(stat)>>31) == SEVERITY_ERROR)
+#define SUCCEEDED(stat) (!IS_ERROR(stat))
+#define FAILED(stat) (IS_ERROR(stat))
+#define IS_ERROR(stat) ((stat) & 0x80000000)
 
 #define HRESULT_CODE(hr) ((hr) & 0xFFFF)
 #define SCODE_CODE(sc)   ((sc) & 0xFFFF)

@@ -38,10 +38,10 @@
 
 struct PlainGUID
 {
-	unsigned long  Data1;
-	unsigned short Data2;
-	unsigned short Data3;
-	unsigned char  Data4[8];
+	UINT32 			Data1; // 32 bit
+	UINT16 			Data2; // 16 bit
+	UINT16 			Data3; // 16 bit
+	unsigned char   Data4[8];
 };
 
 struct SmartGUID : public PlainGUID
@@ -145,6 +145,7 @@ void SysFreeString(BSTR bstr);
 int SysReAllocString(BSTR* pbstr, const OLECHAR* psz);
 int SysReAllocStringLen(BSTR* pbstr, const OLECHAR* pch, unsigned int cch);
 UINT SysStringLen(BSTR bstr);
+UINT SysStringByteLen(BSTR bstr);
 
 // Class registration and object creation
 

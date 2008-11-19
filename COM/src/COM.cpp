@@ -125,13 +125,14 @@ HRESULT CLSIDFromProgID(LPCOLESTR lpszProgID, LPCLSID lpclsid)
 
 BSTR SysAllocStringLen(const OLECHAR* pch, unsigned int cch)
 {
-	OLECHAR* buf = new OLECHAR[cch + 3];	// Space for length, data, terminator
-	
-	*(int*)buf = cch * sizeof(OLECHAR);	// Length (bytes)
+	OLECHAR* buf = new OLECHAR[cch + 3];	// Space for length, data, terminator. 
+		// Note: this allocates 2 * (cch + 3) bytes if sizeof(OLECHAR) == 2
+
+	*(INT32*)buf = cch * sizeof(OLECHAR);	// Length (bytes)
 	if (pch)
-		memcpy(buf + 2, pch, *(int*)buf);	// Data
+		memcpy(buf + 2, pch, *(INT32*)buf);	// Data
 	else
-		memset(buf + 2, 0, *(int*)buf);	// Data
+		memset(buf + 2, 0, *(INT32*)buf);	// Data
 	buf[2 + cch] = 0;						// Terminator
 	
 	return buf + 2;
@@ -150,15 +151,17 @@ BSTR SysAllocStringByteLen(LPCSTR psz, UINT len)
 	if (len < 0)
 		return NULL; 
 		
-	OLECHAR* buf = new OLECHAR[len + 3];
+	OLECHAR* buf = new OLECHAR[len + 3];	// Space for length, data, terminator. 
+		// Note: this allocates 2 * (len + 3) bytes if sizeof(OLECHAR) == 2
+
 	if (NULL == buf)
 		return NULL; // insufficient memory
 		
 	if (psz != NULL)
 	{
-	 	*(int*)buf = len;	
+	 	*(INT32*)buf = len;	
 		memcpy(buf + 2, psz, len);
-		buf[len] = NULL;
+		((char*)(buf + 2))[len] = NULL;
 	}
 
 	return buf + 2;
@@ -197,9 +200,14 @@ int SysReAllocStringLen(BSTR* pbstr, const OLECHAR* pch, unsigned int cch)
 	return true;
 }
 
-unsigned int SysStringLen(BSTR bstr)
+UINT SysStringLen(BSTR bstr)
 {
-	return *(unsigned int*)(bstr - 2);
+	return SysStringByteLen(bstr) / sizeof(OLECHAR);
+}
+
+UINT SysStringByteLen(BSTR bstr)
+{
+	return *(UINT32*)(bstr - 2);
 }
 
 // Class registration and object creation

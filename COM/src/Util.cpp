@@ -40,17 +40,17 @@ typedef HINSTANCE HMODULE;
 
 static wchar_t module_name[] = L"Unknown Module";
 
-unsigned long GetModuleFileName(HMODULE, wchar_t* buf, unsigned long max)
+unsigned int GetModuleFileName(HMODULE, wchar_t* buf, unsigned int max)
 {
 	std::wcsncpy(buf, module_name, max);
 	buf[max - 1] = 0;
 	return std::wcslen(buf);
 }
 
-unsigned long GetModuleFileName(HMODULE h, OLECHAR* buf, unsigned long max)
+unsigned int GetModuleFileName(HMODULE h, OLECHAR* buf, unsigned int max)
 {
 	std::vector<wchar_t> tmp(max);
-	unsigned long count = GetModuleFileName(h, &tmp[0], max);
+	unsigned int count = GetModuleFileName(h, &tmp[0], max);
 	std::copy(tmp.begin(), tmp.end(), buf);
 	return count;
 }
