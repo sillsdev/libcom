@@ -30,6 +30,7 @@
 
 #include <cstddef>
 #include <unicode/utypes.h>
+#include <stdint.h>
 
 // Compiler features
 
@@ -65,8 +66,17 @@ typedef unsigned long long ULONGLONG;
 typedef          float     FLOAT;
 typedef          double    DOUBLE;
 
-typedef USHORT	WORD;
-typedef ULONG	DWORD;
+// some type defs with defined length.
+// These are platform specific
+typedef  int16_t INT16;
+typedef uint16_t UINT16;
+typedef  int32_t INT32;
+typedef uint32_t UINT32;
+typedef  int64_t INT64;
+typedef uint64_t UINT64;
+
+typedef UINT16	WORD;
+typedef UINT32	DWORD;
 typedef UCHAR	BYTE;
 typedef UCHAR	BCHAR;
 

@@ -4,6 +4,7 @@
 #define _WINBASE_H_
 
 #include <sys/types.h>
+#include "BasicTypes.h"
 
 // needs to be included above WinSupport
 enum Win32FileAttributes
@@ -26,14 +27,6 @@ enum Win32FileAttributes
 	FILE_ATTRIBUTE_VIRTUAL = 0x10000
 	
 };
-
-
-
-
-//TODO REVIEW include type definitions...
-#define WCHAR short unsigned int
-#define BOOL long
-#define DWORD long int
 
 // Emulations of WIN32 _SECURITY_ATTRIBUTES struct
 typedef struct _SECURITY_ATTRIBUTES {

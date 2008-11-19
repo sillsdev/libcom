@@ -34,30 +34,30 @@ union LARGE_INTEGER
 {
 	struct
 	{
-		DWORD LowPart;
-		LONG HighPart;
+		UINT32 LowPart;
+		INT32  HighPart;
 	};
 	struct
 	{
-		DWORD LowPart;
-		LONG HighPart;
+		UINT32 LowPart;
+		INT32  HighPart;
 	} u;
-	LONGLONG QuadPart;
+	INT64 QuadPart;
 };
 
 union ULARGE_INTEGER
 {
 	struct
 	{
-		DWORD LowPart;
-		DWORD HighPart;
+		UINT32 LowPart;
+		UINT32 HighPart;
 	};
 	struct
 	{
-		DWORD LowPart;
-		DWORD HighPart;
+		UINT32 LowPart;
+		UINT32 HighPart;
 	} u;
-	ULONGLONG QuadPart;
+	UINT64 QuadPart;
 };
 
 __DECLARE_POINTER_TYPES(LARGE_INTEGER)
@@ -67,10 +67,10 @@ union CY
 {
     struct
 	{
-        unsigned long   Lo;
-        long			Hi;
+        UINT32  Lo;
+        INT32	Hi;
     };
-    LONGLONG int64;
+    INT64 int64;
 };
 
 __DECLARE_POINTER_TYPES(CY)
@@ -85,22 +85,20 @@ __DECLARE_POINTER_TYPES(FIXED)
 
 struct POINT
 {
-	long x, y;
+	INT32 x, y;
 };
 
 __DECLARE_POINTER_TYPES(POINT)
 
 struct RECT
 {
-	long left, top, right, bottom;
+	INT32 left, top, right, bottom;
 };
 
 __DECLARE_POINTER_TYPES(RECT)
 
 
-typedef long SCODE;
-//typedef long HRESULT;
-//#define _HRESULT_DEFINED // To avoid conflict with our WinError.h
+typedef HRESULT SCODE;
 
 typedef void*		HANDLE;
 typedef HANDLE		HGLOBAL;
@@ -150,7 +148,7 @@ typedef WORD	LANGID;
 // Begin UNIXODBC block
 // This could probably be simpler.
 #define ALLREADY_HAVE_WINDOWS_TYPE
-typedef long int SDWORD;
+typedef int SDWORD;
 typedef signed short RETCODE;
 typedef void* SQLHWND;
 #define SQL_API
