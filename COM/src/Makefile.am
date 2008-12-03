@@ -25,6 +25,8 @@
 # http://www.gnu.org/licenses/lgpl.html
 # 
 
+AM_CXXFLAGS = -Werror
+
 lib_LTLIBRARIES = libcom.la
 
 # TODO Don't compile Util.cpp into libcom
