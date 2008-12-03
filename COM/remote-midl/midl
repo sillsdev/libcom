@@ -28,15 +28,23 @@
 # 
 
 if [ $# -lt 2 ]; then
-	echo Usage: $0 remote_host [midl args] /h foo.h input.idl
+	echo Usage: $0 remote_host [-p remote_port] [midl args] /h foo.h input.idl
 	exit 1
 fi
 
 REMOTE_HOST=$1
 shift
 
+if [ "$1" == "-p" ]; then
+	REMOTE_PORT=$2
+	shift
+	shift
+else
+	REMOTE_PORT=22
+fi
+
 # Choose temporary directory on remote machine
-DIR=$(ssh "$REMOTE_HOST" "mktemp -dt")
+DIR=$(ssh -p $REMOTE_PORT "$REMOTE_HOST" "mktemp -dt" | sed 's/\\/\//g' | sed 's/\r//g')
 if [ -z "$DIR" ]
   then echo $(basename "$0"): Error choosing temporary directory on remote host.
   exit 1
@@ -76,9 +84,8 @@ if [ "x$LAST" = "xCmnFwDlgsTlb.idl" ]; then
 	FILES_TO_SEND_TO_REMOTE_HOST=("${FILES_TO_SEND_TO_REMOTE_HOST[@]}" "$(dirname "$INFILE")/FwKernelTlb.tlb" "$(dirname "$INFILE")/ViewsTlb.tlb" "$(dirname "$INFILE")/LanguageTlb.tlb")
 fi
 
-
-scp "${FILES_TO_SEND_TO_REMOTE_HOST[@]}" "$REMOTE_HOST:$DIR"/ && 
-	ssh "$REMOTE_HOST" "$CMD" && 
-	scp "$REMOTE_HOST:$DIR"/$STEM{.h,.tlb} "$LOCAL_TMPDIR" &&
+scp -P $REMOTE_PORT "${FILES_TO_SEND_TO_REMOTE_HOST[@]}" "$REMOTE_HOST:$DIR" && 
+	ssh -p $REMOTE_PORT "$REMOTE_HOST" "$CMD" && 
+	scp -P $REMOTE_PORT "$REMOTE_HOST:$DIR"/$STEM{.h,.tlb} "$LOCAL_TMPDIR" &&
 	cp -a "$LOCAL_TMPDIR/$STEM"{.h,.tlb} $(dirname "$OUTFILE_ORIG") ||
 	(echo $(basename "$0"): Error communicating with remote host.; exit 1)
