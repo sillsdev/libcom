@@ -1,8 +1,6 @@
 #ifndef OleDb_h_INCLUDED
 #define OleDb_h_INCLUDED
 
-#warning What is code license and origin?
-
 typedef struct tagDBDATE
     {
     SHORT year;
