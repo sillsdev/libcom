@@ -58,6 +58,7 @@ enum {
 };
 
 // Begin copied code from Wine's winerror.h from git on 2008-01-15
+// Modified by SIL on 2008-11-19
 
 /*
  * Copyright (C) the Wine project
