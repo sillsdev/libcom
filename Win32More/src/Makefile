@@ -30,6 +30,10 @@ CXXFLAGS = -Wall -g -O0 -fPIC -fvisibility=hidden -Werror
 
 ARFLAGS = -crs
 
+ARCH = $(shell uname -m)
+BUILD_DIR = build$(ARCH)
+VPATH = $(BUILD_DIR)
+
 OBJS = \
 	TextServices.o \
 	COMInterfacesMore.o \
@@ -38,10 +42,19 @@ OBJS = \
 SRCS = $(OBJS:%.o=%.cpp)
 DEPS = $(OBJS:%.o=%.d)
 
-libWin32More.a: $(OBJS)
-	$(AR) $(ARFLAGS) $@ $^
+setup:
+	-mkdir -p $(BUILD_DIR)
+
+libWin32More.a: setup $(OBJS)
+	$(AR) $(ARFLAGS) $(BUILD_DIR)/$@ $(addprefix $(BUILD_DIR)/, $(OBJS))
 
 clean:
-	$(RM) libWin32More.a $(OBJS) $(DEPS)
+	$(RM) $(BUILD_DIR)/libWin32More.a $(BUILD_DIR)/$@ $(addprefix $(BUILD_DIR)/, $(OBJS)) \
+		$(BUILD_DIR)/$@ $(addprefix $(BUILD_DIR)/, $(DEPS))
+	-rm -rf $(BUILD_DIR)
 
--include $(DEPS)
+-include $(addprefix $(BUILD_DIR)/, $(DEPS))
+
+$(BUILD_DIR)/%.o: %.cpp
+	$(CC) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
+
