@@ -27,19 +27,32 @@
 
 CXXFLAGS = -g -O3
 
-RegisterServer: RegisterServer.o
+ARCH = $(shell uname -m)
+INSTALL_DIR = ../../bin$(ARCH)
+OBJ_DIR = obj$(ARCH)
+
+all: setup $(OBJ_DIR)/RegisterServer
+
+setup:
+	@mkdir -p $(OBJ_DIR)
+
+$(OBJ_DIR)/RegisterServer: $(OBJ_DIR)/RegisterServer.o
 	$(LINK.cc) -o $@ $^ -ldl
+
+$(OBJ_DIR)/RegisterServer.o: RegisterServer.cpp
+	$(COMPILE.cc) $(CXXFLAGS) -o $(OBJ_DIR)/RegisterServer.o RegisterServer.cpp
 
 -include *.d
 
-install: RegisterServer
-	mkdir -p ../../bin
-	install RegisterServer make-map.sh generate-map.sh ../../bin
+install: $(OBJ_DIR)/RegisterServer
+	mkdir -p $(INSTALL_DIR)
+	install $(OBJ_DIR)/RegisterServer make-map.sh generate-map.sh $(INSTALL_DIR)
 
 uninstall:
-	rm -f ../../bin/RegisterServer
-	rm -f ../../bin/make-map.sh
-	rm -f ../../bin/generate-map.sh
+	rm -f $(INSTALL_DIR)/RegisterServer
+	rm -f $(INSTALL_DIR)/make-map.sh
+	rm -f $(INSTALL_DIR)/generate-map.sh
 
 clean:
-	$(RM) RegisterServer *.[od] *.gch
+	$(RM) $(OBJ_DIR)/RegisterServer $(OBJ_DIR)/*.[od] $(OBJ_DIR)/*.gch
+	-rmdir $(OBJ_DIR)
