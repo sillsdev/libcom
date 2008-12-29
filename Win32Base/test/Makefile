@@ -25,19 +25,27 @@
 # http://www.gnu.org/licenses/lgpl.html
 # 
 
+ARCH = $(shell uname -m)
+BUILD_DIR = build$(ARCH)
+vpath %.cpp $(shell pwd)
+vpath %.o $(BUILD_DIR)
+
 CXXFLAGS = -g -Wall
 CPPFLAGS = -MMD -I.. -I../include -I../../COM/include $(shell icu-config --cppflags)
-LDFLAGS = $(shell icu-config --ldflags) -L../../COM/src/.libs -lcom
+LDFLAGS = $(shell icu-config --ldflags) -L../../COM/$(BUILD_DIR)/src/.libs -lcom
 # LDLIBS = -licucore -luuid
 
-PROGS = TestOutputDebugString TestGUID
+PROGS = $(BUILD_DIR)/TestOutputDebugString $(BUILD_DIR)/TestGUID
 
-all: $(PROGS)
+all: setup $(PROGS)
 
-$(PROGS): %: %.o ../src/libWin32Base.a
-	$(LINK.cc) -o $@ $^ $(LDLIBS)
+setup:
+	-mkdir -p $(BUILD_DIR)
 
-../src/libWin32Base.a::
+$(PROGS): $(BUILD_DIR)/%: %.o ../src/$(BUILD_DIR)/libWin32Base.a
+	$(LINK.cc) -o $@ $(BUILD_DIR)/$(<F) ../src/$(BUILD_DIR)/libWin32Base.a $(LDLIBS) 
+
+../src/$(BUILD_DIR)/libWin32Base.a::
 	@$(MAKE) -C $(@D) $(@F) -q || \
 	 $(MAKE) -C $(@D) $(@F)
 
@@ -45,6 +53,11 @@ run-test:
 	sh test.sh
 
 clean:
-	$(RM) $(PROGS) *.[od]
+	$(RM) $(addprefix $(BUILD_DIR)/, $(PROGS)) $(BUILD_DIR)/*.[od]
+	-rm -rf $(BUILD_DIR)
 
--include *.d
+-include $(BUILD_DIR)/*.d
+
+.cpp.o:
+	$(CC) $(CPPFLAGS) $(CXXFLAGS) -c -o $(BUILD_DIR)/$@ $< 
+

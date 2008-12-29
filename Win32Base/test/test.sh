@@ -1,3 +1,4 @@
+#! /bin/bash
 #
 #	$Id$
 #
@@ -25,15 +26,18 @@
 # http://www.gnu.org/licenses/lgpl.html
 #
 
+ARCH=$(uname -m)
+BUILD_DIR=build$ARCH
+
 # Location of ICU so files
 LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$(icu-config --libdir)
 # Location of libcom
-LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../../COM/src/.libs
+LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../../COM/$BUILD_DIR/src/.libs
 export LD_LIBRARY_PATH
 
 TESTS="TestGUID TestOutputDebugString"
 for Test in $TESTS
 do
 	echo Testing $Test
-	./$Test && echo Successful test of $Test || { echo Failure testing $Test; exit 1; }
+	$BUILD_DIR/$Test && echo Successful test of $Test || { echo Failure testing $Test; exit 1; }
 done
