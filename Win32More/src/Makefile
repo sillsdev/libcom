@@ -45,7 +45,7 @@ DEPS = $(OBJS:%.o=%.d)
 setup:
 	-mkdir -p $(BUILD_DIR)
 
-libWin32More.a: setup $(OBJS)
+libWin32More.a: setup $(addprefix $(BUILD_DIR)/, $(OBJS))
 	$(AR) $(ARFLAGS) $(BUILD_DIR)/$@ $(addprefix $(BUILD_DIR)/, $(OBJS))
 
 clean:
@@ -57,4 +57,3 @@ clean:
 
 $(BUILD_DIR)/%.o: %.cpp
 	$(CC) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
-
