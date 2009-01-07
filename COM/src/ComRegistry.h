@@ -60,8 +60,10 @@ class ComRegistry
 		/** Gets an instance of the ComRegistry (singleton) */
 		static ComRegistry* getInstance() { return getMutableInstance(); }
 		static void pointerToHex(const void* pointer, char *buf);
-		void registerFactory(const CLSID &Class, LPCLASSFACTORY Pointer);
+		void registerFactory(const CLSID& Class, LPCLASSFACTORY Pointer);
 		HRESULT getFactoryPointer(const CLSID& Class, LPCLASSFACTORY* pIFactory);
+		HRESULT getAssemblyFilename(const CLSID& Class, std::string& assemblyFilename) const;
+		HRESULT getClassName(const CLSID& Class, std::string& className) const;
 		string getDllFilename(const CLSID &);
 		void dumpComponentMap(std::ostream& out);
 		HRESULT findFactoryInDll(void* dllhandle, REFCLSID requestedClassID, IClassFactory** factory);
@@ -79,10 +81,12 @@ class ComRegistry
 		static ComRegistry* getMutableInstance();
 		LPCLASSFACTORY getFactory(const CLSID &);
 
-		/** factory,dllfilename pair */
+		/** Registry entry to associate COM interfaces and objects with shared libraries */
 		struct Entry {
 			LPCLASSFACTORY factory;
 			string dllfilename;
+			string assemblyFilename;
+			string className;
 			
 			Entry() {
 				factory = NULL;

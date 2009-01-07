@@ -38,6 +38,7 @@
 #include <string.h>
 #include <errno.h>
 
+using namespace std;
 using std::vector;
 
 /**
@@ -186,6 +187,44 @@ HRESULT ComRegistry::getFactoryPointer(const CLSID &classID, LPCLASSFACTORY* cla
 }
 
 /**
+ * @brief Get the Assembly Filename associated with the CLSID
+ * 
+ * @return S_OK upon successfully getting the assembly filename.
+ */
+HRESULT ComRegistry::getAssemblyFilename(const CLSID& Class, std::string& assemblyFilename) const
+{
+	ComponentMap::const_iterator where = this->m_componentMap.find(Class);
+	
+	if (where != m_componentMap.end())
+	{
+		assemblyFilename = (*where).second.assemblyFilename;
+		return S_OK;
+	}
+
+	// This method is designed to be used by the Factory itself, so Class should always be found. 
+	return REGDB_E_CLASSNOTREG;
+}
+
+/**
+ * @brief Get the Class Name associated with the CLSID
+ * 
+ * @return S_OK upon successfully getting the managed class name.
+ */
+HRESULT ComRegistry::getClassName(const CLSID& Class, std::string& className) const
+{
+	ComponentMap::const_iterator where = this->m_componentMap.find(Class);
+	
+	if (where != m_componentMap.end())
+	{
+		className = (*where).second.className;
+		return S_OK;
+	}
+
+	// This method is designed to be used by the Factory itself, so Class should always be found.
+	return REGDB_E_CLASSNOTREG;
+}
+
+/**
  * @brief Converts a pointer to a hexadecimal NUL terminated representation in the 11 byte buffer buf.
  * 
  * @param pointer pointer to convert
@@ -326,16 +365,48 @@ void ComRegistry::populateFromComponentsMapFile(const string mapfilename)
 		if (line.empty())
 			continue;
 		
-		// Split the line into GUID and DLL Filename parts
-		string::size_type pos = line.find(" ", 0);
-		if (std::string::npos == pos) {
+		// Split the line into GUID and DLL Filename parts + optional  assemblyFilename and className
+		string::size_type sep1 = string::npos; // Seperator between classID and dllfilename
+		string::size_type sep2 = string::npos; // Sepeator between dllfilename and assemblyFilename (may equal string::npos)
+		string::size_type sep3 = string::npos; // Sepeator between assemblyFilename and className (may equal string::npos)
+		string::size_type sep4 = string::npos; // Sepeator between className end of line (should equal string::npos)
+
+		sep1 = line.find(" ", 0);
+
+		if (sep1 != string::npos)
+			sep2 = line.find(" ", sep1 + 1);
+
+		if (sep2 != string::npos)
+			sep3 = line.find(" ", sep2 + 1);
+
+		if (sep3 != string::npos)
+			sep4 = line.find(" ", sep3 + 1);
+
+		if (string::npos == sep1) {
 			fprintf(stderr, "libcom: Warning: malformed line (no space) at %s:%d\n", 
 				mapfilename.c_str(), linenum);
 			continue;
 		}
-		std::string classIdString = line.substr(0,pos);
-		std::string dllfilename = line.substr(pos+1, string::npos);
-		//TODO line.find(" ",0) may have given us something that might make substr throw an out_of_range if there was a space at the end of line possibly? Test that.
+
+		if (string::npos != sep4) {
+			fprintf(stderr, "libcom: Warning: malformed line (extra characters at end of line) at %s:%d\n",
+				mapfilename.c_str(), linenum, sep1, sep2, sep3, sep4);
+		}
+		string classIdString;
+		string dllfilename;		
+		string assemblyFilename; // optional parameter used when creating managed COM Objects
+		string className; // should only exist if assemblyFilename is specified
+
+		classIdString = line.substr(0, sep1);
+
+		if (string::npos != sep1)
+			dllfilename = line.substr(sep1 + 1, sep2 - sep1 -1);
+
+		if (string::npos != sep2)
+			assemblyFilename = line.substr(sep2 + 1, sep3 - sep2 -1);
+
+		if (string::npos != sep3)
+			className = line.substr(sep3 + 1, sep4 - sep3 - 1);
 
 		if (classIdString.empty())
 		{
@@ -349,6 +420,14 @@ void ComRegistry::populateFromComponentsMapFile(const string mapfilename)
 		{
 			fprintf(stderr, 
 				"libcom: Warning: malformed line; can't find filename at %s:%d\n",
+				mapfilename.c_str(), linenum);
+			continue;
+		}
+
+		if (!assemblyFilename.empty() && className.empty())
+		{
+			fprintf(stderr, 
+				"libcom: Warning: malformed line; assembly name specified without classname %s:%d\n",
 				mapfilename.c_str(), linenum);
 			continue;
 		}
@@ -414,6 +493,8 @@ void ComRegistry::populateFromComponentsMapFile(const string mapfilename)
 		}
 		
 		m_componentMap[clsid].dllfilename = dllfilename;
+		m_componentMap[clsid].assemblyFilename = assemblyFilename;
+		m_componentMap[clsid].className = className;
 	}
 	dllmapfilestream.close();
 }
