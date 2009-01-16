@@ -31,3 +31,4 @@
 #include "WinError.h"
 
 #endif // Ole2_h_included
+
