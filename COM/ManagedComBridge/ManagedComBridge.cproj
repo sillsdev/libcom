@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{E5474DA1-7336-4151-91AD-B812074BDBB0}</ProjectGuid>
+    <Packages>
+      <Packages />
+    </Packages>
+    <Compiler>
+      <Compiler ctype="GppCompiler" />
+    </Compiler>
+    <Language>CPP</Language>
+    <Target>Bin</Target>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug</OutputPath>
+    <ExtraLinkerArguments>/usr/local/lib/libmono.so.0.0.0
+`pkg-config --libs mono`
+-L../../COM/lib/libcom.so
+-luuid
+`icu-config --ldflags'
+-L../Win32More/src 
+-lWin32More</ExtraLinkerArguments>
+    <ExtraCompilerArguments>`../../FieldWorks/Lib/src/icu/install/bin//icu-config --cppflags`
+`pkg-config --cflags mono`</ExtraCompilerArguments>
+    <SourceDirectory>.</SourceDirectory>
+    <DefineSymbols>DEBUG MONODEVELOP</DefineSymbols>
+    <CompileTarget>SharedLibrary</CompileTarget>
+    <OutputName>ManagedComBridge</OutputName>
+    <Libs>
+      <Libs>
+        <Lib>../../Win32More/src/libWin32More.a</Lib>
+        <Lib>../../Win32Base/src/libWin32Base.a</Lib>
+        <Lib>../../COM/lib/libcom.so</Lib>
+      </Libs>
+    </Libs>
+    <Includes>
+      <Includes>
+        <Include>../../COM/include</Include>
+        <Include>../../Win32Base/include</Include>
+        <Include>../../COM/src</Include>
+      </Includes>
+    </Includes>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release</OutputPath>
+    <DefineSymbols>MONODEVELOP</DefineSymbols>
+    <SourceDirectory>.</SourceDirectory>
+    <OptimizationLevel>3</OptimizationLevel>
+    <OutputName>ManagedComBridge</OutputName>
+    <CompileTarget>Bin</CompileTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="ManagedComBridge.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ManagedComBridge.cpp" />
+  </ItemGroup>
+</Project>
