@@ -177,6 +177,12 @@ HRESULT ManagedComBridge::CreateInstance(IUnknown * pUnkOuter, REFIID riid, void
 	MonoClass *comClass; // ptr to the COM object class type.
 	MonoObject *comClassInstance; // ptr to the COM object instance.
 	
+	const char* const defaultMonoRuntimeVersion = "v2.0.50727";
+	const char* const environVarMonoRuntime = "MONO_RUNTIME";
+	const char*  monoRuntimeVersion = getenv(environVarMonoRuntime);
+	if (monoRuntimeVersion == NULL)
+		monoRuntimeVersion = defaultMonoRuntimeVersion;
+	
 	////
 	// Parse Managed COM information from COMRegistry
 	////
@@ -201,7 +207,9 @@ HRESULT ManagedComBridge::CreateInstance(IUnknown * pUnkOuter, REFIID riid, void
 		
 	if (m_domain == NULL)
 	{
-		m_domain = mono_jit_init (""); //< This is the name of the Exe. We set it to Empty string as this exe isn't managed.
+		m_domain = mono_get_root_domain();
+		if (m_domain == NULL)
+			m_domain = mono_jit_init_version("", monoRuntimeVersion); // Initialize the selected mono runtime.
 		if (m_domain == NULL)
 		{
 			fprintf(stderr, "Error could not init mono\n");
@@ -211,10 +219,12 @@ HRESULT ManagedComBridge::CreateInstance(IUnknown * pUnkOuter, REFIID riid, void
 		// Need to ensure mono config is read other wise certian managed library calls will fail.
 		mono_config_parse(NULL);		
 	}
-	
+				
 	////
 	// Open managed Assembly and create the COM object from C++
 	////
+		
+	MonoClass* marshalClass = GetMarshalClass();	
 	
 	assembly = mono_domain_assembly_open(m_domain, m_assemblyName.c_str());
 	if (assembly == NULL)
@@ -251,7 +261,7 @@ HRESULT ManagedComBridge::CreateInstance(IUnknown * pUnkOuter, REFIID riid, void
 	////
 
 	// Find Marshal.GetIUnknownForObjectInternal static method.
-	MonoMethod* method = mono_class_get_method_from_name (GetMarshalClass(), "GetIUnknownForObjectInternal", 1);
+	MonoMethod* method = mono_class_get_method_from_name (marshalClass, "GetIUnknownForObjectInternal", 1);
 	typedef void* (GetIUnknownForObjectInternal)(MonoObject*);
 	GetIUnknownForObjectInternal* getIUnknownForObjectInternal  = (GetIUnknownForObjectInternal*)mono_lookup_internal_call(method);
 	
@@ -259,7 +269,7 @@ HRESULT ManagedComBridge::CreateInstance(IUnknown * pUnkOuter, REFIID riid, void
 	void *pCCW  = getIUnknownForObjectInternal(comClassInstance);
 	
 	// Find Marshal.QueryInterfaceInternal
-	MonoMethod* method2 = mono_class_get_method_from_name (GetMarshalClass(), "QueryInterfaceInternal", 3);
+	MonoMethod* method2 = mono_class_get_method_from_name (marshalClass, "QueryInterfaceInternal", 3);
 	typedef int (QueryInterfaceInternal)(gpointer pUnk, gpointer riid, gpointer* ppv);
 	QueryInterfaceInternal* queryInterfaceInternal  = (QueryInterfaceInternal*)mono_lookup_internal_call(method2);
 	
