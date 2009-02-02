@@ -91,10 +91,22 @@ GUID GUID_NULL;
 
 // Translation of IDs
 
+// TODO-Linux: Write Unit Test - Although I have tested it and it basicaly works.
 int StringFromGUID2(REFGUID rguid, LPOLESTR lpsz, int cchMax)
 {
-	// PORT-TODO
-	return 0; // Bytes used, including null terminator
+	SmartGUID temp;
+	temp = rguid;
+	std::string text = temp.str();
+	int i = 0;
+	for(; i<cchMax && i<text.length(); ++i)
+		lpsz[i] = text[i];
+	
+	if (i < cchMax)
+		lpsz[i] = '\0';
+	else
+		lpsz[cchMax -1] = '\0';
+	
+	return (text.length() + 1) * 2; // Bytes used, including null terminator
 }
 
 HRESULT StringFromIID(REFIID rclsid, LPOLESTR* lplpsz)
