@@ -49,6 +49,7 @@ if [ -z "$DIR" ]
   then echo $(basename "$0"): Error choosing temporary directory on remote host.
   exit 1
 fi
+DIR_FROM_WIN_PERSPECTIVE="C:\\cygwin$(echo $DIR | sed -e 's#\/#\\#g')"
 
 # Remove extra path information from the last and second last argument since it won't be helpful on Windows
 arguments=($@)
@@ -61,7 +62,7 @@ arguments[$arguments_size-2]=$(basename ${arguments[$arguments_size-2]})
 LAST=${arguments[$arguments_size-1]}
 STEM=$(echo "$LAST" | sed 's/\.idl$//')
 
-CMD="cd \"$DIR\" && midl"
+CMD="cd $DIR_FROM_WIN_PERSPECTIVE && midl"
 CMD="$CMD ${arguments[@]}"
 
 LOCAL_TMPDIR=$(mktemp -dt)
@@ -84,8 +85,14 @@ if [ "x$LAST" = "xCmnFwDlgsTlb.idl" ]; then
 	FILES_TO_SEND_TO_REMOTE_HOST=("${FILES_TO_SEND_TO_REMOTE_HOST[@]}" "$(dirname "$INFILE")/FwKernelTlb.tlb" "$(dirname "$INFILE")/ViewsTlb.tlb" "$(dirname "$INFILE")/LanguageTlb.tlb")
 fi
 
+# cmd.exe /C seems to have trouble with double-quote handling and the spaces in
+# running the vcvars32.bat path if you try to also do more things in one go. But
+# that can be worked around by putting the vcvars32.bat path into another
+# file with no spaces in the path, as done below.
+
 scp -P $REMOTE_PORT "${FILES_TO_SEND_TO_REMOTE_HOST[@]}" "$REMOTE_HOST:$DIR" && 
-	ssh -p $REMOTE_PORT "$REMOTE_HOST" "$CMD" && 
+	ssh -p $REMOTE_PORT "$REMOTE_HOST" 'cmd /C echo "C:\Program Files\Microsoft Visual Studio 9.0\Common7\Tools\vsvars32.bat" \> "$DIR_FROM_WIN_PERSPECTIVE\\vcvars.bat"' &&
+	ssh -p $REMOTE_PORT "$REMOTE_HOST" 'cmd /C "$DIR_FROM_WIN_PERSPECTIVE\vcvars.bat && '$CMD'"' &&
 	scp -P $REMOTE_PORT "$REMOTE_HOST:$DIR"/$STEM{.h,.tlb} "$LOCAL_TMPDIR" &&
 	cp -a "$LOCAL_TMPDIR/$STEM"{.h,.tlb} $(dirname "$OUTFILE_ORIG") ||
 	(echo $(basename "$0"): Error communicating with remote host.; exit 1)
