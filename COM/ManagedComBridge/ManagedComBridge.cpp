@@ -24,6 +24,7 @@ Description: Implementation of ManagedComBridge
 #include <comdef.h>
 #include <COM.h> // for GUID defs
 #include <ComRegistry.h>
+#include <stdlib.h>
 
 #include "ManagedComBridge.h"
 
