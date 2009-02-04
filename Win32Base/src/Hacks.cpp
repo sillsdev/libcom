@@ -208,6 +208,12 @@ int wcslen_s(const OLECHAR *str, const int size)
 	return u_strlen(str);
 }
 
+int wcscat_s(OLECHAR *dst, const int size, const OLECHAR *src)
+{
+	u_strcat(dst, src);
+	return 0;
+}
+
 // TODO return EINVAL on error
 // return 0 on success
 int wcscpy_s(OLECHAR *dst, const int size, const OLECHAR *src)

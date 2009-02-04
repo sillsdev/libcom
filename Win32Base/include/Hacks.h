@@ -442,6 +442,8 @@ inline void OutputDebugStr(const OLECHAR* str)
 int wcslen_s(const OLECHAR *str);
 int wcslen_s(const OLECHAR *str, const int size);
 
+int wcscat_s(OLECHAR *dst, const int size, const OLECHAR *src);
+
 int wcscpy_s(OLECHAR *dst, const int size, const OLECHAR *src);
 int wcscpy_s(OLECHAR *dst, const OLECHAR *src);
 
