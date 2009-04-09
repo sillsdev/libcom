@@ -239,18 +239,7 @@ public:
 	
 	virtual HRESULT STDMETHODCALLTYPE get_Height( 
 		/* [out] */ OLE_YSIZE_HIMETRIC *pHeight) = 0;
-	
-#if 0	// Leave out unneeded methods
 
-	virtual HRESULT STDMETHODCALLTYPE get_Handle( 
-		/* [out] */ OLE_HANDLE *pHandle) = 0;
-	
-	virtual HRESULT STDMETHODCALLTYPE get_hPal( 
-		/* [out] */ OLE_HANDLE *phPal) = 0;
-	
-	virtual HRESULT STDMETHODCALLTYPE get_Type( 
-		/* [out] */ SHORT *pType) = 0;
-	
 	virtual HRESULT STDMETHODCALLTYPE Render( 
 		/* [in] */ HDC hDC,
 		/* [in] */ LONG x,
@@ -262,6 +251,17 @@ public:
 		/* [in] */ OLE_XSIZE_HIMETRIC cxSrc,
 		/* [in] */ OLE_YSIZE_HIMETRIC cySrc,
 		/* [in] */ LPCRECT pRcWBounds) = 0;
+	
+#if 0	// Leave out unneeded methods
+
+	virtual HRESULT STDMETHODCALLTYPE get_Handle( 
+		/* [out] */ OLE_HANDLE *pHandle) = 0;
+	
+	virtual HRESULT STDMETHODCALLTYPE get_hPal( 
+		/* [out] */ OLE_HANDLE *phPal) = 0;
+	
+	virtual HRESULT STDMETHODCALLTYPE get_Type( 
+		/* [out] */ SHORT *pType) = 0;
 	
 	virtual HRESULT STDMETHODCALLTYPE set_hPal( 
 		/* [in] */ OLE_HANDLE hPal) = 0;
