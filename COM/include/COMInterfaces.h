@@ -53,16 +53,81 @@ typedef IClassFactory* LPCLASSFACTORY;
 
 class IDataObject : public IUnknown {};
 class IDispatch : public IUnknown {};
-class IStorage : public IUnknown {};
+
 
 class IRpcStubBuffer;	// Forward declaration
 class IRpcChannelBuffer;	// Forward declaration
 class IEnumSTATDATA;		// Forward declaration
 class IAdviseSink;		// Forward declaration
 class IRecordInfo;		// Forward declaration
+class IStream;			// Forward declaration
+struct STATSTG;			// Forward declaration
+
 
 class IEnumFORMATETC : public IUnknown {};
 class IShellFolder : public IUnknown {};
+
+typedef void*** SNB; // SNB is a pointer to an array of pointers to strings
+
+class IEnumSTATSTG
+{
+public:
+	virtual HRESULT STDMETHODCALLTYPE Clone(IEnumSTATSTG **ppenum);
+
+	virtual HRESULT STDMETHODCALLTYPE Next(
+		ULONG celt,
+		STATSTG *rgelt,
+		ULONG *pceltFetched);
+
+	virtual HRESULT STDMETHODCALLTYPE Reset();
+
+	virtual HRESULT STDMETHODCALLTYPE Skip(ULONG celt);
+};
+
+typedef IEnumSTATSTG* IEnumSTATSTGPtr;
+
+// Partial decleration of IStorage interface.
+class IStorage : public IUnknown 
+{
+public:
+	virtual HRESULT STDMETHODCALLTYPE Commit(
+		DWORD grfCommitFlags);
+
+	virtual HRESULT STDMETHODCALLTYPE CreateStorage(
+		const WCHAR *pwcsName, 
+		DWORD grfMode, 
+		DWORD res1, 
+		DWORD res2, 
+		IStorage **ppstg) = 0;
+
+	virtual HRESULT STDMETHODCALLTYPE CreateStream(
+		const WCHAR *pwcsName, 
+		DWORD grfMode, 
+		DWORD res1, 
+		DWORD res2, 
+		IStream **ppstm) = 0;
+
+	virtual HRESULT STDMETHODCALLTYPE OpenStorage(
+		const WCHAR *pwcsName, 
+		IStorage *pstgPriority, 
+		DWORD grfMode, 
+		SNB snbExclude, 
+		DWORD reserved, 
+		IStorage **ppstg) = 0;
+	
+	virtual HRESULT STDMETHODCALLTYPE OpenStream(
+		const WCHAR *pwcsName, 
+		void *res1, 
+		DWORD grfMode, 
+		DWORD res2, 
+		IStream **ppstm) = 0;
+
+	virtual HRESULT STDMETHODCALLTYPE EnumElements(
+		DWORD res1,
+		void *res2,
+		DWORD res3,
+		IEnumSTATSTG **ppenum);
+};
 
 #define IID_IClassFactory __uuidof(IClassFactory)
 #define IID_IDataObject __uuidof(IDataObject)
