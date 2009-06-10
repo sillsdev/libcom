@@ -86,47 +86,84 @@ public:
 
 typedef IEnumSTATSTG* IEnumSTATSTGPtr;
 
-// Partial decleration of IStorage interface.
+// declaration of IStorage interface.
 class IStorage : public IUnknown 
 {
 public:
-	virtual HRESULT STDMETHODCALLTYPE Commit(
-		DWORD grfCommitFlags);
-
-	virtual HRESULT STDMETHODCALLTYPE CreateStorage(
-		const WCHAR *pwcsName, 
-		DWORD grfMode, 
-		DWORD res1, 
-		DWORD res2, 
-		IStorage **ppstg) = 0;
-
 	virtual HRESULT STDMETHODCALLTYPE CreateStream(
-		const WCHAR *pwcsName, 
+		const OLECHAR *pwcsName, 
 		DWORD grfMode, 
 		DWORD res1, 
 		DWORD res2, 
 		IStream **ppstm) = 0;
 
-	virtual HRESULT STDMETHODCALLTYPE OpenStorage(
-		const WCHAR *pwcsName, 
-		IStorage *pstgPriority, 
-		DWORD grfMode, 
-		SNB snbExclude, 
-		DWORD reserved, 
-		IStorage **ppstg) = 0;
-	
 	virtual HRESULT STDMETHODCALLTYPE OpenStream(
-		const WCHAR *pwcsName, 
+		const OLECHAR *pwcsName, 
 		void *res1, 
 		DWORD grfMode, 
 		DWORD res2, 
 		IStream **ppstm) = 0;
 
+	virtual HRESULT STDMETHODCALLTYPE CreateStorage(
+		const OLECHAR *pwcsName, 
+		DWORD grfMode, 
+		DWORD res1, 
+		DWORD res2, 
+		IStorage **ppstg) = 0;
+
+	virtual HRESULT STDMETHODCALLTYPE OpenStorage(
+		const OLECHAR *pwcsName, 
+		IStorage *pstgPriority, 
+		DWORD grfMode, 
+		SNB snbExclude, 
+		DWORD reserved, 
+		IStorage **ppstg) = 0;
+
+	virtual HRESULT STDMETHODCALLTYPE CopyTo(
+		DWORD ciid,
+		const IID *rgiid,
+		SNB snb,
+		IStorage *dest) = 0;
+
+	virtual HRESULT STDMETHODCALLTYPE MoveElementTo(
+		const OLECHAR *pwcsName,
+		IStorage *pstgDest,
+		const OLECHAR *pwcsNewName,
+		DWORD grfFlags) = 0;
+
+	virtual HRESULT STDMETHODCALLTYPE Commit(
+		DWORD grfCommitFlags) = 0;
+
+	virtual HRESULT STDMETHODCALLTYPE Revert() = 0;
+
 	virtual HRESULT STDMETHODCALLTYPE EnumElements(
 		DWORD res1,
 		void *res2,
 		DWORD res3,
-		IEnumSTATSTG **ppenum);
+		IEnumSTATSTG **ppenum) = 0;
+
+	virtual HRESULT STDMETHODCALLTYPE DestroyElement(
+		const OLECHAR *pwcsName) = 0;
+
+	virtual HRESULT STDMETHODCALLTYPE RenameElement(
+		const OLECHAR *old) = 0;
+	
+	virtual HRESULT STDMETHODCALLTYPE SetElementTimes(
+		const OLECHAR name,
+		const FILETIME *created,
+		const FILETIME *accessed,
+		const FILETIME *modified) = 0;
+
+	virtual HRESULT STDMETHODCALLTYPE SetClass(
+		REFCLSID clsid) = 0;
+
+	virtual HRESULT STDMETHODCALLTYPE SetStateBits(
+		DWORD grfStateBits,
+		DWORD grfMask) = 0;
+
+	virtual HRESULT STDMETHODCALLTYPE Stat(
+		STATSTG *pstatstg,
+		DWORD grfStatFlag) = 0;
 };
 
 #define IID_IClassFactory __uuidof(IClassFactory)
