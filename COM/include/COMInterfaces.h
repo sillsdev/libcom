@@ -150,9 +150,9 @@ public:
 	
 	virtual HRESULT STDMETHODCALLTYPE SetElementTimes(
 		const OLECHAR name,
-		const FILETIME *created,
-		const FILETIME *accessed,
-		const FILETIME *modified) = 0;
+		const void /*FILETIME*/ *created,
+		const void /*FILETIME*/ *accessed,
+		const void /*FILETIME*/ *modified) = 0;
 
 	virtual HRESULT STDMETHODCALLTYPE SetClass(
 		REFCLSID clsid) = 0;
