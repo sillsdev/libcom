@@ -69,19 +69,20 @@ class IShellFolder : public IUnknown {};
 
 typedef void*** SNB; // SNB is a pointer to an array of pointers to strings
 
-class IEnumSTATSTG
+class IEnumSTATSTG : public IUnknown
 {
 public:
-	virtual HRESULT STDMETHODCALLTYPE Clone(IEnumSTATSTG **ppenum);
 
 	virtual HRESULT STDMETHODCALLTYPE Next(
 		ULONG celt,
 		STATSTG *rgelt,
 		ULONG *pceltFetched);
 
+	virtual HRESULT STDMETHODCALLTYPE Skip(ULONG celt);
+
 	virtual HRESULT STDMETHODCALLTYPE Reset();
 
-	virtual HRESULT STDMETHODCALLTYPE Skip(ULONG celt);
+	virtual HRESULT STDMETHODCALLTYPE Clone(IEnumSTATSTG **ppenum);
 };
 
 typedef IEnumSTATSTG* IEnumSTATSTGPtr;
