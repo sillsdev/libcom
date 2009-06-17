@@ -85,8 +85,6 @@ public:
 	virtual HRESULT STDMETHODCALLTYPE Clone(IEnumSTATSTG **ppenum);
 };
 
-typedef IEnumSTATSTG* IEnumSTATSTGPtr;
-
 // declaration of IStorage interface.
 class IStorage : public IUnknown 
 {
