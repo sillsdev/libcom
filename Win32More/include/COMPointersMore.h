@@ -41,6 +41,7 @@ _DEFINE_PTR(IAccessible);
 _DEFINE_PTR(IServiceProvider);
 _DEFINE_PTR(IEnumVARIANT);
 _DEFINE_PTR(ITypeInfo);
+_DEFINE_PTR(IEnumSTATSTG);
 
 #endif // COMPointersMore_h
 
