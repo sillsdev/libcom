@@ -308,6 +308,28 @@ enum
 
 enum
 { 	
+#ifdef WIN32_KEY_VALUES
+	VK_PRIOR = 33,
+	VK_NEXT = 34,
+	VK_END = 35,
+	VK_HOME = 36,
+	VK_LEFT = 37,
+	VK_UP = 38,
+	VK_RIGHT = 39,
+	VK_DOWN = 40,
+	VK_INSERT = 45,
+	VK_DELETE = 46,
+	VK_TAB = 9,
+	VK_RETURN = 13,
+	VK_F1 = 0x70,
+	VK_F2 = 0x71,
+	VK_F3 = 0x72,
+	VK_F4 = 0x73,
+	VK_F5 = 0x74,
+	VK_F6 = 0x75,
+	VK_F7 = 0x76,
+	VK_F8 = 0x77, 
+#else
 	VK_PRIOR = 0,
 	VK_NEXT = 1,
 	VK_END = 2,
@@ -327,7 +349,8 @@ enum
 	VK_F5 = 116,
 	VK_F6 = 117,
 	VK_F7 = 118,
-	VK_F8 = 119, 
+	VK_F8 = 119,
+#endif
 };		
 HKL GetKeyboardLayout(DWORD);
 #define LANGIDFROMLCID(localeIdentifier) ((WORD)localeIdentifier)
