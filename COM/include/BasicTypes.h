@@ -66,6 +66,8 @@ typedef unsigned long long ULONGLONG;
 typedef          float     FLOAT;
 typedef          double    DOUBLE;
 
+typedef unsigned long      HANDLE_PTR;
+
 // some type defs with defined length.
 // These are platform specific
 typedef  int16_t INT16;

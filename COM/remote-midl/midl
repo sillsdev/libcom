@@ -49,7 +49,10 @@ if [ -z "$DIR" ]
   then echo $(basename "$0"): Error choosing temporary directory on remote host.
   exit 1
 fi
-DIR_FROM_WIN_PERSPECTIVE="C:\\cygwin$(echo $DIR | sed -e 's#\/#\\#g')"
+# in case $DIR isn't already a Windows path we're running Cygwin and make it relative to
+# Cygwin directory
+[[ "$DIR" =~ ^.:/ ]] || DIR="C:/cygwin$DIR"
+DIR_FROM_WIN_PERSPECTIVE="$(echo $DIR | sed -e 's#\/#\\#g')"
 
 # Remove extra path information from the last and second last argument since it won't be helpful on Windows
 arguments=($@)
@@ -78,6 +81,9 @@ fi
 if [ "x$LAST" = "xViewsTlb.idl" ]; then
 	FILES_TO_SEND_TO_REMOTE_HOST=("${FILES_TO_SEND_TO_REMOTE_HOST[@]}" "$(dirname "$INFILE")/FwKernelTlb.tlb")
 fi
+if [ "x$LAST" = "xDbAccessTlb.idl" ]; then
+	FILES_TO_SEND_TO_REMOTE_HOST=("${FILES_TO_SEND_TO_REMOTE_HOST[@]}" "$(dirname "$INFILE")/FwKernelTlb.tlb")
+fi
 if [ "x$LAST" = "xWorldPadTlb.idl" ]; then
 	FILES_TO_SEND_TO_REMOTE_HOST=("${FILES_TO_SEND_TO_REMOTE_HOST[@]}" "$(dirname "$INFILE")/FwKernelTlb.tlb" "$(dirname "$INFILE")/ViewsTlb.tlb")
 fi
@@ -90,9 +96,11 @@ fi
 # that can be worked around by putting the vcvars32.bat path into another
 # file with no spaces in the path, as done below.
 
+VCVARSBAT="$DIR_FROM_WIN_PERSPECTIVE\\vcvars.bat"
+VSVARSCMD="cmd /C echo \"C:\\Program Files\\Microsoft Visual Studio 9.0\\Common7\\Tools\\vsvars32.bat\" \> \"$VCVARSBAT\""
 scp -P $REMOTE_PORT "${FILES_TO_SEND_TO_REMOTE_HOST[@]}" "$REMOTE_HOST:$DIR" && 
-	ssh -p $REMOTE_PORT "$REMOTE_HOST" 'cmd /C echo "C:\Program Files\Microsoft Visual Studio 9.0\Common7\Tools\vsvars32.bat" \> "$DIR_FROM_WIN_PERSPECTIVE\\vcvars.bat"' &&
-	ssh -p $REMOTE_PORT "$REMOTE_HOST" 'cmd /C "$DIR_FROM_WIN_PERSPECTIVE\vcvars.bat && '$CMD'"' &&
-	scp -P $REMOTE_PORT "$REMOTE_HOST:$DIR"/$STEM{.h,.tlb} "$LOCAL_TMPDIR" &&
+	ssh -p $REMOTE_PORT "$REMOTE_HOST" "$VSVARSCMD" && 
+	ssh -p $REMOTE_PORT "$REMOTE_HOST" 'cmd /C "'$VCVARSBAT' && '$CMD'"' && 
+	scp -P $REMOTE_PORT "$REMOTE_HOST:$DIR"/$STEM{.h,.tlb} "$LOCAL_TMPDIR" && 
 	cp -a "$LOCAL_TMPDIR/$STEM"{.h,.tlb} $(dirname "$OUTFILE_ORIG") ||
 	(echo $(basename "$0"): Error communicating with remote host.; exit 1)
