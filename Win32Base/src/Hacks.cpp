@@ -132,14 +132,14 @@ bool IsBadWritePtr(const void*, unsigned long) { return false; }
 
 char* _itoa_s(int value, char* buffer, size_t bufferSize, int radix)
 {
-	assert(radix == 10 && radix == 16);
+	assert(radix == 10 || radix == 16);
 	snprintf(buffer, bufferSize, (radix == 16 ? "%x" : "%d"), value);
 	return buffer;
 };
 
 wchar_t* _itow_s(int value, wchar_t* buffer, size_t bufferSize, int radix)
 {
-	assert(radix == 10 && radix == 16);
+	assert(radix == 10 || radix == 16);
 	swprintf(buffer, bufferSize, (radix == 16 ? L"%x" : L"%d"), value);
 	return buffer;
 };
