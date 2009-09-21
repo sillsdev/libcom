@@ -129,6 +129,7 @@ bool IsBadStringPtrW(const OLECHAR*, unsigned long) { return false; }
 bool IsBadStringPtrA(const char*, unsigned long) { return false; }
 bool IsBadReadPtr(const void*, unsigned long) { return false; }
 bool IsBadWritePtr(const void*, unsigned long) { return false; }
+bool IsBadCodePtr(const void*) { return false; }
 
 char* _itoa_s(int value, char* buffer, size_t bufferSize, int radix)
 {

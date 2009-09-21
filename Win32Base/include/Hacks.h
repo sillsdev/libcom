@@ -32,6 +32,7 @@ bool IsBadStringPtrW(const OLECHAR*, unsigned long);
 bool IsBadStringPtrA(const char*, unsigned long);
 bool IsBadReadPtr(const void*, unsigned long);
 bool IsBadWritePtr(const void*, unsigned long);
+bool IsBadCodePtr(const void*);
 
 short ClientToScreen(HWND, POINT*);
 short ScreenToClient(HWND, POINT*);
