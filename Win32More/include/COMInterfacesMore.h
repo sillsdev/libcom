@@ -338,7 +338,7 @@ class ITypeInfo : public IUnknown
 // Variants
 
 typedef short VARIANT_BOOL;
-enum { VARIANT_FALSE, VARIANT_TRUE };
+enum { VARIANT_FALSE = 0, VARIANT_TRUE = -1};
 
 typedef unsigned short VARTYPE;
 
