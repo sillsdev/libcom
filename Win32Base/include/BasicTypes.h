@@ -165,8 +165,9 @@ typedef unsigned char byte;
 
 #define STDAPI EXTERN_C HRESULT STDAPICALLTYPE
 
-// Force definition of HRESULT as long
-typedef long HRESULT;
+// On Windows HRESULT is defined as long. However, Microsoft decided to make 'long' always 
+// 32bit, even on 64bit Windows. Since long is 64bit on 64-bit Linux we better use 'int' instead.
+typedef int             HRESULT;
 #define _HRESULT_DEFINED
 
 #endif //_BASICTYPES_H_

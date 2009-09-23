@@ -199,7 +199,7 @@ int sprintf_s(char *buffer, size_t sizeOfBuffer, const char *format ,...)
 	va_end(argList);
 }
 
-int wcslen_s(const OLECHAR *str)
+int wcslen(const OLECHAR *str)
 {
 	return u_strlen(str);
 }
@@ -223,29 +223,23 @@ int wcscpy_s(OLECHAR *dst, const int size, const OLECHAR *src)
 	return 0;
 }
 
-// TOOD return EINVAL on error
-// return 0 on success
-int wcscpy_s(OLECHAR *dst, const OLECHAR *src)
+OLECHAR* wcscpy(OLECHAR *dst, const OLECHAR *src)
 {
-	u_strcpy(dst, src);
-	return 0;
+	return u_strcpy(dst, src);
 }
 
 // TODO return EINVAL on error
 // returns 0 on success
-int wcsncpy_s(	OLECHAR* dst, const int dsize,
+int wcsncpy_s(OLECHAR* dst, const int dsize,
 			const OLECHAR* src, const int size)
 {
 	u_strncpy(dst, src, size);
 	return 0;
 }
 
-// TODO return EINVAL on error
-// returns 0 on success
-int wcsncpy_s(	OLECHAR* dst, const OLECHAR* src, const int size)
+OLECHAR* wcsncpy(OLECHAR* dst, const OLECHAR* src, const int size)
 {
-	u_strncpy(dst, src, size);
-	return 0;
+	return u_strncpy(dst, src, size);
 }
 
 void InitializeCriticalSection(CRITICAL_SECTION*)

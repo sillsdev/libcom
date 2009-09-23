@@ -458,22 +458,23 @@ inline void OutputDebugStr(const OLECHAR* str)
 #define strcpy_s(DST, NUM, SRC) strcpy(DST, SRC)
 
 #define wcscmp(LEFT, RIGHT) u_strcmp(LEFT, RIGHT)
+#define wcsncmp(LEFT, RIGHT, NUM) u_strncmp(LEFT, RIGHT, NUM)
 #define wcsncmp_s(LEFT, RIGHT, NUM) u_strncmp(LEFT, RIGHT, NUM)
 #define _wcsicmp(LEFT, RIGHT) u_strcasecmp(LEFT, RIGHT, 0)
 
 #define fopen_s(FH, FILE, MODE) (*FH = fopen(FILE, MODE)) == NULL
 
-int wcslen_s(const OLECHAR *str);
+int wcslen(const OLECHAR *str);
 int wcslen_s(const OLECHAR *str, const int size);
 
 int wcscat_s(OLECHAR *dst, const int size, const OLECHAR *src);
 
+OLECHAR * wcscpy(OLECHAR *dst, const OLECHAR *src);
 int wcscpy_s(OLECHAR *dst, const int size, const OLECHAR *src);
-int wcscpy_s(OLECHAR *dst, const OLECHAR *src);
 
 
+OLECHAR * wcsncpy(OLECHAR* dst, const OLECHAR* src, const int size);
 int wcsncpy_s(OLECHAR* dst, const int dsize, const OLECHAR* src, const int size);
-int wcsncpy_s(OLECHAR* dst, const OLECHAR* src, const int size);
 		
 
 // Not done as a macro because use of elipsis..
