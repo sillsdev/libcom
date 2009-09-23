@@ -183,6 +183,8 @@ extern "C" HRESULT OleInitialize(LPVOID pvReserved);
 // Closes the COM library on the apartment.
 extern "C" void	OleUninitialize();
 
+extern "C" void CoFreeUnusedLibraries();
+
 HRESULT CoRegisterClassObject(REFCLSID rclsid, class IUnknown* pObj, DWORD dwClsContext, DWORD flags, LPDWORD lpdwRegister);
 HRESULT CoRevokeClassObject(DWORD dwRegister);
 

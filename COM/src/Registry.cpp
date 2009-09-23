@@ -141,4 +141,9 @@ extern "C" HRESULT CoCreateInstance(REFCLSID requestedClassID,
 
 	return hr;
 }
+
+void CoFreeUnusedLibraries()
+{
+	// no-op
+}
 #pragma export off

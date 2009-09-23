@@ -241,3 +241,4 @@ HRESULT CoRevokeClassObject(DWORD dwRegister)
 	// PORT-TODO
 	return E_NOTIMPL;
 }
+
