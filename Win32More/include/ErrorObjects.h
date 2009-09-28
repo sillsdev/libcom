@@ -58,8 +58,8 @@ public:
 
 	// IUknown Methods
         virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void ** ppv);
-        virtual ULONG   STDMETHODCALLTYPE AddRef();
-        virtual ULONG   STDMETHODCALLTYPE Release();
+        virtual UINT32   STDMETHODCALLTYPE AddRef();
+        virtual UINT32   STDMETHODCALLTYPE Release();
 
 	
 protected:

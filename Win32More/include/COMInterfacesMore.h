@@ -86,8 +86,8 @@ public:
 
 #define IID_ISupportErrorInfo __uuidof(ISupportErrorInfo)
 
-STDAPI SetErrorInfo(ULONG dwReserved, IErrorInfo* perrinfo);
-STDAPI GetErrorInfo(ULONG dwReserved, IErrorInfo** pperrinfo);
+STDAPI SetErrorInfo(UINT32 dwReserved, IErrorInfo* perrinfo);
+STDAPI GetErrorInfo(UINT32 dwReserved, IErrorInfo** pperrinfo);
 STDAPI CreateErrorInfo(ICreateErrorInfo** pperrinfo);
 
 enum STREAM_SEEK
@@ -161,13 +161,13 @@ class ISequentialStream : public IUnknown
 public:
 	virtual /* [local] */ HRESULT STDMETHODCALLTYPE Read( 
 		/* [length_is][size_is][out] */ void *pv,
-		/* [in] */ ULONG cb,
-		/* [out] */ ULONG *pcbRead) = 0;
+		/* [in] */ UINT32 cb,
+		/* [out] */ UINT32 *pcbRead) = 0;
 	
 	virtual /* [local] */ HRESULT STDMETHODCALLTYPE Write( 
 		/* [size_is][in] */ const void *pv,
-		/* [in] */ ULONG cb,
-		/* [out] */ ULONG *pcbWritten) = 0;
+		/* [in] */ UINT32 cb,
+		/* [out] */ UINT32 *pcbWritten) = 0;
 	
 };
 
@@ -224,12 +224,12 @@ enum PICTUREATTRIBUTES
 	PICTURE_TRANSPARENT	= 0x2
 };
 
-typedef UINT OLE_HANDLE;
+typedef UINT32 OLE_HANDLE;
 
-typedef LONG OLE_XPOS_HIMETRIC;
-typedef LONG OLE_YPOS_HIMETRIC;
-typedef LONG OLE_XSIZE_HIMETRIC;
-typedef LONG OLE_YSIZE_HIMETRIC;
+typedef INT32 OLE_XPOS_HIMETRIC;
+typedef INT32 OLE_YPOS_HIMETRIC;
+typedef INT32 OLE_XSIZE_HIMETRIC;
+typedef INT32 OLE_YSIZE_HIMETRIC;
 
 class IPicture : public IUnknown
 {
@@ -242,10 +242,10 @@ public:
 
 	virtual HRESULT STDMETHODCALLTYPE Render( 
 		/* [in] */ HDC hDC,
-		/* [in] */ LONG x,
-		/* [in] */ LONG y,
-		/* [in] */ LONG cx,
-		/* [in] */ LONG cy,
+		/* [in] */ INT32 x,
+		/* [in] */ INT32 y,
+		/* [in] */ INT32 cx,
+		/* [in] */ INT32 cy,
 		/* [in] */ OLE_XPOS_HIMETRIC xSrc,
 		/* [in] */ OLE_YPOS_HIMETRIC ySrc,
 		/* [in] */ OLE_XSIZE_HIMETRIC cxSrc,
@@ -261,7 +261,7 @@ public:
 		/* [out] */ OLE_HANDLE *phPal) = 0;
 	
 	virtual HRESULT STDMETHODCALLTYPE get_Type( 
-		/* [out] */ SHORT *pType) = 0;
+		/* [out] */ INT16 *pType) = 0;
 	
 	virtual HRESULT STDMETHODCALLTYPE set_hPal( 
 		/* [in] */ OLE_HANDLE hPal) = 0;
@@ -285,7 +285,7 @@ public:
 	virtual HRESULT STDMETHODCALLTYPE SaveAsFile( 
 		/* [in] */ LPSTREAM pStream,
 		/* [in] */ BOOL fSaveMemCopy,
-		/* [out] */ LONG *pCbSize) = 0;
+		/* [out] */ INT32 *pCbSize) = 0;
 	
 	virtual HRESULT STDMETHODCALLTYPE get_Attributes( 
 		/* [out] */ DWORD *pDwAttr) = 0;
@@ -354,10 +354,10 @@ struct VARIANT
 			WORD wReserved3;
 			union
 			{
-				LONGLONG llVal;
-				LONG lVal;
+				INT64 llVal;
+				INT32 lVal;
 				BYTE bVal;
-				SHORT iVal;
+				INT16 iVal;
 				FLOAT fltVal;
 				DOUBLE dblVal;
 				VARIANT_BOOL boolVal;
@@ -370,9 +370,9 @@ struct VARIANT
 				IDispatch *pdispVal;
 	//			SAFEARRAY *parray;
 				BYTE *pbVal;
-				SHORT *piVal;
-				LONG *plVal;
-				LONGLONG *pllVal;
+				INT16 *piVal;
+				INT32 *plVal;
+				INT64 *pllVal;
 				FLOAT *pfltVal;
 				DOUBLE *pdblVal;
 				VARIANT_BOOL *pboolVal;
@@ -387,18 +387,18 @@ struct VARIANT
 				VARIANT *pvarVal;
 				PVOID byref;
 				CHAR cVal;
-				USHORT uiVal;
-				ULONG ulVal;
-				ULONGLONG ullVal;
-				INT intVal;
-				UINT uintVal;
+				UINT16 uiVal;
+				UINT32 ulVal;
+				UINT64 ullVal;
+				INT32 intVal;
+				UINT32 uintVal;
 	//			DECIMAL *pdecVal;
 				CHAR *pcVal;
-				USHORT *puiVal;
-				ULONG *pulVal;
-				ULONGLONG *pullVal;
-				INT *pintVal;
-				UINT *puintVal;
+				UINT16 *puiVal;
+				UINT32 *pulVal;
+				UINT64 *pullVal;
+				INT32 *pintVal;
+				UINT32 *puintVal;
 				struct //__tagBRECORD
 				{
 					PVOID pvRecord;

@@ -59,7 +59,7 @@ ThreadLocalStorage g_ErrorInfo;
    If g_ErrorInfo already contains a non null value decrement existing 
    values ref count.
  */
-STDAPI SetErrorInfo(ULONG dwReserved, IErrorInfo* perrinfo)
+STDAPI SetErrorInfo(UINT32 dwReserved, IErrorInfo* perrinfo)
 {
 	IErrorInfo* pErrorInfoOld = NULL;
 	
@@ -79,7 +79,7 @@ STDAPI SetErrorInfo(ULONG dwReserved, IErrorInfo* perrinfo)
 	return (g_ErrorInfo.Set(perrinfo)?S_OK:S_FALSE);		
 }
 
-STDAPI GetErrorInfo(ULONG dwReserved, IErrorInfo** pperrinfo)
+STDAPI GetErrorInfo(UINT32 dwReserved, IErrorInfo** pperrinfo)
 {	
 	// g_ErrorInfo stores void** ptr value hence need to reinterpret_cast.
 	return (g_ErrorInfo.Get(reinterpret_cast<void**>(pperrinfo))?S_OK:S_FALSE);	

@@ -101,13 +101,13 @@ HRESULT STDMETHODCALLTYPE ErrorInfo::QueryInterface(REFIID riid, void ** ppv)
 	return S_OK;
 }
 
-ULONG STDMETHODCALLTYPE ErrorInfo::AddRef()
+UINT32 STDMETHODCALLTYPE ErrorInfo::AddRef()
 {
         assert(m_cref > 0);
         return ++m_cref;
 }
 
-ULONG STDMETHODCALLTYPE ErrorInfo::Release()
+UINT32 STDMETHODCALLTYPE ErrorInfo::Release()
 {
 	assert(m_cref > 0);
         if (--m_cref > 0)
