@@ -34,8 +34,8 @@ class IUnknown
 {
 public:
 	virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void ** ppv) = 0;
-	virtual ULONG   STDMETHODCALLTYPE AddRef() = 0;
-	virtual ULONG   STDMETHODCALLTYPE Release() = 0;
+	virtual UINT32   STDMETHODCALLTYPE AddRef() = 0;
+	virtual UINT32   STDMETHODCALLTYPE Release() = 0;
 };
 
 #define IID_IUnknown __uuidof(IUnknown)
@@ -74,11 +74,11 @@ class IEnumSTATSTG : public IUnknown
 public:
 
 	virtual HRESULT STDMETHODCALLTYPE Next(
-		ULONG celt,
+		UINT32 celt,
 		STATSTG *rgelt,
-		ULONG *pceltFetched);
+		UINT32 *pceltFetched);
 
-	virtual HRESULT STDMETHODCALLTYPE Skip(ULONG celt);
+	virtual HRESULT STDMETHODCALLTYPE Skip(UINT32 celt);
 
 	virtual HRESULT STDMETHODCALLTYPE Reset();
 

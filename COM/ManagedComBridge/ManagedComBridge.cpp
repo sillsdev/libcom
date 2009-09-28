@@ -140,7 +140,7 @@ STDMETHODIMP ManagedComBridge::QueryInterface(REFIID iid, void ** ppv)
 /**
  * Reference counting not implemented for this factory class. 
  */
-ULONG ManagedComBridge::AddRef(void)
+UINT32 ManagedComBridge::AddRef(void)
 {
 	return 0;	
 }
@@ -148,7 +148,7 @@ ULONG ManagedComBridge::AddRef(void)
 /**
  * Reference counting not implemented for this factory class. 
  */
-ULONG ManagedComBridge::Release(void)
+UINT32 ManagedComBridge::Release(void)
 {
 	return 0;	
 }

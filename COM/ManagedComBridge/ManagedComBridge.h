@@ -51,8 +51,8 @@ public:
 	HRESULT QueryInterface(REFIID iid, void ** ppv);
 	
 	// These methods are not used.
-	ULONG AddRef(void);
-	ULONG Release(void);
+	UINT32 AddRef(void);
+	UINT32 Release(void);
 	HRESULT LockServer(BOOL fLock);
 	
 	// Stores the mapping between a creatable COM object classID and their associated ManagedComBridge instance.
