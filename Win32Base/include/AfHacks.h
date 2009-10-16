@@ -20,15 +20,6 @@ UINT RealizePalette(HDC hdc);
 HPALETTE SelectPalette(HDC hdc, HPALETTE hpal, BOOL bForceBackground);
 BOOL DeleteObject(HGDIOBJ hObject);
 
-inline int _stricmp(const char *string1, const char *string2)
-{
-	return strcasecmp(string1, string2);
-}
-inline int _strnicmp(const char *string1, const char *string2, size_t count)
-{
-	return strncasecmp(string1, string2, count);
-}
-
 class AfApp
 {
 public:

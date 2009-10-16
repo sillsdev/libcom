@@ -242,6 +242,15 @@ OLECHAR* wcsncpy(OLECHAR* dst, const OLECHAR* src, const int size)
 	return u_strncpy(dst, src, size);
 }
 
+int _stricmp(const char *string1, const char *string2)
+{
+	return strcasecmp(string1, string2);
+}
+int _strnicmp(const char *string1, const char *string2, size_t count)
+{
+	return strncasecmp(string1, string2, count);
+}		
+
 void InitializeCriticalSection(CRITICAL_SECTION*)
 {
 	// TOODLinux
