@@ -30,6 +30,7 @@ AC_INIT(configure.ac)
 
 AM_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE(libcom, 0.4.0)
+m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 
 AC_LANG_CPLUSPLUS
 AC_PROG_CXX
