@@ -35,6 +35,7 @@
 #include <cassert>
 #include <unicode/ustring.h>
 #include <stdarg.h>
+#include <stdio.h>
 
 // Begin copied code from Wine's uitools.c, Modified 2007-02-12 MarkS.
 
