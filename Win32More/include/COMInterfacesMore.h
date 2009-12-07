@@ -234,6 +234,19 @@ typedef INT32 OLE_YSIZE_HIMETRIC;
 class IPicture : public IUnknown
 {
 public:
+
+	virtual HRESULT STDMETHODCALLTYPE get_Handle( 
+	/* [out] */ OLE_HANDLE *pHandle) = 0;
+
+	virtual HRESULT STDMETHODCALLTYPE get_hPal( 
+	/* [out] */ OLE_HANDLE *phPal) = 0;
+
+	virtual HRESULT STDMETHODCALLTYPE set_hPal( 
+	/* [in] */ OLE_HANDLE hPal) = 0;
+
+	virtual HRESULT STDMETHODCALLTYPE get_Type( 
+		/* [out] */ INT16 *pType) = 0;
+
 	virtual HRESULT STDMETHODCALLTYPE get_Width( 
 		/* [out] */ OLE_XSIZE_HIMETRIC *pWidth) = 0;
 	
@@ -251,20 +264,6 @@ public:
 		/* [in] */ OLE_XSIZE_HIMETRIC cxSrc,
 		/* [in] */ OLE_YSIZE_HIMETRIC cySrc,
 		/* [in] */ LPCRECT pRcWBounds) = 0;
-	
-#if 0	// Leave out unneeded methods
-
-	virtual HRESULT STDMETHODCALLTYPE get_Handle( 
-		/* [out] */ OLE_HANDLE *pHandle) = 0;
-	
-	virtual HRESULT STDMETHODCALLTYPE get_hPal( 
-		/* [out] */ OLE_HANDLE *phPal) = 0;
-	
-	virtual HRESULT STDMETHODCALLTYPE get_Type( 
-		/* [out] */ INT16 *pType) = 0;
-	
-	virtual HRESULT STDMETHODCALLTYPE set_hPal( 
-		/* [in] */ OLE_HANDLE hPal) = 0;
 	
 	virtual HRESULT STDMETHODCALLTYPE get_CurDC( 
 		/* [out] */ HDC *phDC) = 0;
@@ -290,7 +289,8 @@ public:
 	virtual HRESULT STDMETHODCALLTYPE get_Attributes( 
 		/* [out] */ DWORD *pDwAttr) = 0;
 
-#endif //0
+	virtual HRESULT STDMETHODCALLTYPE get_Hdc( 
+	/* [in] */ DWORD pDwAttr) = 0;
 };
 
 #define IID_IPicture __uuidof(IPicture)
