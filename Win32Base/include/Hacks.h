@@ -416,6 +416,13 @@ enum
 	_CRTDBG_LEAK_CHECK_DF,
 };
 
+enum
+{
+	_CRT_WARN = 0,
+	_CRT_ERROR = 1,
+	_CRT_ASSERT = 2,
+};
+
 int _CrtSetDbgFlag(int);
 
 #define _alloca alloca
@@ -445,6 +452,8 @@ inline void OutputDebugStr(const wchar_t* str)
 inline void OutputDebugStr(const OLECHAR* str)
 	{ OutputDebugString(str); }
 
+#define UNREFERENCED_PARAMETER(P)          (P)
+
 // FieldWorks-specific
 
 #ifndef NO_ASM
@@ -456,6 +465,7 @@ inline void OutputDebugStr(const OLECHAR* str)
 // These functions defines don't account for specified length
 // TODO Replace these macros with multiple functions
 #define strcpy_s(DST, NUM, SRC) strcpy(DST, SRC)
+#define strncpy_s(DST, NUM, SRC, CNT) strncpy(DST, SRC, CNT)
 
 #define wcscmp(LEFT, RIGHT) u_strcmp(LEFT, RIGHT)
 #define wcsncmp(LEFT, RIGHT, NUM) u_strncmp(LEFT, RIGHT, NUM)

@@ -49,7 +49,7 @@ struct SmartGUID : public PlainGUID
 	// These are not in Win32, but we need them to make our emulation work
 	explicit SmartGUID(bool create = false);
 	explicit SmartGUID(const char*) throw (std::runtime_error);
-	explicit SmartGUID(const PlainGUID& other)
+	SmartGUID(const PlainGUID& other)
 		: PlainGUID(other) {}
 
 	SmartGUID& operator = (const PlainGUID& other)
@@ -105,6 +105,14 @@ extern GUID GUID_NULL;
 #define IID_NULL GUID_NULL
 #define CLSID_NULL GUID_NULL
 
+#ifdef INITGUID
+#define DEFINE_GUID(name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8) \
+        EXTERN_C const PlainGUID name \
+                = { l, w1, w2, {b1, b2,  b3,  b4,  b5,  b6,  b7,  b8 } }
+#else
+#define DEFINE_GUID(name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8) \
+        EXTERN_C const PlainGUID name 
+#endif // INITGUID
 HRESULT CoCreateGuid(GUID* pguid);
 
 #define interface struct

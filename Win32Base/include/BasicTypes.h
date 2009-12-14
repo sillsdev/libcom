@@ -149,6 +149,7 @@ typedef unsigned char byte;
 
 #define WINAPI  	FAR PASCAL
 #define CALLBACK	FAR PASCAL
+#define APIENTRY __stdcall
 
 #define STDMETHODCALLTYPE __stdcall
 #define STDMETHODVCALLTYPE __cdecl

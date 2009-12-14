@@ -143,8 +143,8 @@ typedef struct _devicemode {
 
 HDC 	CreateCompatibleDC(HDC hdc);
 BOOL	DeleteDC(HDC hdc);
-HDC		GetDC(HWND hWnd);
-int		ReleaseDC(HWND hWnd, HDC hdc);
+inline HDC		GetDC(HWND hWnd) { return 0; }
+inline int		ReleaseDC(HWND hWnd, HDC hdc) { }
 HFONT	CreateFontIndirect(CONST LOGFONT * plf);
 HBITMAP	CreateCompatibleBitmap(HDC hdc, int width, int height);
 HBRUSH	CreateSolidBrush(COLORREF crColor);

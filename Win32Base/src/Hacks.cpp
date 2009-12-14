@@ -254,21 +254,21 @@ int _strnicmp(const char *string1, const char *string2, size_t count)
 
 void InitializeCriticalSection(CRITICAL_SECTION*)
 {
-	// TOODLinux
+	// TODO-Linux
 }
 
 void DeleteCriticalSection(CRITICAL_SECTION*)
 {
-	// TOODLinux
+	// TODO-Linux
 }
 
 void EnterCriticalSection(CRITICAL_SECTION*)
 {
-	// TOODLinux
+	// TODO-Linux
 }
 
 void LeaveCriticalSection(CRITICAL_SECTION*)
 {
-	// TOODLinux
+	// TODO-Linux
 }
 
