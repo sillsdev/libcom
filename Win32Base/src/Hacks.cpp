@@ -192,11 +192,21 @@ void OutputDebugString(const OLECHAR* str)
 
 // TODO-P4CL23677-Merge
 // TODO - maybe add assert if char* longer that sizeOfBuffer?
-int sprintf_s(char *buffer, size_t sizeOfBuffer, const char *format ,...)
+int sprintf_s(char *buffer, size_t sizeOfBuffer, const char *format, ...)
 {
 	va_list argList;
 	va_start(argList, format);
-	return sprintf(buffer, format, argList);
+	return vsprintf(buffer, format, argList);
+	va_end(argList);
+}
+
+int _snprintf_s(char *buffer, size_t sizeOfBuffer, size_t count, const char *format, ...)
+{
+	va_list argList;
+	va_start(argList, format);
+	if (count == _TRUNCATE)
+		count = sizeOfBuffer;
+	return vsnprintf(buffer, count, format, argList);
 	va_end(argList);
 }
 

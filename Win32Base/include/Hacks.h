@@ -466,6 +466,8 @@ inline void OutputDebugStr(const OLECHAR* str)
 // TODO Replace these macros with multiple functions
 #define strcpy_s(DST, NUM, SRC) strcpy(DST, SRC)
 #define strncpy_s(DST, NUM, SRC, CNT) strncpy(DST, SRC, CNT)
+#define strcat_s(DST, NUM, SRC) strcat(DST, SRC)
+#define strncat_s(DST, NUM, SRC, CNT) strncat(DST, SRC, CNT)
 
 #define wcscmp(LEFT, RIGHT) u_strcmp(LEFT, RIGHT)
 #define wcsncmp(LEFT, RIGHT, NUM) u_strncmp(LEFT, RIGHT, NUM)
@@ -473,6 +475,8 @@ inline void OutputDebugStr(const OLECHAR* str)
 #define _wcsicmp(LEFT, RIGHT) u_strcasecmp(LEFT, RIGHT, 0)
 
 #define fopen_s(FH, FILE, MODE) (*FH = fopen(FILE, MODE)) == NULL
+
+#define _TRUNCATE	(size_t)-1
 
 int wcslen(const OLECHAR *str);
 int wcslen_s(const OLECHAR *str, const int size);
@@ -491,6 +495,6 @@ int _strnicmp(const char *string1, const char *string2, size_t count);
 
 // Not done as a macro because use of elipsis..
 int sprintf_s(char *buffer, size_t sizeOfBuffer, const char *format, ...);
-
+int _snprintf_s(char *buffer, size_t sizeOfBuffer, size_t count, const char *format, ...);
 
 #endif //HACKS_H
