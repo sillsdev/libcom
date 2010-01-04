@@ -132,32 +132,32 @@ bool IsBadReadPtr(const void*, unsigned long) { return false; }
 bool IsBadWritePtr(const void*, unsigned long) { return false; }
 bool IsBadCodePtr(const void*) { return false; }
 
-char* _itoa_s(int value, char* buffer, size_t bufferSize, int radix)
+char* _itoa_s(int value, char* buffer, size_t sizeInCharacters, int radix)
 {
 	assert(radix == 10 || radix == 16);
-	snprintf(buffer, bufferSize, (radix == 16 ? "%x" : "%d"), value);
+	snprintf(buffer, sizeInCharacters, (radix == 16 ? "%x" : "%d"), value);
 	return buffer;
 };
 
-wchar_t* _itow_s(int value, wchar_t* buffer, size_t bufferSize, int radix)
+wchar_t* _itow_s(int value, wchar_t* buffer, size_t sizeInCharacters, int radix)
 {
 	assert(radix == 10 || radix == 16);
-	swprintf(buffer, bufferSize, (radix == 16 ? L"%x" : L"%d"), value);
+	swprintf(buffer, sizeInCharacters, (radix == 16 ? L"%x" : L"%d"), value);
 	return buffer;
 };
 
-OLECHAR* _itow_s(int value, OLECHAR* buffer, size_t bufferSize, int radix)
+OLECHAR* _itow_s(int value, OLECHAR* buffer, size_t sizeInCharacters, int radix)
 {
 	wchar_t tmp[64]; // Should be big enough for any number
-	_itow_s(value, tmp, sizeof(tmp), radix);
+	_itow_s(value, tmp, sizeof(tmp) / sizeof(wchar_t), radix);
 
 	UErrorCode status = U_ZERO_ERROR;
-	u_strFromWCS(buffer, bufferSize, 0, tmp, -1, &status);
+	u_strFromWCS(buffer, sizeInCharacters, 0, tmp, -1, &status);
 
 	// Ensure null-termination, but only for genuine buffer sizes
 	if (status == U_STRING_NOT_TERMINATED_WARNING ||
 	    status == U_BUFFER_OVERFLOW_ERROR)
-		buffer[bufferSize-1] = 0;
+		buffer[sizeInCharacters-1] = 0;
 
 	return buffer;
 };

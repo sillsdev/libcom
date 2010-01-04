@@ -427,9 +427,9 @@ int _CrtSetDbgFlag(int);
 
 #define _alloca alloca
 
-char*    _itoa_s(int value, char*    buffer, size_t bufferSize, int radix);
-wchar_t* _itow_s(int value, wchar_t* buffer, size_t bufferSize, int radix);
-OLECHAR* _itow_s(int value, OLECHAR* buffer, size_t bufferSize, int radix);
+char*    _itoa_s(int value, char*    buffer, size_t sizeInCharacters, int radix);
+wchar_t* _itow_s(int value, wchar_t* buffer, size_t sizeInCharacters, int radix);
+OLECHAR* _itow_s(int value, OLECHAR* buffer, size_t sizeInCharacters, int radix);
 
 #define	_itoa(V, B, R) _itoa_s((V), (B), ~0, (R))	// Unchecked version, don't use in new code
 #define	_itow(V, B, R) _itow_s((V), (B), ~0, (R))	// Unchecked version, don't use in new code
