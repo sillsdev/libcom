@@ -320,7 +320,7 @@ BOOL SetFileAttributes(const char* lpFileName, DWORD dwFileAttributes)
 		else
 		{
 			// add user and group write permistions.
-			sb.st_mode = sb.st_mode & S_IWUSR & S_IWGRP;
+			sb.st_mode = sb.st_mode | S_IWUSR | S_IWGRP;
 			if (chmod(lpFileName, sb.st_mode) == -1)
 			{
 				rv = false;	
