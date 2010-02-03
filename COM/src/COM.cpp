@@ -134,11 +134,18 @@ HRESULT CLSIDFromProgID(LPCOLESTR lpszProgID, LPCLSID lpclsid)
 }
 
 // Memory allocation
+OLECHAR* Alloc(int nOleChars)
+{
+	// NOTE: we better use malloc/free for allocating the memory since this is what Mono does,
+	// and this string might be freed by managed code.
+	return (OLECHAR*)malloc(nOleChars * sizeof(OLECHAR));
+}
 
 BSTR SysAllocStringLen(const OLECHAR* pch, unsigned int cch)
 {
-	OLECHAR* buf = new OLECHAR[cch + 3];	// Space for length, data, terminator. 
-		// Note: this allocates 2 * (cch + 3) bytes if sizeof(OLECHAR) == 2
+	//	OLECHAR* buf = new OLECHAR[cch + 3];	// Space for length, data, terminator.
+	//		// Note: this allocates 2 * (cch + 3) bytes if sizeof(OLECHAR) == 2
+	OLECHAR* buf = Alloc(cch + 3); // Space for length, data, terminator.
 
 	*(INT32*)buf = cch * sizeof(OLECHAR);	// Length (bytes)
 	if (pch)
@@ -163,7 +170,9 @@ BSTR SysAllocStringByteLen(LPCSTR psz, UINT len)
 	if (len < 0)
 		return NULL; 
 		
-	OLECHAR* buf = new OLECHAR[len + 3];	// Space for length, data, terminator. 
+//	OLECHAR* buf = new OLECHAR[len + 3];	// Space for length, data, terminator.
+//		// Note: this allocates 2 * (len + 3) bytes if sizeof(OLECHAR) == 2
+	OLECHAR* buf = Alloc(len + 3); 	// Space for length, data, terminator.
 		// Note: this allocates 2 * (len + 3) bytes if sizeof(OLECHAR) == 2
 
 	if (NULL == buf)
@@ -189,7 +198,12 @@ BSTR SysAllocString(const OLECHAR *sz) // Zero-terminated
 void SysFreeString(BSTR bstr)
 {
 	if (bstr)
-		delete [] (bstr - 2);
+	{
+		// NOTE: we better use malloc/free for allocating the memory since this is what Mono does,
+		// and this string might have been allocated by managed code.
+		//delete [] (bstr - 2);
+		free(bstr - 2);
+	}
 }
 
 int SysReAllocString(BSTR* pbstr, const OLECHAR* psz)
