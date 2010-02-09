@@ -111,12 +111,12 @@ void LeaveCriticalSection(CRITICAL_SECTION*);
 template<typename T>
 T InterlockedIncrement(T* p)
 {
-	return ++*p;
+	return __sync_add_and_fetch(p, 1);
 }
 template<typename T>
 T InterlockedDecrement(T* p)
 {
-	return --*p;
+	return __sync_sub_and_fetch(p, 1);
 }
 
 //long InterlockedIncrement(long*);
