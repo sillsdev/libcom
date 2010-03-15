@@ -204,7 +204,7 @@ int _snprintf_s(char *buffer, size_t sizeOfBuffer, size_t count, const char *for
 {
 	va_list argList;
 	va_start(argList, format);
-	if (count == _TRUNCATE)
+	if (count == (size_t)_TRUNCATE)
 		count = sizeOfBuffer;
 	return vsnprintf(buffer, count, format, argList);
 	va_end(argList);
@@ -239,12 +239,24 @@ OLECHAR* wcscpy(OLECHAR *dst, const OLECHAR *src)
 	return u_strcpy(dst, src);
 }
 
-// TODO return EINVAL on error
 // returns 0 on success
 int wcsncpy_s(OLECHAR* dst, const int dsize,
 			const OLECHAR* src, const size_t size)
 {
-	u_strncpy(dst, src, size);
+	if (!dst || dsize == 0)
+		return EINVAL;
+	dst[0] = 0;
+	if (!src)
+		return EINVAL;
+
+	int nToCopy = size;
+	if (size == _TRUNCATE)
+		nToCopy = std::min(u_strlen(src), dsize - 1);
+	else if (dsize <= size)
+		return EINVAL;
+
+	u_strncpy(dst, src, nToCopy);
+	dst[nToCopy] = 0;
 	return 0;
 }
 

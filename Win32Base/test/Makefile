@@ -35,7 +35,7 @@ CPPFLAGS = -MMD -I.. -I../include -I../../COM/include $(shell icu-config --cppfl
 LDFLAGS = $(shell icu-config --ldflags) -L../../COM/$(BUILD_DIR)/src/.libs -lcom
 # LDLIBS = -licucore -luuid
 
-PROGS = $(BUILD_DIR)/TestOutputDebugString $(BUILD_DIR)/TestGUID
+PROGS = $(BUILD_DIR)/TestOutputDebugString $(BUILD_DIR)/TestGUID $(BUILD_DIR)/TestHacks
 
 all: setup $(PROGS)
 
@@ -49,7 +49,7 @@ $(PROGS): $(BUILD_DIR)/%: %.o ../src/$(BUILD_DIR)/libWin32Base.a
 	@$(MAKE) -C $(@D) $(@F) -q || \
 	 $(MAKE) -C $(@D) $(@F)
 
-run-test:
+run-test: all
 	sh test.sh
 
 clean:

@@ -14,6 +14,7 @@
 #include "DateTime.h"
 #include "WinError.h"
 #include "winuser.h"
+#include <errno.h>
 
 #include <stddef.h>
 #include <ctype.h>
@@ -476,7 +477,7 @@ inline void OutputDebugStr(const OLECHAR* str)
 
 #define fopen_s(FH, FILE, MODE) (*FH = fopen(FILE, MODE)) == NULL
 
-#define _TRUNCATE	(size_t)-1
+#define _TRUNCATE	-1
 
 int wcslen(const OLECHAR *str);
 int wcslen_s(const OLECHAR *str, const int size);
