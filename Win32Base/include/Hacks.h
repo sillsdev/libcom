@@ -489,7 +489,7 @@ int wcscpy_s(OLECHAR *dst, const int size, const OLECHAR *src);
 
 
 OLECHAR * wcsncpy(OLECHAR* dst, const OLECHAR* src, const int size);
-int wcsncpy_s(OLECHAR* dst, const int dsize, const OLECHAR* src, const size_t size);
+int wcsncpy_s(OLECHAR* dst, const size_t dsize, const OLECHAR* src, const size_t size);
 
 int _stricmp(const char *string1, const char *string2);
 int _strnicmp(const char *string1, const char *string2, size_t count);

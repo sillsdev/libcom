@@ -240,7 +240,7 @@ OLECHAR* wcscpy(OLECHAR *dst, const OLECHAR *src)
 }
 
 // returns 0 on success
-int wcsncpy_s(OLECHAR* dst, const int dsize,
+int wcsncpy_s(OLECHAR* dst, const size_t dsize,
 			const OLECHAR* src, const size_t size)
 {
 	if (!dst || dsize == 0)
@@ -250,8 +250,8 @@ int wcsncpy_s(OLECHAR* dst, const int dsize,
 		return EINVAL;
 
 	int nToCopy = size;
-	if (size == _TRUNCATE)
-		nToCopy = std::min(u_strlen(src), dsize - 1);
+	if (size == (size_t)_TRUNCATE)
+		nToCopy = std::min(u_strlen(src), (int)dsize - 1);
 	else if (dsize <= size)
 		return EINVAL;
 
