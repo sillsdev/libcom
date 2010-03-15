@@ -242,7 +242,7 @@ OLECHAR* wcscpy(OLECHAR *dst, const OLECHAR *src)
 // TODO return EINVAL on error
 // returns 0 on success
 int wcsncpy_s(OLECHAR* dst, const int dsize,
-			const OLECHAR* src, const int size)
+			const OLECHAR* src, const size_t size)
 {
 	u_strncpy(dst, src, size);
 	return 0;
