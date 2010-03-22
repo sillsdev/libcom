@@ -49,6 +49,12 @@ using std::vector;
 #pragma export on
 ComRegistry::ComRegistry()
 {
+	componentsMapPathEnvironmentKey = "COMPONENTS_MAP_PATH";
+	componentsMapFilename = "components.map";
+	componentsMapPathDelimiter = ":";
+	directorySeparator = "/";
+	componentsMapCommentIndicator = "#";
+
 	populateComponentMap();
 
 #if DUMP_COM_REGISTRY
@@ -537,18 +543,3 @@ void ComRegistry::populateComponentMap()
 	} while(location++ < paths.npos);
 }
 #pragma export off
-
-/** Components-map path environment key */
-const string ComRegistry::componentsMapPathEnvironmentKey("COMPONENTS_MAP_PATH");
-
-/** Components-map filename */
-const string ComRegistry::componentsMapFilename("components.map");
-
-/** Components-map path delimiter to separate paths in the environment variable */
-const string ComRegistry::componentsMapPathDelimiter(":");
-
-/** Directory separator */
-const string ComRegistry::directorySeparator("/");
-
-/** Components-map comment indicator */
-const string ComRegistry::componentsMapCommentIndicator("#");

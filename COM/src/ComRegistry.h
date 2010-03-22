@@ -99,11 +99,16 @@ class ComRegistry
 		/** CLSID to Class Factory and Dll Filename map */
 		ComponentMap m_componentMap;
 
-		static const string componentsMapFilename;				
-		static const string componentsMapPathEnvironmentKey;
-		static const string componentsMapPathDelimiter;
-		static const string directorySeparator;
-		static const string componentsMapCommentIndicator;
+		/** Components-map path environment key */
+		string componentsMapFilename;
+		/** Components-map filename */
+		string componentsMapPathEnvironmentKey;
+		/** Components-map path delimiter to separate paths in the environment variable */
+		string componentsMapPathDelimiter;
+		/** Directory separator */
+		string directorySeparator;
+		/** Components-map comment indicator */
+		string componentsMapCommentIndicator;
 		
 		void populateComponentMap();
 		void populateFromComponentsMapFile(const string filename);
