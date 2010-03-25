@@ -112,9 +112,9 @@ int MessageBoxA(HWND /*hWnd*/, LPCSTR lpText, LPCSTR lpCaption, UINT uType)
 	command << xmessage << " "
 		<< "-center "
 		<< buttons.str() << " "
-		<< "-name " << lpCaption << " "
-		<< "-title " << lpCaption << " "
-		<< lpText;
+		<< "-name \"" << lpCaption << "\" "
+		<< "-title \"" << lpCaption << "\" "
+		<< "\"" << lpText << "\"";
 
 	int result = system(command.str().c_str());
 
