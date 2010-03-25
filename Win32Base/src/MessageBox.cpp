@@ -75,15 +75,12 @@ static std::string quote(std::string text)
 	return result;
 }
 
-int MessageBox(HWND /*hWnd*/, LPCTSTR lpText, LPCTSTR lpCaption, UINT uType)
+int MessageBoxA(HWND /*hWnd*/, LPCSTR lpText, LPCSTR lpCaption, UINT uType)
 {
 	const char* xmessage = getenv("XMESSAGE");
 
 	if (!xmessage)
 		xmessage = "xmessage";
-
-	std::string caption = quote(convert(lpCaption));
-	std::string text = quote(convert(lpText));
 
 	std::ostringstream buttons;
 	switch (uType & MB_BUTTONMASK)
@@ -115,9 +112,9 @@ int MessageBox(HWND /*hWnd*/, LPCTSTR lpText, LPCTSTR lpCaption, UINT uType)
 	command << xmessage << " "
 		<< "-center "
 		<< buttons.str() << " "
-		<< "-name " << caption << " "
-		<< "-title " << caption << " "
-		<< text;
+		<< "-name " << lpCaption << " "
+		<< "-title " << lpCaption << " "
+		<< lpText;
 
 	int result = system(command.str().c_str());
 
@@ -125,14 +122,22 @@ int MessageBox(HWND /*hWnd*/, LPCTSTR lpText, LPCTSTR lpCaption, UINT uType)
 	if (result == -1 || !WIFEXITED(result) || WEXITSTATUS(result) == 0x7f)
 	{
 		std::cerr
-			<< "MessageBox: " << xmessage << " terminated abnormally\n"
-			<< "   Caption: " << caption << "\n"
-			<< "   Message: " << text << "\n"
+			<< "MessageBox: " << xmessage << " terminated abnormally" << std::endl
+			<< "   Caption: " << lpCaption << std::endl
+			<< "   Message: " << lpText << std::endl
 			<< std::flush;
 		return 1; // Same as xmessage error status
 	}
 
 	return WEXITSTATUS(result);
+}
+
+int MessageBox(HWND hWnd, LPCTSTR lpText, LPCTSTR lpCaption, UINT uType)
+{
+	std::string caption = quote(convert(lpCaption));
+	std::string text = quote(convert(lpText));
+
+	return MessageBoxA(hWnd, text.c_str(), caption.c_str(), uType);
 }
 
 #ifdef INCLUDE_MAIN

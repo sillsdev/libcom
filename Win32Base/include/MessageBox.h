@@ -26,7 +26,7 @@ enum
 	MB_SETFOREGROUND	= ~MB_BUTTONMASK,
 };
 
-int MessageBoxA(HWND, LPCTSTR, LPCTSTR, UINT);
+int MessageBoxA(HWND hWnd, LPCSTR lpText, LPCSTR lpCaption, UINT uType);
 
 int MessageBox(HWND hWnd, LPCTSTR lpText, LPCTSTR lpCaption, UINT uType);
 #endif
