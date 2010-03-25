@@ -35,12 +35,14 @@ CPPFLAGS = -MMD -I.. -I../include -I../../COM/include $(shell icu-config --cppfl
 LDFLAGS = $(shell icu-config --ldflags) -L../../COM/$(BUILD_DIR)/src/.libs -lcom
 # LDLIBS = -licucore -luuid
 
-PROGS = $(BUILD_DIR)/TestOutputDebugString $(BUILD_DIR)/TestGUID $(BUILD_DIR)/TestHacks
+PROGS = $(BUILD_DIR)/TestOutputDebugString $(BUILD_DIR)/TestGUID $(BUILD_DIR)/TestHacks \
+	$(BUILD_DIR)/TestMessageBox
 
 all: setup $(PROGS)
 
 setup:
 	-mkdir -p $(BUILD_DIR)
+	cp messageboxdouble $(BUILD_DIR)
 
 $(PROGS): $(BUILD_DIR)/%: %.o ../src/$(BUILD_DIR)/libWin32Base.a
 	$(LINK.cc) -o $@ $(BUILD_DIR)/$(<F) ../src/$(BUILD_DIR)/libWin32Base.a $(LDLIBS) 

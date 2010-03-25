@@ -30,7 +30,9 @@
 
 // Standard dialog button IDs
 enum {
-	IDOK = 1,
+	// Windows defines IDOK as 1, but we can't do that with xmessage since that indicates
+	// an error
+	IDOK = 0,
 	IDCANCEL = 2,
 	IDABORT = 3,
 	IDRETRY = 4,

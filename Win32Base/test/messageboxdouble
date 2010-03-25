@@ -1,0 +1,30 @@
+#!/bin/bash
+
+while [ "$1" != "" ]
+do
+	# default argument
+	if [ $# == 1 ]; then
+		message=" $1"
+		break
+	fi
+
+	case "$1" in
+		-buttons) shift; buttons="$1";shift;;
+		-default) shift; default="$1";shift;;
+		-center) shift;; # we ignore -center as it is always sent
+		-nearmouse) shift;nearmouse=" -nearmouse";;
+		-title) shift; title=" $1";shift;;
+		*) shift;; # unknown option or we don't care
+	esac
+done
+
+commandline="$buttons $default$center$nearmouse$title$message"
+if [ "$commandline" == "$MB_EXPECTED" ]; then
+	rm -f "$MB_RESULTFILE"
+else
+	echo "Expected: \"$MB_EXPECTED\"" >> "$MB_RESULTFILE"
+	echo "but got:  \"$commandline\"" >> "$MB_RESULTFILE"
+fi
+
+exit $MB_RESULT
+

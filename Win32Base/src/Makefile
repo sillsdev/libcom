@@ -38,7 +38,7 @@ ARCH = $(shell uname -m)
 BUILD_DIR = build$(ARCH)
 VPATH = $(BUILD_DIR)
 
-OBJS = Hacks.o WinBase.o
+OBJS = Hacks.o WinBase.o MessageBox.o
 SRCS = $(OBJS:%.o=%.cpp)
 DEPS = $(OBJS:%.o=%.d)
 

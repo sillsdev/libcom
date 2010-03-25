@@ -210,33 +210,12 @@ int _snprintf_s(char *buffer, size_t sizeOfBuffer, size_t count, const char *for
 	va_end(argList);
 }
 
-int wcslen(const OLECHAR *str)
-{
-	return u_strlen(str);
-}
-
-int wcslen_s(const OLECHAR *str, const int size)
-{
-	return u_strlen(str);
-}
-
-int wcscat_s(OLECHAR *dst, const int size, const OLECHAR *src)
-{
-	u_strcat(dst, src);
-	return 0;
-}
-
 // TODO return EINVAL on error
 // return 0 on success
 int wcscpy_s(OLECHAR *dst, const int size, const OLECHAR *src)
 {
 	u_strcpy(dst, src);
 	return 0;
-}
-
-OLECHAR* wcscpy(OLECHAR *dst, const OLECHAR *src)
-{
-	return u_strcpy(dst, src);
 }
 
 // returns 0 on success
@@ -259,20 +238,6 @@ int wcsncpy_s(OLECHAR* dst, const size_t dsize,
 	dst[nToCopy] = 0;
 	return 0;
 }
-
-OLECHAR* wcsncpy(OLECHAR* dst, const OLECHAR* src, const int size)
-{
-	return u_strncpy(dst, src, size);
-}
-
-int _stricmp(const char *string1, const char *string2)
-{
-	return strcasecmp(string1, string2);
-}
-int _strnicmp(const char *string1, const char *string2, size_t count)
-{
-	return strncasecmp(string1, string2, count);
-}		
 
 void InitializeCriticalSection(CRITICAL_SECTION*)
 {

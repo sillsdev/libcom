@@ -24,6 +24,8 @@
 
 #include <unicode/ustring.h>
 
+#include "MessageBox.h"
+
 enum { CP_ACP, CP_UTF8 };
 
 int WideCharToMultiByte(int, int, const OLECHAR*, int, char*, int, char*, char*);
@@ -280,21 +282,7 @@ enum
 };	
 bool PeekMessage(PMSG, HWND, UINT,	UINT, UINT);
 
-enum
-{
-	MB_ICONASTERISK		= 0x00000040L,
-	MB_ICONEXCLAMATION	= 0x00000030L,
-	MB_ICONHAND			= 0x00000010L,
-	MB_ICONQUESTION		= 0x00000020L,
-	MB_OK				= 0x00000000L,
-	MB_YESNO			= ~0,
-	MB_DEFBUTTON2		= ~0,
-	MB_TASKMODAL		= ~0,
-};
-
 bool MessageBeep(unsigned int);
-int MessageBox(HWND, LPCTSTR, LPCTSTR, UINT);
-int MessageBoxA(HWND, LPCTSTR, LPCTSTR, UINT);
 bool TranslateMessage(const MSG*);
 LRESULT DispatchMessage(const MSG*);
 
@@ -470,32 +458,66 @@ inline void OutputDebugStr(const OLECHAR* str)
 #define strcat_s(DST, NUM, SRC) strcat(DST, SRC)
 #define strncat_s(DST, NUM, SRC, CNT) strncat(DST, SRC, CNT)
 
-#define wcscmp(LEFT, RIGHT) u_strcmp(LEFT, RIGHT)
-#define wcsncmp(LEFT, RIGHT, NUM) u_strncmp(LEFT, RIGHT, NUM)
+inline int wcscmp(const UChar* s1, const UChar* s2)
+{
+	return u_strcmp(s1, s2);
+}
+
+inline int wcsncmp(const UChar* s1, const UChar* s2, size_t n)
+{
+	return u_strncmp(s1, s2, n);
+}
+
 #define wcsncmp_s(LEFT, RIGHT, NUM) u_strncmp(LEFT, RIGHT, NUM)
 #define _wcsicmp(LEFT, RIGHT) u_strcasecmp(LEFT, RIGHT, 0)
 
-#define fopen_s(FH, FILE, MODE) (*FH = fopen(FILE, MODE)) == NULL
+#define fopen_s(FH, FILE, MODE) ((*FH = fopen(FILE, MODE)) == NULL)
 
 #define _TRUNCATE	-1
 
-int wcslen(const OLECHAR *str);
-int wcslen_s(const OLECHAR *str, const int size);
+inline int wcslen(const OLECHAR *str)
+{
+	return u_strlen(str);
+}
 
-int wcscat_s(OLECHAR *dst, const int size, const OLECHAR *src);
+inline int wcslen_s(const OLECHAR *str, const int size)
+{
+	return u_strlen(str);
+}
 
-OLECHAR * wcscpy(OLECHAR *dst, const OLECHAR *src);
+inline int wcscat_s(OLECHAR *dst, const int size, const OLECHAR *src)
+{
+	u_strcat(dst, src);
+	return 0;
+}
+
+inline OLECHAR* wcscpy(OLECHAR *dst, const OLECHAR *src)
+{
+	return u_strcpy(dst, src);
+}
+
 int wcscpy_s(OLECHAR *dst, const int size, const OLECHAR *src);
 
 
-OLECHAR * wcsncpy(OLECHAR* dst, const OLECHAR* src, const int size);
+inline OLECHAR* wcsncpy(OLECHAR* dst, const OLECHAR* src, const int size)
+{
+	return u_strncpy(dst, src, size);
+}
+
 int wcsncpy_s(OLECHAR* dst, const size_t dsize, const OLECHAR* src, const size_t size);
 
-int _stricmp(const char *string1, const char *string2);
-int _strnicmp(const char *string1, const char *string2, size_t count);
+inline int _stricmp(const char *string1, const char *string2)
+{
+	return strcasecmp(string1, string2);
+}
+inline int _strnicmp(const char *string1, const char *string2, size_t count)
+{
+	return strncasecmp(string1, string2, count);
+}
 
 // Not done as a macro because use of elipsis..
 int sprintf_s(char *buffer, size_t sizeOfBuffer, const char *format, ...);
 int _snprintf_s(char *buffer, size_t sizeOfBuffer, size_t count, const char *format, ...);
 
 #endif //HACKS_H
+

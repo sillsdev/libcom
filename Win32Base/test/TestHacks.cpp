@@ -28,13 +28,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <errno.h>
-
-#define Assert_eq(expected, actual, msg) \
-	if ((actual) != (expected)) \
-	{ \
-		std::cerr << "FAIL: " << (msg) << "; expected " << (expected) << ", but was " << (actual) << "." << std::endl; \
-		nErr++; \
-	}
+#include "TestUtils.h"
 
 int nErr;
 

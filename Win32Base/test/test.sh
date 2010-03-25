@@ -35,7 +35,7 @@ LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$(icu-config --libdir)
 LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../../COM/$BUILD_DIR/src/.libs
 export LD_LIBRARY_PATH
 
-TESTS="TestGUID TestOutputDebugString TestHacks"
+TESTS="TestGUID TestOutputDebugString TestHacks TestMessageBox"
 for Test in $TESTS
 do
 	echo Testing $Test
