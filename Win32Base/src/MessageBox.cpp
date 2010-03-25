@@ -86,7 +86,7 @@ int MessageBox(HWND /*hWnd*/, LPCTSTR lpText, LPCTSTR lpCaption, UINT uType)
 	std::string text = quote(convert(lpText));
 
 	std::ostringstream buttons;
-	switch (uType)
+	switch (uType & MB_BUTTONMASK)
 	{
 		case MB_OK:
 			buttons << "-buttons _OK:0 -default _OK";

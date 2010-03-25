@@ -82,6 +82,8 @@ int main(int argc, char** argv)
 	AssertMessageBox(MB_YESNO, IDNO, "_Yes:6,_No:7 _Yes caption text");
 	AssertMessageBox(MB_RETRYCANCEL, IDRETRY, "_Retry:4,_Cancel:2 _Retry caption text");
 	AssertMessageBox(MB_CANCELTRYCONTINUE, IDCANCEL, "_Cancel:2,_Try:10,_Continue:11 _Cancel caption text");
+	AssertMessageBox(MB_ABORTRETRYIGNORE|MB_ICONHAND|MB_SETFOREGROUND|MB_TASKMODAL, IDABORT,
+		"_Abort:3,_Retry:4,_Ignore:5 _Ignore caption text"); 
 	return nErr;
 }
 
