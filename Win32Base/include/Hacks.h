@@ -514,6 +514,10 @@ inline int _strnicmp(const char *string1, const char *string2, size_t count)
 {
 	return strncasecmp(string1, string2, count);
 }
+inline int _wcsnicmp(const OLECHAR* string1, const OLECHAR* string2, size_t count)
+{
+	return 	u_strncasecmp(string1, string2, count, 0);
+}
 
 // Not done as a macro because use of elipsis..
 int sprintf_s(char *buffer, size_t sizeOfBuffer, const char *format, ...);
