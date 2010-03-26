@@ -35,6 +35,12 @@ LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$(icu-config --libdir)
 LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../../COM/$BUILD_DIR/src/.libs
 export LD_LIBRARY_PATH
 
+if [ $# -eq 0 ]
+then
+	echo "Usage: $(basename "$0") TEST ..." >&2
+	exit 1
+fi
+
 for Test
 do
 	echo "==== Running $Test ===================="
