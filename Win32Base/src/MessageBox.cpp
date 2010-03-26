@@ -43,12 +43,14 @@ static std::string convert(const wchar_t* text)
 	std::copy(text, text + chars.size(), &chars[0]);
 	return std::string(&chars[0], &chars[chars.size()]);
 }
-//static std::wstring convert(const char* text)
-//{
-//	std::vector<wchar_t> chars(text ? strlen(text) : 0);
-//	std::copy(text, text + chars.size(), &chars[0]);
-//	return std::wstring(&chars[0], &chars[chars.size()]);
-//}
+#ifdef INCLUDE_MAIN
+static std::wstring convert(const char* text)
+{
+	std::vector<wchar_t> chars(text ? strlen(text) : 0);
+	std::copy(text, text + chars.size(), &chars[0]);
+	return std::wstring(&chars[0], &chars[chars.size()]);
+}
+#endif
 
 // Return a single-quoted string
 static std::string quote(std::string text)
@@ -82,39 +84,39 @@ int MessageBoxA(HWND /*hWnd*/, LPCSTR lpText, LPCSTR lpCaption, UINT uType)
 	if (!xmessage)
 		xmessage = "xmessage";
 
-	std::ostringstream buttons;
+	std::string buttons;
 	switch (uType & MB_BUTTONMASK)
 	{
 		case MB_OK:
-			buttons << "-buttons _OK:0 -default _OK";
+			buttons = "-buttons _OK:0 -default _OK";
 			break;
 		case MB_OKCANCEL:
-			buttons << "-buttons _OK:0,_Cancel:2 -default _OK";
+			buttons = "-buttons _OK:0,_Cancel:2 -default _OK";
 			break;
 		case MB_ABORTRETRYIGNORE:
-			buttons << "-buttons _Abort:3,_Retry:4,_Ignore:5 -default _Ignore";
+			buttons = "-buttons _Abort:3,_Retry:4,_Ignore:5 -default _Ignore";
 			break;
 		case MB_YESNOCANCEL:
-			buttons << "-buttons _Yes:6,_No:7,_Cancel:2 -default _Yes";
+			buttons = "-buttons _Yes:6,_No:7,_Cancel:2 -default _Yes";
 			break;
 		case MB_YESNO:
-			buttons << "-buttons _Yes:6,_No:7 -default _Yes";
+			buttons = "-buttons _Yes:6,_No:7 -default _Yes";
 			break;
 		case MB_RETRYCANCEL:
-			buttons << "-buttons _Retry:4,_Cancel:2 -default _Retry";
+			buttons = "-buttons _Retry:4,_Cancel:2 -default _Retry";
 			break;
 		case MB_CANCELTRYCONTINUE:
-			buttons << "-buttons _Cancel:2,_Try:10,_Continue:11 -default _Cancel";
+			buttons = "-buttons _Cancel:2,_Try:10,_Continue:11 -default _Cancel";
 			break;
 	}
 	std::ostringstream command;
 
 	command << xmessage << " "
 		<< "-center "
-		<< buttons.str() << " "
-		<< "-name \"" << lpCaption << "\" "
-		<< "-title \"" << lpCaption << "\" "
-		<< "\"" << lpText << "\"";
+		<< buttons << " "
+		<< "-name " << quote(lpCaption) << " "
+		<< "-title " << quote(lpCaption) << " "
+		<< quote(lpText);
 
 	int result = system(command.str().c_str());
 
@@ -134,10 +136,7 @@ int MessageBoxA(HWND /*hWnd*/, LPCSTR lpText, LPCSTR lpCaption, UINT uType)
 
 int MessageBox(HWND hWnd, LPCTSTR lpText, LPCTSTR lpCaption, UINT uType)
 {
-	std::string caption = quote(convert(lpCaption));
-	std::string text = quote(convert(lpText));
-
-	return MessageBoxA(hWnd, text.c_str(), caption.c_str(), uType);
+	return MessageBoxA(hWnd, convert(lpText).c_str(), convert(lpCaption).c_str(), uType);
 }
 
 #ifdef INCLUDE_MAIN

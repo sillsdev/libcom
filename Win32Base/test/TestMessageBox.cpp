@@ -35,7 +35,8 @@
 
 int nErr;
 
-void AssertMessageBox(UINT type, UINT nRetExpected, const char* expectedStr)
+void AssertMessageBox(UINT type, UINT nRetExpected, const char* expectedStr,
+	const wchar_t* captionStr = L"caption", const wchar_t* textStr = L"text")
 {
 
 	std::ostringstream filename;
@@ -48,7 +49,7 @@ void AssertMessageBox(UINT type, UINT nRetExpected, const char* expectedStr)
 	setenv("MB_EXPECTED", expectedStr, true);
 	setenv("MB_RESULT", expectedRetValue.str().c_str(), true);
 
-	UINT nRet = MessageBox(NULL, L"text", L"caption", type);
+	UINT nRet = MessageBox(NULL, textStr, captionStr, type);
 
 	std::ifstream resultFile(filename.str().c_str());
 	if (resultFile.is_open())
@@ -83,7 +84,9 @@ int main(int argc, char** argv)
 	AssertMessageBox(MB_RETRYCANCEL, IDRETRY, "_Retry:4,_Cancel:2 _Retry caption text");
 	AssertMessageBox(MB_CANCELTRYCONTINUE, IDCANCEL, "_Cancel:2,_Try:10,_Continue:11 _Cancel caption text");
 	AssertMessageBox(MB_ABORTRETRYIGNORE|MB_ICONHAND|MB_SETFOREGROUND|MB_TASKMODAL, IDABORT,
-		"_Abort:3,_Retry:4,_Ignore:5 _Ignore caption text"); 
+		"_Abort:3,_Retry:4,_Ignore:5 _Ignore caption text");
+	AssertMessageBox(MB_ABORTRETRYIGNORE, IDABORT,
+		"_Abort:3,_Retry:4,_Ignore:5 _Ignore A  \"caption\" It's text", L"A  \"caption\"", L"It's text");
 	return nErr;
 }
 
