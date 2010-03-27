@@ -27,39 +27,37 @@
 
 ARCH = $(shell uname -m)
 BUILD_DIR = build$(ARCH)
-vpath %.cpp $(shell pwd)
-vpath %.o $(BUILD_DIR)
 
 CXXFLAGS = -g -Wall
 CPPFLAGS = -MMD -I.. -I../include -I../../COM/include $(shell icu-config --cppflags)
 LDFLAGS = $(shell icu-config --ldflags) -L../../COM/$(BUILD_DIR)/src/.libs -lcom
 # LDLIBS = -licucore -luuid
 
-PROGS = $(BUILD_DIR)/TestOutputDebugString $(BUILD_DIR)/TestGUID $(BUILD_DIR)/TestHacks \
-	$(BUILD_DIR)/TestMessageBox
+PROGNAMES   = TestOutputDebugString TestGUID TestHacks TestMessageBox
+SCRIPTNAMES = messageboxdouble
+PROGS       = $(PROGNAMES:%=$(BUILD_DIR)/%)
+SCRIPTS     = $(SCRIPTNAMES:%=$(BUILD_DIR)/%)
 
-all: setup $(PROGS)
+WIN32BASEDIR = ../src
+WIN32BASELIB = $(WIN32BASEDIR)/$(BUILD_DIR)/libWin32Base.a
 
-setup:
-	-mkdir -p $(BUILD_DIR)
-	cp messageboxdouble $(BUILD_DIR)
+all: $(PROGS) $(SCRIPTS)
 
-$(PROGS): $(BUILD_DIR)/%: %.o ../src/$(BUILD_DIR)/libWin32Base.a
-	$(LINK.cc) -o $@ $(BUILD_DIR)/$(<F) ../src/$(BUILD_DIR)/libWin32Base.a $(LDLIBS) 
+$(BUILD_DIR)/%: %.cpp $(WIN32BASELIB)
+	@mkdir -p $(@D)
+	$(LINK.cc) -o $@ $< $(WIN32BASELIB) $(LDLIBS)
 
-../src/$(BUILD_DIR)/libWin32Base.a::
-	@$(MAKE) -C $(@D) $(@F) -q || \
-	 $(MAKE) -C $(@D) $(@F)
+$(BUILD_DIR)/%: %
+	cp -p $< $@
+
+$(WIN32BASELIB)::
+	@$(MAKE) -C $(WIN32BASEDIR) -q || \
+	 $(MAKE) -C $(WIN32BASEDIR)
 
 run-test: all
-	sh test.sh
+	sh test.sh $(PROGNAMES)
 
 clean:
-	$(RM) $(addprefix $(BUILD_DIR)/, $(PROGS)) $(BUILD_DIR)/*.[od]
-	-rm -rf $(BUILD_DIR)
+	$(RM) -rf $(BUILD_DIR)
 
 -include $(BUILD_DIR)/*.d
-
-.cpp.o:
-	$(CC) $(CPPFLAGS) $(CXXFLAGS) -c -o $(BUILD_DIR)/$@ $< 
-

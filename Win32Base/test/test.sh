@@ -35,9 +35,8 @@ LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$(icu-config --libdir)
 LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../../COM/$BUILD_DIR/src/.libs
 export LD_LIBRARY_PATH
 
-TESTS="TestGUID TestOutputDebugString TestHacks TestMessageBox"
-for Test in $TESTS
+for Test
 do
-	echo Testing $Test
+	echo "==== Running $Test ===================="
 	$BUILD_DIR/$Test && echo Successful test of $Test || { echo Failure testing $Test; exit 1; }
 done

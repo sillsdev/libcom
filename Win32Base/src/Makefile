@@ -36,23 +36,22 @@ ARFLAGS = -crs
 
 ARCH = $(shell uname -m)
 BUILD_DIR = build$(ARCH)
-VPATH = $(BUILD_DIR)
 
-OBJS = Hacks.o WinBase.o MessageBox.o
-SRCS = $(OBJS:%.o=%.cpp)
+MODS = Hacks.o WinBase.o MessageBox.o
+OBJS = $(MODS:%=$(BUILD_DIR)/%)
 DEPS = $(OBJS:%.o=%.d)
 
-setup:
-	-mkdir -p $(BUILD_DIR)
+all: $(BUILD_DIR)/libWin32Base.a
 
-libWin32Base.a: setup $(addprefix $(BUILD_DIR)/, $(OBJS))
-	$(AR) $(ARFLAGS) $(BUILD_DIR)/$@ $(addprefix $(BUILD_DIR)/, $(OBJS))
-
-clean:
-	$(RM) $(BUILD_DIR)/libWin32Base.a $(addprefix $(BUILD_DIR)/, $(OBJS)) $(addprefix $(BUILD_DIR)/, $(DEPS))
-	-rm -rf $(BUILD_DIR)
-
--include $(addprefix $(BUILD_DIR)/, $(DEPS))
+$(BUILD_DIR)/libWin32Base.a: $(OBJS)
+	@mkdir -p $(@D)
+	$(AR) $(ARFLAGS) $@ $^
 
 $(BUILD_DIR)/%.o: %.cpp
-	$(CC) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
+	@mkdir -p $(@D)
+	$(COMPILE.cc) -o $@ $<
+
+clean:
+	$(RM) -rf $(BUILD_DIR)
+
+-include $(DEPS)
