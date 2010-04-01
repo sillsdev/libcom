@@ -28,7 +28,7 @@
 LIBRARIES = ../..
 
 CPPFLAGS = -MMD $(shell icu-config --cppflags) -I../include -I../../COM/include -I../../COM/src -I../../Win32Base/include \
-	-I../../Win32More/include $(shell pkg-config --cflags mono)
+	-I../../Win32More/include $(shell pkg-config --cflags mono-2)
 CXXFLAGS = -Wall -g -O0 -fPIC -fvisibility=hidden -Werror
 
 PACKAGES = mono uuid

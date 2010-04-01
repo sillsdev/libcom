@@ -20,13 +20,12 @@ Description: Implementation of ManagedComBridge
 // any other headers (not precompiled)
 #endif
 
-
-#include <comdef.h>
-#include <COM.h> // for GUID defs
-#include <ComRegistry.h>
-#include <stdlib.h>
-
 #include "ManagedComBridge.h"
+
+#include <ComRegistry.h>
+#include <WinError.h>
+#include <stdlib.h>
+#include <glib.h>
 
 using namespace std;
 

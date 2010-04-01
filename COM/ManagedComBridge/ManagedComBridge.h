@@ -18,6 +18,8 @@ Last reviewed: Not yet.
 #include <mono/metadata/debug-helpers.h>
 #include <dlfcn.h>
 
+#include <COM.h> // For GUID class
+#include <COMInterfaces.h> // For IClassFactory
 #include <map>
 
 static const GUID CLSID_ManagedComBridge("1490e147-f2d2-4909-a4b8-3533d2f264d1");
