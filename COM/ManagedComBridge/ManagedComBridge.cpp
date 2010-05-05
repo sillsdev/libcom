@@ -26,8 +26,6 @@ Description: Implementation of ManagedComBridge
 #include <WinError.h>
 #include <stdlib.h>
 #include <glib.h>
-#include <unistd.h>  // for getcwd 
-#include <libgen.h> // for dirname + basename
 
 using namespace std;
 
@@ -227,56 +225,32 @@ HRESULT ManagedComBridge::CreateInstance(IUnknown * pUnkOuter, REFIID riid, void
 	////
 		
 	MonoClass* marshalClass = GetMarshalClass();	
-	
-	assembly = mono_domain_assembly_open(m_domain, m_assemblyName.c_str());
-	if (assembly == NULL)
+
+	// Open assembly in one of 3 cases:
+	//  1. absolute path in components.map
+	//  2. relative path in components.map and COMPONENTS_MAP_PATH is not set
+	//  3. relative path in components.map and COMPONENTS_MAP_PATH is set
+	const char * componentsMapPath = getenv("COMPONENTS_MAP_PATH");	
+	if (m_assemblyName.c_str()[0] == '/' || componentsMapPath == NULL) // case 1 & 2
 	{
-		char oldcwd[2048];
-		getcwd(oldcwd, sizeof(oldcwd));
-
-		// TODO-Linux: CompRegistry defines this string as componentsMapPathEnvironmentKey
-		const char * componentsMapPath = getenv("COMPONENTS_MAP_PATH");
-
+		assembly = mono_domain_assembly_open(m_domain, m_assemblyName.c_str());	
+	}
+	else // case 3
+	{
 		std::string absAssemblyPath(componentsMapPath);
 		absAssemblyPath.append("/");
 		absAssemblyPath.append(m_assemblyName);
-
-		// try as a abs path from COMPONENTS_MAP_PATH
 		assembly = mono_domain_assembly_open(m_domain, absAssemblyPath.c_str());
-
-		if (assembly == NULL)
-		{	
-			// try releative path after changing to componentsMapPath
-			chdir(componentsMapPath);
-			assembly = mono_domain_assembly_open(m_domain, m_assemblyName.c_str());
-		}
-
-		if (assembly == NULL)
-		{
-			// try abs path after changing to componentsMapPath
-			assembly = mono_domain_assembly_open(m_domain, absAssemblyPath.c_str());
-		}
-
-		if (assembly == NULL)
-		{
-			// try changing to the location of the assembly
-			char * absPath = strdup(absAssemblyPath.c_str());
-			chdir(dirname(absPath));
-			free(absPath);
-			absPath = strdup(absAssemblyPath.c_str());
-			assembly = mono_domain_assembly_open(m_domain, basename(absPath));
-			free(absPath);
-		}
-
-		if (assembly == NULL)
-		{
-			fprintf(stderr, "Could not open assembly %s : cwd = %s looking at %s\n", 
-				m_assemblyName.c_str(), oldcwd, absAssemblyPath.c_str());
-
-			return 1;
-		}
 	}
-	
+
+	if (assembly == NULL)
+	{
+		fprintf(stderr, "Could not open assembly %s\n", 
+			m_assemblyName.c_str());
+
+		return 1;
+	}
+
 	image = mono_assembly_get_image(assembly);
 	if (image == NULL)
 	{
