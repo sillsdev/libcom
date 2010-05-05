@@ -268,8 +268,6 @@ HRESULT ManagedComBridge::CreateInstance(IUnknown * pUnkOuter, REFIID riid, void
 			free(absPath);
 		}
 
-		chdir(oldcwd);
-
 		if (assembly == NULL)
 		{
 			fprintf(stderr, "Could not open assembly %s : cwd = %s looking at %s\n", 
