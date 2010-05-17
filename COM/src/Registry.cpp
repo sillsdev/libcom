@@ -33,6 +33,8 @@
 #include "ComRegistry.h"
 #include "COM.h"
 
+#define DLLEXPORT // Define properly if ever needed
+
 /**
  * CoInitialize.
  * 
@@ -42,7 +44,7 @@
  * @param unused NULL
  * @return S_OK
  */
-#pragma export on
+DLLEXPORT
 extern "C" HRESULT CoInitialize(LPVOID unused)
 {
 	return S_OK;
@@ -50,15 +52,17 @@ extern "C" HRESULT CoInitialize(LPVOID unused)
 
 
 // Closes the COM Library on the current apartment.
+DLLEXPORT
 HRESULT CoUninitialize()
 {
-
+	return S_OK;
 }
 
 /**
  * @brief Initializes the COM library from the current Apartment and sets the concurrency model as single-threaded apartment.
  * @param pvReserved unused
  */
+DLLEXPORT
 HRESULT OleInitialize(LPVOID pvReserved)
 {
 	return CoInitialize(NULL);
@@ -67,11 +71,11 @@ HRESULT OleInitialize(LPVOID pvReserved)
 /** 
  * @brief Closes the COM library on the apartment.
  */
+DLLEXPORT
 void OleUninitialize()
 {
 	
 }
-#pragma export off
 
 /**
  * @brief Get a class factory able to create objects of class ID requestedClassID.
@@ -89,11 +93,11 @@ void OleUninitialize()
  * @return CLASS_E_CLASSNOTAVAILABLE if the DLL does not support the requested class id, though the dll map file claimed it did
  * @return REGDB_E_CLASSNOTREG if there was an error calling DllGetClassObject and we never registered the factory
  */
-#pragma export on
+DLLEXPORT
 HRESULT CoGetClassObject(REFCLSID requestedClassID, DWORD dwClsContext, LPVOID, 
 	REFIID /*requestedInterfaceID*/, LPVOID* factoryInterface)
 {
-	if (dwClsContext =! CLSCTX_INPROC) {
+	if (dwClsContext != CLSCTX_INPROC) {
 		return CO_E_NOT_SUPPORTED;
 	}
 
@@ -105,7 +109,6 @@ HRESULT CoGetClassObject(REFCLSID requestedClassID, DWORD dwClsContext, LPVOID,
 	*factoryInterface = factory;
 	return hr;
 }
-#pragma export off
 
 /**
  * @brief Create an instance of a class of class ID requestedClassID, which implements interface ID objectInterfaceID, and will be accessible through the interface objectInterface.
@@ -121,7 +124,7 @@ HRESULT CoGetClassObject(REFCLSID requestedClassID, DWORD dwClsContext, LPVOID,
  * @return CLASS_E_CLASSNOTAVAILABLE if a DLL does not support the requested class id, though the dll map file claimed it did
  * @return REGDB_E_CLASSNOTREG if there was an error calling DllGetClassObject and we never registered the factory 
  */
-#pragma export on
+DLLEXPORT
 extern "C" HRESULT CoCreateInstance(REFCLSID requestedClassID, 
 	LPUNKNOWN outerAggregateIUnknown, DWORD /*dwClsContext*/, 
 	REFIID objectInterfaceID, LPVOID* objectInterface)
@@ -142,8 +145,8 @@ extern "C" HRESULT CoCreateInstance(REFCLSID requestedClassID,
 	return hr;
 }
 
+DLLEXPORT
 void CoFreeUnusedLibraries()
 {
 	// no-op
 }
-#pragma export off

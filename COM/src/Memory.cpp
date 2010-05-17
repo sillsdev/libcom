@@ -28,6 +28,8 @@
 #include "BasicTypes.h"
 #include <cstdlib>
 
+#define DLLEXPORT // Define properly if ever needed
+
 /**
  * Allocate memory.
  * Because there is no guarantee that memory will actually be allocated, you should always check that the return value is not NULL.
@@ -35,7 +37,7 @@
  * @param size number of bytes to allocate
  * @return pointer to allocated memory, or NULL if the memory allocation request failed.
  */
-#pragma export on
+DLLEXPORT
 void* CoTaskMemAlloc(SIZE_T size)
 {
 	// This is defined as just malloc() until a reason is found
@@ -43,7 +45,6 @@ void* CoTaskMemAlloc(SIZE_T size)
 
 	return (std::malloc(size));
 }
-#pragma export off
 
 /**
  * Change size of a previously allocated chunk of memory. 
@@ -54,7 +55,7 @@ void* CoTaskMemAlloc(SIZE_T size)
  * @param newSize number of bytes for the new allocation, or 0 (see description).
  * @return pointer to reallocated memory (which may be in a different memory location than previousAllocation), or NULL if newSize is 0 and previousAllocation is not NULL, or NULL if we fail to allocate memory for the new allocation
  */
-#pragma export on
+DLLEXPORT
 void* CoTaskMemRealloc(LPVOID previousAllocation, SIZE_T newSize)
 {
 	// This is defined as just realloc() until a reason is found
@@ -62,14 +63,13 @@ void* CoTaskMemRealloc(LPVOID previousAllocation, SIZE_T newSize)
 
 	return (std::realloc(previousAllocation, newSize));
 }
-#pragma export off
 
 /**
  * Free previously allocated memory. If allocatedMemory is NULL, nothing happens.
  * http://msdn2.microsoft.com/en-us/library/ms680722.aspx
  * @param allocatedMemory pointer to memory previously allocated by CoTaskMemAlloc or CoTaskMemRealloc, or NULL
  */
-#pragma export on
+DLLEXPORT
 void CoTaskMemFree(LPVOID allocatedMemory)
 {
 	// This is defined as just free() until a reason is found
@@ -77,4 +77,3 @@ void CoTaskMemFree(LPVOID allocatedMemory)
 
 	std::free(allocatedMemory);
 }
-#pragma export off

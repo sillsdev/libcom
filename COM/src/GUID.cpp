@@ -31,6 +31,8 @@
 #include <vector>
 #include <unicode/ustring.h>
 
+#define DLLEXPORT // Define properly if ever needed
+
 /**
  * Convert a string representation of a classID to a binary classID GUID (in host byte order).
  * The string value should not be enclosed with {...}.
@@ -40,7 +42,7 @@
  * @param outClassID output binary classID GUID based on inWideString
  * @return ERROR_SUCCESS on successful conversion, E_INVALIDARG if one or more invalid arguments, or CO_E_CLASSSTRING if the class string was not formatted correctly.
  */
-#pragma export on
+DLLEXPORT
 HRESULT WINAPI CLSIDFromString(LPCOLESTR inWideString, LPCLSID outClassID)
 {
 	if (!inWideString || !outClassID)
@@ -58,7 +60,6 @@ HRESULT WINAPI CLSIDFromString(LPCOLESTR inWideString, LPCLSID outClassID)
 	}
 	return CO_E_CLASSSTRING;
 }
-#pragma export off
 
 /**
  * Convert binary classID GUID to string representation.
@@ -68,7 +69,7 @@ HRESULT WINAPI CLSIDFromString(LPCOLESTR inWideString, LPCLSID outClassID)
  * @param outWideString output string based on inClassID
  * @return S_OK on successful conversion, E_OUTOFMEMORY if we run out of memory while creating the string, or (despite the spec) E_INVALIDARG if an invalid argument was given.
  */
-#pragma export on
+DLLEXPORT
 HRESULT StringFromCLSID(const CLSID& inClassID, LPOLESTR* outWideString)
 {
 	if (!outWideString) return E_INVALIDARG;
@@ -85,4 +86,3 @@ HRESULT StringFromCLSID(const CLSID& inClassID, LPOLESTR* outWideString)
 	*outWideString = buf;
 	return S_OK;
 }
-#pragma export off

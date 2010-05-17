@@ -46,7 +46,6 @@ using std::vector;
  * classID GUIDs and their corresponding class factories. 
  * This constructor will also populate the component map from the disk file(s).
  */
-#pragma export on
 ComRegistry::ComRegistry()
 {
 	componentsMapPathEnvironmentKey = "COMPONENTS_MAP_PATH";
@@ -62,31 +61,26 @@ ComRegistry::ComRegistry()
 	dumpComponentMap(std::cerr);
 #endif
 }
-#pragma export off
 
 /**
  * ComRegistry destructor. Destroys an instance of ComRegistry.
  * Does nothing.
  */
-#pragma export on
 ComRegistry::~ComRegistry()
 {
 	// No explicit actions needed
 }
-#pragma export off
 	
 /**
  * Gets a pointer to a previously created registry, or to a new one if none 
  * has yet been created. The static instance of the COM registry is 
  * created here.
  */
-#pragma export on
 ComRegistry* ComRegistry::getMutableInstance()
 {
 	static ComRegistry instance;
 	return &instance;
 }
-#pragma export off
 
 /**
  * @brief Register a class factory.
@@ -95,7 +89,6 @@ ComRegistry* ComRegistry::getMutableInstance()
  * @param classID class ID to register
  * @param classFactory class factory that can create objects of class ID classID.
  */
-#pragma export on
 void ComRegistry::registerFactory(const CLSID &classID, LPCLASSFACTORY classFactory)
 {
 	m_componentMap[classID].factory = classFactory;
@@ -105,7 +98,6 @@ void ComRegistry::registerFactory(const CLSID &classID, LPCLASSFACTORY classFact
 	dumpComponentMap(std::cerr);
 #endif
 }
-#pragma export off
 
 /**
  * @brief Get a class factory that can produce classes of a certain classID.
@@ -125,7 +117,6 @@ LPCLASSFACTORY ComRegistry::getFactory(const CLSID &classID) {
 	return NULL;
 }
 
-#pragma export on
 /**
  * @brief Get a class factory for a class out of the registry, possibly loading a necessary DLL file.
  * 
@@ -142,8 +133,7 @@ LPCLASSFACTORY ComRegistry::getFactory(const CLSID &classID) {
 HRESULT ComRegistry::getFactoryPointer(const CLSID &classID, LPCLASSFACTORY* classFactory)
 {
 	// Look for the factory pointer, by Class ID, in the COM registry
-	LPCLASSFACTORY resultFactory = NULL;
-	if (resultFactory = getFactory(classID)) {
+	if (LPCLASSFACTORY resultFactory = getFactory(classID)) {
 		*classFactory = resultFactory;
 		return S_OK;
 	}
@@ -185,7 +175,7 @@ HRESULT ComRegistry::getFactoryPointer(const CLSID &classID, LPCLASSFACTORY* cla
 	RegisterFactory(classID, tempFactory);
 
 	// classID should now be registered (either by it calling RegisterFactory, or by us registering it for it), so try again.
-	if (resultFactory = getFactory(classID)) {
+	if (LPCLASSFACTORY resultFactory = getFactory(classID)) {
 		*classFactory = resultFactory;
 		return S_OK;
 	}
@@ -279,7 +269,6 @@ string ComRegistry::getDllFilename(const CLSID &classID) {
  * 
  * @param out output stream to which to write data
  */
-#pragma export on
 void ComRegistry::dumpComponentMap(std::ostream& out)
 {
 	for (ComponentMap::const_iterator iterator = m_componentMap.begin(); iterator != m_componentMap.end(); ++iterator)
@@ -291,7 +280,6 @@ void ComRegistry::dumpComponentMap(std::ostream& out)
 		out << guid.str() << " -> " << factory << ", " << dllfilename << "\n";
 	}
 }
-#pragma export off
 
 /**
  * @brief Find a class factory for requestedClassID from an open COM DLL file by calling its DllGetClassObject function.
@@ -307,21 +295,19 @@ void ComRegistry::dumpComponentMap(std::ostream& out)
  * @return REGDB_E_CLASSNOTREG if there was an error calling DllGetClassObject (TODO a better HRESULT should probably be used here).
  * @return S_OK upon success
  */
-#pragma export on
 HRESULT ComRegistry::findFactoryInDll(void* dllhandle, REFCLSID requestedClassID, IClassFactory** factory) {
 
 	// DllGetClassObject: http://msdn2.microsoft.com/en-us/library/ms680760.aspx
-	HRESULT (*DllGetClassObject)(REFCLSID requestedClassID, REFIID requestedInterfaceID, VOID ** objectInterface);
+	typedef HRESULT (*GetClassObjectFunc)(REFCLSID requestedClassID, REFIID requestedInterfaceID, VOID** objectInterface);
 	dlerror(); // clear any old error conditions
-	*(void **) (&DllGetClassObject) = dlsym(dllhandle, "DllGetClassObject");
-	const char* dllerror = dlerror();
-	if (NULL != dllerror)
+	GetClassObjectFunc dllGetClassObject = (GetClassObjectFunc)dlsym(dllhandle, "DllGetClassObject");
+	if (const char* error = dlerror())
 	{
-		fprintf(stderr, "COM Support Library: Error getting COM object's DllGetClassObject function. Error: %s\n", dllerror);
+		fprintf(stderr, "COM Support Library: Error getting COM object's DllGetClassObject function. Error: %s\n", error);
 		return REGDB_E_CLASSNOTREG;
 	}
 	// Note that if we pass factory as a null pointer, it'll not work.
-	HRESULT hr = (*DllGetClassObject)(requestedClassID, IID_IClassFactory, (VOID**)factory);
+	HRESULT hr = (*dllGetClassObject)(requestedClassID, IID_IClassFactory, (VOID**)factory);
 	
 	if (FAILED(hr))
 		return hr;
@@ -331,7 +317,6 @@ HRESULT ComRegistry::findFactoryInDll(void* dllhandle, REFCLSID requestedClassID
 
 	return S_OK;
 }
-#pragma export off
 
 /**
  * @brief Add GUID-dllfilename mappings to the component map based on entries in a components-map file.
@@ -340,7 +325,6 @@ HRESULT ComRegistry::findFactoryInDll(void* dllhandle, REFCLSID requestedClassID
  * 
  * @param mapfilename components-map file to process
  */
-#pragma export on
 void ComRegistry::populateFromComponentsMapFile(const string mapfilename)
 {
 	std::ifstream dllmapfilestream(mapfilename.c_str());
@@ -396,7 +380,7 @@ void ComRegistry::populateFromComponentsMapFile(const string mapfilename)
 
 		if (string::npos != sep4) {
 			fprintf(stderr, "libcom: Warning: malformed line (extra characters at end of line) at %s:%d\n",
-				mapfilename.c_str(), linenum, sep1, sep2, sep3, sep4);
+				mapfilename.c_str(), linenum);
 		}
 		string classIdString;
 		string dllfilename;		
@@ -504,7 +488,6 @@ void ComRegistry::populateFromComponentsMapFile(const string mapfilename)
 	}
 	dllmapfilestream.close();
 }
-#pragma export off
 
 /** 
  * @brief Populate the component map
@@ -518,7 +501,6 @@ void ComRegistry::populateFromComponentsMapFile(const string mapfilename)
  * 
  * If COMPONENTS_MAP_PATH is NULL or empty, it will not be processed.
  */
-#pragma export on
 void ComRegistry::populateComponentMap()
 {
 	// Get the paths from the environment, or empty string if NULL.
@@ -542,4 +524,3 @@ void ComRegistry::populateComponentMap()
 		location = delimiterPos;
 	} while(location++ < paths.npos);
 }
-#pragma export off

@@ -51,6 +51,8 @@
 
 #include "ComRegistry.h"
 
+#define DLLEXPORT // Define properly if ever needed
+
 /**
  * @brief Register a class factory by class ID in the internal registry.
  * 
@@ -62,20 +64,18 @@
  * @param classID class ID to register
  * @param classFactory class factory to register that can create objects of class ID classID.
  */
-#pragma export on
+DLLEXPORT
 void RegisterFactory(const CLSID& classID, LPCLASSFACTORY classFactory)
 {
 	ComRegistry::getInstance()->registerFactory(classID, classFactory);
 }
-#pragma export off
 
 /**
  * @brief Write class information to stdout. Still needs processed before it's valid components.map syntax.
  */
-#pragma export on
+DLLEXPORT
 void CoRegisterClassInfo(const CLSID* classId, const char* progId, const char* descr)
 {
 	std::cout << "# " << progId << ": " << descr << "\n"
 		<< classId->str() << std::endl;
 }
-#pragma export off
