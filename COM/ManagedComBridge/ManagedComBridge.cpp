@@ -91,7 +91,7 @@ ManagedComBridge::~ManagedComBridge()
  * @param ppv - returns a ptr to the factory.
  */
 // REVIEW: maybe move DLLEXPORT define from Generic/common.h to WIN32 - something.
-HRESULT __attribute__ ((visibility("default"))) DllGetClassObject(REFCLSID clsid, REFIID iid, VOID ** ppv)
+HRESULT __attribute__ ((visibility("default"))) DllGetClassObject(REFCLSID clsid, REFIID /*iid*/, VOID ** ppv)
 {
 	// Build up a map of clsid - with its implementation factory class.
 	
@@ -155,7 +155,7 @@ UINT32 ManagedComBridge::Release(void)
 /**
  * Not used.
  */
-HRESULT ManagedComBridge::LockServer(BOOL fLock)
+HRESULT ManagedComBridge::LockServer(BOOL /*fLock*/)
 {
 	return S_OK;	
 }
@@ -168,7 +168,7 @@ HRESULT ManagedComBridge::LockServer(BOOL fLock)
  * @param riid - id of the Interface that the COM object implements. 
  * @param ppvObject - return parameter - returns ptr instance to request interface implementation  
  */
-HRESULT ManagedComBridge::CreateInstance(IUnknown * pUnkOuter, REFIID riid, void ** ppvObject)
+HRESULT ManagedComBridge::CreateInstance(IUnknown * /*pUnkOuter*/, REFIID riid, void ** ppvObject)
 {	
 	std::string classNamespace; 
 	std::string className;

@@ -35,7 +35,7 @@ CPPFLAGS = -MMD \
 	-I../../Win32More/include \
 	$(shell pkg-config --cflags $(PACKAGES))
 
-CXXFLAGS = -g -O0 -Werror -Wall -fPIC -fvisibility=hidden
+CXXFLAGS = -g -O0 -Werror -Wall -Wextra -fPIC -fvisibility=hidden
 
 LDFLAGS = \
 	-L$(LIBRARIES)/COM/build$(ARCH)/src/.libs -lcom \

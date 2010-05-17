@@ -25,7 +25,7 @@
 # http://www.gnu.org/licenses/lgpl.html
 # 
 
-AM_CXXFLAGS = -Werror
+AM_CXXFLAGS = -Werror -Wall -Wextra -Wno-unused-parameter
 
 lib_LTLIBRARIES = libcom.la
 

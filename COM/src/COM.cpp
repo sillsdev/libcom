@@ -162,15 +162,10 @@ BSTR SysAllocStringLen(const OLECHAR* pch, unsigned int cch)
  * This implementation will work only for little-endian systems.
  * @param psz input null-terminated string. If NULL, the BSTR string will be uninitialized.
  * @param len Number of bytes to copy from input string to output string. Most likely should be the length of psz, not including null-terminator. 
- * @return pointer to the BSTR string, or NULL if not enough memory. The BSTR string will have len bytes copied from psz as well as a null-terminator appended. Possibly contrary to spec, NULL will be returned if len<0.
+ * @return pointer to the BSTR string, or NULL if not enough memory. The BSTR string will have len bytes copied from psz as well as a null-terminator appended.
  */
 BSTR SysAllocStringByteLen(LPCSTR psz, UINT len)
 {
-	if (len < 0)
-		return NULL; 
-		
-//	OLECHAR* buf = new OLECHAR[len + 3];	// Space for length, data, terminator.
-//		// Note: this allocates 2 * (len + 3) bytes if sizeof(OLECHAR) == 2
 	OLECHAR* buf = Alloc(len + 3); 	// Space for length, data, terminator.
 		// Note: this allocates 2 * (len + 3) bytes if sizeof(OLECHAR) == 2
 
