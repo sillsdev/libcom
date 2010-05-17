@@ -25,19 +25,23 @@
 # http://www.gnu.org/licenses/lgpl.html
 # 
 
+PACKAGES = mono-2 uuid
+
 LIBRARIES = ../..
 
-CPPFLAGS = -MMD $(shell icu-config --cppflags) -I../include -I../../COM/include -I../../COM/src -I../../Win32Base/include \
-	-I../../Win32More/include $(shell pkg-config --cflags mono-2)
-CXXFLAGS = -Wall -g -O0 -fPIC -fvisibility=hidden -Werror
+CPPFLAGS = -MMD \
+	-I$(LIBRARIES)/COM/include -I$(LIBRARIES)/COM/src \
+	-I../../Win32Base/include \
+	-I../../Win32More/include \
+	$(shell pkg-config --cflags $(PACKAGES))
 
-PACKAGES = mono uuid
+CXXFLAGS = -g -O0 -Werror -Wall -fPIC -fvisibility=hidden
 
-LDFLAGS = 	$(shell pkg-config --libs $(PACKAGES)) \
-			-L$(LIBRARIES)/Win32More/src/build$(ARCH) -lWin32More \
-			-L$(LIBRARIES)/COM/build$(ARCH)/src/.libs -lcom \
-			-L$(LIBRARIES)/Win32Base/src/build$(ARCH) -lWin32Base \
-			$(shell icu-config --ldflags) 
+LDFLAGS = \
+	-L$(LIBRARIES)/COM/build$(ARCH)/src/.libs -lcom \
+	-L$(LIBRARIES)/Win32Base/src/build$(ARCH) -lWin32Base \
+	-L$(LIBRARIES)/Win32More/src/build$(ARCH) -lWin32More \
+	$(shell pkg-config --libs $(PACKAGES))
 
 ARCH = $(shell uname -m)
 BUILD_DIR = build$(ARCH)

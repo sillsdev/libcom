@@ -31,6 +31,15 @@
 
 #include <map>
 #include <string>
+#include <algorithm>
 using std::string;
+
+// OLECHAR overload of wcslen
+inline size_t wcslen(const OLECHAR* s)
+{
+	// Point to the top of the virtual address space
+	const OLECHAR* no_end = (const OLECHAR*)0 - 1;
+	return std::find(s, no_end, 0) - s;
+}
 
 #endif // COMSupportInternals_h

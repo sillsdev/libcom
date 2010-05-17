@@ -28,6 +28,7 @@
 #include "BasicTypes.h"
 #include "COM.h"
 #include "WinError.h"
+#include "COMSupportInternals.h"
 #include <vector>
 #include <unicode/ustring.h>
 
@@ -48,7 +49,8 @@ HRESULT WINAPI CLSIDFromString(LPCOLESTR inWideString, LPCLSID outClassID)
 	if (!inWideString || !outClassID)
 		return E_INVALIDARG;
 
-	std::vector<char> text(inWideString, inWideString + u_strlen(inWideString) + 1);
+	// Convert from wide to narrow string
+	std::vector<char> text(inWideString, inWideString + wcslen(inWideString) + 1);
 	try
 	{
 		GUID clsid(&text[0]);

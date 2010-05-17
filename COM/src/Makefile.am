@@ -50,15 +50,13 @@ EXTRA_DIST = \
 # set the include path found by configure
 INCLUDES = \
 	$(all_includes) \
-	-I$(top_srcdir)/include \
-	$(shell icu-config --cppflags) 
+	-I$(top_srcdir)/include
 
 # the library search path.
 libcom_la_LDFLAGS = \
 	$(all_libraries) \
 	-luuid \
-	-ldl \
-	$(shell icu-config --ldflags) 
+	-ldl
 
 install-exec-hook:
 	cd $(DESTDIR)/$(libdir) && ln -sf libcom.so ole32.dll

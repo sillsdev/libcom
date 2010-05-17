@@ -27,6 +27,7 @@
 
 #include "COM.h"
 #include "WinError.h"
+#include "COMSupportInternals.h"
 
 #include <uuid/uuid.h>
 #include <arpa/inet.h>	// For htonl etc.
@@ -188,9 +189,7 @@ BSTR SysAllocStringByteLen(LPCSTR psz, UINT len)
 
 BSTR SysAllocString(const OLECHAR *sz) // Zero-terminated
 {
-	const OLECHAR* end = std::find(sz, sz + 99999, 0);
-	
-	return SysAllocStringLen(sz, end - sz);
+	return SysAllocStringLen(sz, wcslen(sz));
 }
 
 void SysFreeString(BSTR bstr)
