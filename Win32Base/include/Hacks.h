@@ -458,12 +458,12 @@ inline void OutputDebugStr(const OLECHAR* str)
 #define strcat_s(DST, NUM, SRC) strcat(DST, SRC)
 #define strncat_s(DST, NUM, SRC, CNT) strncat(DST, SRC, CNT)
 
-inline int wcscmp(const UChar* s1, const UChar* s2)
+inline int wcscmp(const OLECHAR* s1, const OLECHAR* s2)
 {
 	return u_strcmp(s1, s2);
 }
 
-inline int wcsncmp(const UChar* s1, const UChar* s2, size_t n)
+inline int wcsncmp(const OLECHAR* s1, const OLECHAR* s2, size_t n)
 {
 	return u_strncmp(s1, s2, n);
 }

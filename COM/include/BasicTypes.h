@@ -29,7 +29,6 @@
 #define _BASICTYPES_H_
 
 #include <cstddef>
-#include <unicode/utypes.h>
 #include <stdint.h>
 
 // Compiler features
@@ -114,8 +113,8 @@ __DECLARE_POINTER_TYPES(BOOL)
 
 // Wide characters - 16-bit
 
-typedef UChar				OLECHAR;
-typedef UChar				WCHAR;
+typedef uint16_t			OLECHAR;
+typedef OLECHAR				WCHAR;
 typedef wchar_t				TCHAR; // Assume we always want Unicode
 
 typedef OLECHAR*			BSTR;

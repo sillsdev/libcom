@@ -255,10 +255,10 @@ HRESULT Wall::readWallBSTR(BSTR* text) {
 	
 	
 	/*
-	UChar* foo;	
+	OLECHAR* foo;	
 	
 	// TODO allocate memory for foo the right way. malloc surely isn't the "right way".
-	foo = static_cast<UChar*>(malloc(contents.length()*2+2));
+	foo = static_cast<OLECHAR*>(malloc(contents.length()*2+2));
 	if (NULL == foo)
 		exit(1);
 	foo[contents.length()] = 0;

@@ -30,7 +30,6 @@
 #include "WinError.h"
 #include "COMSupportInternals.h"
 #include <vector>
-#include <unicode/ustring.h>
 
 #define DLLEXPORT // Define properly if ever needed
 
