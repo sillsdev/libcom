@@ -31,7 +31,7 @@ export LD_LIBRARY_PATH := ../$(BUILD_DIR)/src/.libs:$(LD_LIBRARY_PATH)
 
 CXXFLAGS ?= -g -O0
 CXXFLAGS += -Wall -Wextra -Werror -MMD
-CPPFLAGS += -I../include
+CPPFLAGS += -I../include -I../src
 LDFLAGS  += -L../$(BUILD_DIR)/src/.libs -lcom
 LDLIBS = -lboost_unit_test_framework
 

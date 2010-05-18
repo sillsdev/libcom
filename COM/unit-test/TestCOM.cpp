@@ -27,6 +27,7 @@
  */
 
 #include "COM.h"
+#include "COMSupportInternals.h"
 
 #include <vector>
 #include <algorithm>
@@ -102,4 +103,15 @@ BOOST_AUTO_TEST_CASE( test_StringFromGUID2 )
 	output = initial;
 	BOOST_CHECK_EQUAL( StringFromGUID2(guid, &output[0], output.size()), NCHARS+1 );
 	BOOST_CHECK_EQUAL( output, expected );
+}
+
+BOOST_AUTO_TEST_CASE( test_wcslen_OLECHAR )
+{
+	static const size_t sizes[] = { 0, 1, 2, 5, 10, 100, 1000, 10000, 0 };
+	for (const size_t* pSize = sizes; const size_t NCHARS = *pSize; ++pSize)
+	{
+		std::vector<OLECHAR> string('a', NCHARS);
+		string.push_back(0);
+		BOOST_CHECK_EQUAL( wcslen(&string[0]), NCHARS );
+	}
 }
