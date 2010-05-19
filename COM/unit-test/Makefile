@@ -44,8 +44,14 @@ $(BUILD_DIR)/%: %.cpp
 	@mkdir -p $(@D)
 	$(LINK.cc) -o $@ $< $(LDLIBS)
 
+GDB ?= # Use make check GDB="gdb --args" to debug tests
+TESTFLAGS ?= --report_level=short
+
 check: all
-	for P in $(PROGS); do $$P; done
+	@for P in $(PROGS); do \
+		echo $(GDB) "$$P" $(TESTFLAGS); \
+		$(GDB) "$$P" $(TESTFLAGS); \
+	done
 
 clean:
 	$(RM) -rf $(BUILD_DIR)
