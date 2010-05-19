@@ -51,6 +51,20 @@ namespace std
 	}
 }
 
+// Helper functions for iterating C-style arrays
+
+template<class T, size_t N>
+inline const T* begin(const T (&array)[N])
+{
+	return &array[0];
+}
+
+template<class T, size_t N>
+inline const T* end(const T (&array)[N])
+{
+	return &array[N];
+}
+
 BOOST_AUTO_TEST_CASE( test_StringFromGUID2 )
 {
 	// Params to be passed
@@ -107,11 +121,13 @@ BOOST_AUTO_TEST_CASE( test_StringFromGUID2 )
 
 BOOST_AUTO_TEST_CASE( test_wcslen_OLECHAR )
 {
-	static const size_t sizes[] = { 0, 1, 2, 5, 10, 100, 1000, 10000, 0 };
-	for (const size_t* pSize = sizes; const size_t NCHARS = *pSize; ++pSize)
+	static const size_t sizes[] = { 0, 1, 2, 5, 10, 100, 1000, 10000 };
+
+	for (const size_t* it = begin(sizes); it != end(sizes); ++it)
 	{
-		std::vector<OLECHAR> string('a', NCHARS);
+		const size_t nchars = *it;
+		std::vector<OLECHAR> string(nchars, 'a');
 		string.push_back(0);
-		BOOST_CHECK_EQUAL( wcslen(&string[0]), NCHARS );
+		BOOST_CHECK_EQUAL( wcslen(&string[0]), nchars );
 	}
 }
