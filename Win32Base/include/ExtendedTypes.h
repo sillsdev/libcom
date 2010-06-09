@@ -145,16 +145,4 @@ typedef char	CCHAR;
 typedef DWORD	LCID;         
 typedef WORD	LANGID;      
 
-// Begin UNIXODBC block
-// This could probably be simpler.
-#define ALLREADY_HAVE_WINDOWS_TYPE
-typedef int SDWORD;
-typedef signed short RETCODE;
-typedef void* SQLHWND;
-#define SQL_API
-typedef signed char SCHAR;
-typedef SCHAR SQLSCHAR;
-#include <sqltypes.h>
-// End UNIXODBC block
-
 #endif // ExtendedTypes_h
