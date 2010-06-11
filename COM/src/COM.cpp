@@ -220,11 +220,15 @@ int SysReAllocStringLen(BSTR* pbstr, const OLECHAR* pch, unsigned int cch)
 
 UINT SysStringLen(BSTR bstr)
 {
+	if (bstr == NULL)
+		return 0;
+
 	return SysStringByteLen(bstr) / sizeof(OLECHAR);
 }
 
 UINT SysStringByteLen(BSTR bstr)
 {
+	assert(bstr != NULL);
 	return *(UINT32*)(bstr - 2);
 }
 
