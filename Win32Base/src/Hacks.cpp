@@ -126,11 +126,94 @@ int MultiByteToWideChar(int codePage, int flags,
 	return spaceRequiredForData;
 }
 
-bool IsBadStringPtrW(const OLECHAR*, unsigned long) { return false; }
-bool IsBadStringPtrA(const char*, unsigned long) { return false; }
-bool IsBadReadPtr(const void*, unsigned long) { return false; }
-bool IsBadWritePtr(const void*, unsigned long) { return false; }
-bool IsBadCodePtr(const void*) { return false; }
+#include <setjmp.h>
+#include <signal.h>
+
+static bool g_bPtrTestInstalled;
+static jmp_buf g_PtrTestJmpBuf;
+
+// signal handler to catch seg faults
+// returns to the setjmp position.
+void __cdecl PtrTestHandler(int nSig)
+{
+	if (g_bPtrTestInstalled)
+		longjmp(g_PtrTestJmpBuf, 1);
+}
+
+// Attempt to read every byte in the lp array.
+// If seg fault return true
+// else return false.
+bool __IsBadReadPtr(const void* lp, UINT cb)
+{
+	if (!cb)
+		return false;
+	if (!lp)
+		return true;
+
+	UINT i;
+	BYTE b1;
+	bool bRet = false;
+	void (__cdecl* pfnPrevHandler)(int);
+	g_bPtrTestInstalled	= true;
+	if (setjmp(g_PtrTestJmpBuf))
+	{
+		bRet = true;
+		goto Ret;
+	}
+	pfnPrevHandler = signal(SIGSEGV, PtrTestHandler);
+
+	for (i = 0; i < cb; i++)
+		b1 = ((BYTE*)lp)[i];
+Ret:
+	g_bPtrTestInstalled	= false;
+	signal(SIGSEGV, pfnPrevHandler);
+
+	return bRet;
+}
+
+// return true if lp is not valid for reading.
+bool __IsBadCodePtr(const void* lp)
+{
+	return __IsBadReadPtr(lp, 1);
+}
+
+// attempt to |= 0 every byte in lp array
+// if seg fault return true
+// else return false.
+bool __IsBadWritePtr(const void *lp, UINT cb)
+{
+	if (!cb)
+		return false;
+	if (!lp)
+		return true;
+
+	UINT i;
+	bool bRet = false;
+	void (__cdecl* pfnPrevHandler)(int);
+	g_bPtrTestInstalled	= true;
+	if (setjmp(g_PtrTestJmpBuf))
+	{
+		bRet = true;
+		goto Ret;
+	}
+	pfnPrevHandler = signal(SIGSEGV, PtrTestHandler);
+
+	for (i = 0; i < cb; i++)
+		((BYTE*)lp)[i] |= 0;
+Ret:
+	g_bPtrTestInstalled	= false;
+	signal(SIGSEGV, pfnPrevHandler);
+
+	return bRet;
+}
+
+bool IsBadStringPtrW(const OLECHAR* ptr, unsigned long len) { return false; }
+bool IsBadStringPtrA(const char* ptr, unsigned long len ) { return false; }
+bool IsBadReadPtr(const void* ptr, unsigned long len) { return __IsBadReadPtr(ptr, len); }
+bool IsBadWritePtr(const void* ptr, unsigned long len) { return __IsBadWritePtr(ptr,len); }
+bool IsBadCodePtr(const void* ptr) { return __IsBadCodePtr(ptr); }
+
+
 
 char* _itoa_s(int value, char* buffer, size_t sizeInCharacters, int radix)
 {
