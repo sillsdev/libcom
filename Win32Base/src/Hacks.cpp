@@ -126,11 +126,16 @@ int MultiByteToWideChar(int codePage, int flags,
 	return spaceRequiredForData;
 }
 
+static bool g_ptrChecking = getenv("DEBUG_ENABLE_PTR_VALIDATION") != NULL;
+
 // Attempt to read every byte in the lp array.
 // will seg fault if bad.
 // catching segv with signal interferes with mono
 bool __IsBadReadPtr(const void* lp, UINT cb)
 {
+	if (!g_ptrChecking)
+		return false;
+
 	if (!cb)
 		return false;
 	if (!lp)
@@ -148,6 +153,9 @@ bool __IsBadReadPtr(const void* lp, UINT cb)
 // return true if lp is not valid for reading.
 bool __IsBadCodePtr(const void* lp)
 {
+	if (!g_ptrChecking)
+		return false;
+
 	return __IsBadReadPtr(lp, 1);
 }
 
@@ -156,6 +164,9 @@ bool __IsBadCodePtr(const void* lp)
 // catching segv with signal interferes with mono
 bool __IsBadWritePtr(const void *lp, UINT cb)
 {
+	if (!g_ptrChecking)
+		return false;
+
 	if (!cb)
 		return false;
 	if (!lp)
