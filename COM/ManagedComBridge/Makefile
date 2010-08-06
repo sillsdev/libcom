@@ -25,7 +25,7 @@
 # http://www.gnu.org/licenses/lgpl.html
 # 
 
-PACKAGES = mono-2 uuid
+PACKAGES = mono-2 uuid glib-2.0
 
 LIBRARIES = ../..
 
