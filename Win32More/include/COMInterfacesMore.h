@@ -241,9 +241,6 @@ public:
 	virtual HRESULT STDMETHODCALLTYPE get_hPal( 
 	/* [out] */ OLE_HANDLE *phPal) = 0;
 
-	virtual HRESULT STDMETHODCALLTYPE set_hPal( 
-	/* [in] */ OLE_HANDLE hPal) = 0;
-
 	virtual HRESULT STDMETHODCALLTYPE get_Type( 
 		/* [out] */ INT16 *pType) = 0;
 
@@ -264,6 +261,9 @@ public:
 		/* [in] */ OLE_XSIZE_HIMETRIC cxSrc,
 		/* [in] */ OLE_YSIZE_HIMETRIC cySrc,
 		/* [in] */ LPCRECT pRcWBounds) = 0;
+
+	virtual HRESULT STDMETHODCALLTYPE put_hPal( 
+	/* [in] */ OLE_HANDLE hPal) = 0;
 	
 	virtual HRESULT STDMETHODCALLTYPE get_CurDC( 
 		/* [out] */ HDC *phDC) = 0;
