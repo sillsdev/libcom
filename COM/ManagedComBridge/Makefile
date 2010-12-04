@@ -1,7 +1,5 @@
 #
-#	$Id$
-#
-#	Makefile
+#	Makefile for ManagedComBridge
 #
 #	Tom Hindle - 2009-01-15
 #
@@ -30,43 +28,37 @@ PACKAGES = mono-2 uuid glib-2.0
 LIBRARIES = ../..
 
 CPPFLAGS = -MMD \
-	-I$(LIBRARIES)/COM/include -I$(LIBRARIES)/COM/src \
-	-I../../Win32Base/include \
-	-I../../Win32More/include \
+	-I../include -I../src \
+	-I$(LIBRARIES)/Win32Base/include \
+	-I$(LIBRARIES)/Win32More/include \
 	$(shell pkg-config --cflags $(PACKAGES))
 
 CXXFLAGS = -g -O0 -Werror -Wall -Wextra -fPIC -fvisibility=hidden
 
 LDLIBS = \
-	-L$(LIBRARIES)/COM/build$(ARCH)/src/.libs -lcom \
+	-L../build$(ARCH)/src/.libs -lcom \
 	-L$(LIBRARIES)/Win32Base/src/build$(ARCH) -lWin32Base \
 	-L$(LIBRARIES)/Win32More/src/build$(ARCH) -lWin32More \
 	$(shell pkg-config --libs $(PACKAGES))
 
 ARCH = $(shell uname -m)
 BUILD_DIR = build$(ARCH)
-VPATH = $(BUILD_DIR)
 
-OBJS = \
-	ManagedComBridge.o \
-
-SRCS = $(OBJS:%.o=%.cpp)
+MODS = ManagedComBridge.o
+OBJS = $(MODS:%=$(BUILD_DIR)/%)
 DEPS = $(OBJS:%.o=%.d)
 
-all: libManagedComBridge.so
+all: $(BUILD_DIR)/libManagedComBridge.so
 
-libManagedComBridge.so: setup $(addprefix $(BUILD_DIR)/, $(OBJS))
-	$(LINK.cc) -shared -o $(BUILD_DIR)/$@ $(addprefix $(BUILD_DIR)/, $(OBJS)) $(LDLIBS)
-
-setup:
-	-mkdir -p $(BUILD_DIR)
-
-clean:
-	$(RM) $(BUILD_DIR)/libManagedComBridge.so $(BUILD_DIR)/$@ $(addprefix $(BUILD_DIR)/, $(OBJS)) \
-		$(BUILD_DIR)/$@ $(addprefix $(BUILD_DIR)/, $(DEPS))
-	-rm -rf $(BUILD_DIR)
-
--include $(addprefix $(BUILD_DIR)/, $(DEPS))
+$(BUILD_DIR)/libManagedComBridge.so: $(OBJS)
+	@mkdir -p $(@D)
+	$(LINK.cc) -shared -o $@ $^ $(LDLIBS)
 
 $(BUILD_DIR)/%.o: %.cpp
-	$(CC) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
+	@mkdir -p $(@D)
+	$(COMPILE.cc) -o $@ $<
+
+clean:
+	-$(RM) -rf $(BUILD_DIR)
+
+-include $(DEPS)
