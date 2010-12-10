@@ -274,6 +274,9 @@ HRESULT ManagedComBridge::CreateInstance(IUnknown * /*pUnkOuter*/, REFIID riid, 
 		return 1;
 	}
 	
+	// Call c'tor
+	mono_runtime_object_init (comClassInstance);
+
 	////
 	// Get object callable from C++
 	////
