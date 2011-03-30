@@ -176,7 +176,7 @@ BSTR SysAllocStringByteLen(LPCSTR psz, UINT len)
 	{
 	 	*(INT32*)buf = len;	
 		memcpy(buf + 2, psz, len);
-		((char*)(buf + 2))[len] = NULL;
+		((char*)(buf + 2))[len] = 0;
 	}
 
 	return buf + 2;
