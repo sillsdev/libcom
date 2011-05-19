@@ -189,23 +189,23 @@ Jar.dll: $(Jar_dll_SOURCES_NonAM) $(Jar_dll_REFERENCES_NonAM)
 	$(CSC) $(CSC_FLAGS) $(Jar_dll_CSC_FLAGS_NonAM) -out:$@ $(Jar_dll_SOURCES_NonAM) $(Jar_dll_REFERENCES_NonAM:%=-r:%)
 
 IBall_idl.h: raw-midl/IBall_idl.h fix-midl.sh
-	./fix-midl.sh $< >$@
+	$(srcdir)/fix-midl.sh $< >$@
 
 IBakery_idl.h: raw-midl/IBakery_idl.h fix-midl.sh
-	./fix-midl.sh $< >$@
+	$(srcdir)/fix-midl.sh $< >$@
 
 IBall_GUIDs.cpp: IBall_idl.h extract_iids.sh
-	./extract_iids.sh $< >$@
+	$(srcdir)/extract_iids.sh $< >$@
 
 IBakery_GUIDs.cpp: IBakery_idl.h extract_iids.sh
-	./extract_iids.sh $< >$@
+	$(srcdir)/extract_iids.sh $< >$@
 
 IWall_GUIDs.cpp: IWall.h extract_iids.sh
-	./extract_iids.sh $< >$@
+	$(srcdir)/extract_iids.sh $< >$@
 
 # TODO do in a way that isn't a dirty hack with manually removing IBall,Ball GUID definitions from IBag_GUIDs.cpp since IBagLib.idl #includes IBall.idh
 IBag_GUIDs.cpp: IBag.h extract_iids.sh
-	./extract_iids.sh $< >$@
+	$(srcdir)/extract_iids.sh $< >$@
 	TMPFILE="$$(mktemp -t)" && \
 	mv IBag_GUIDs.cpp "$$TMPFILE" && \
 	grep -v -e "__uuidof(IBall)" -e "__uuidof(Ball)" "$$TMPFILE" > IBag_GUIDs.cpp
@@ -214,7 +214,7 @@ IWall.h: IWall.idl fix-midl.sh
 	$(MIDL) "$(REMOTE_WIN32_DEV_HOST)" /I $(midlIncludeDir) /Oicf /env win32 /tlb IWall.tlb /h IWall.h IWall.idl
 	TMPFILE="$$(mktemp -t)" && \
 	mv IWall.h "$$TMPFILE" && \
-	./fix-midl.sh "$$TMPFILE" > IWall.h
+	$(srcdir)/fix-midl.sh "$$TMPFILE" > IWall.h
 
 # IWallInterop.dll actually depends on IWall.tlb, not IWall.h
 IWallInterop.dll: IWall.idl IWall.h
@@ -227,7 +227,7 @@ IBag.h: IBagLib_.idl fix-midl.sh
 	mv IBagLib_.h IBag.h
 	TMPFILE="$$(mktemp -t)" && \
 	mv IBag.h "$$TMPFILE" && \
-	./fix-midl.sh "$$TMPFILE" > IBag.h
+	$(srcdir)/fix-midl.sh "$$TMPFILE" > IBag.h
 
 # IBagInterop.dll actually depends on IBag.tlb, not IBag.h
 IBagInterop.dll: IBagLib_.idl IBag.h
@@ -238,7 +238,7 @@ IBagLib_.idl: IBagLib.idl IBag.idh IBall.idh
 
 # Auto-generate Jar_GUIDs.cpp when the script handles it properly
 #Jar_GUIDs.cpp: jar.tlh extract_iids.sh
-#	./extract_iids.sh $< >$@
+#	$(srcdir)/extract_iids.sh $< >$@
 
 Ball.lo: IBall_idl.h
 Bakery.lo: IBakery_idl.h
