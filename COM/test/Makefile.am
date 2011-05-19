@@ -33,7 +33,7 @@ FieldWorksObjDebugDir = $(FieldWorksRootDir)/Obj/Debug
 Win32BaseDir = ../../Win32Base
 Win32MoreDir = ../../Win32More
 BUILD_ROOT = $(FieldWorksRootDir)
-include $(BUILD_ROOT)/Bld/_user.mak.lnx
+-include $(BUILD_ROOT)/Bld/_user.mak.lnx
 else
 AM_CPPFLAGS = -DNO_FW
 endif
