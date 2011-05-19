@@ -162,14 +162,14 @@ HRESULT __stdcall CFactory::QueryInterface(const IID& interfaceid, void** object
 /**
  * CFactory::AddRef
  */
-ULONG __stdcall CFactory::AddRef() {
+UINT32 __stdcall CFactory::AddRef() {
 	return InterlockedIncrement(&m_referenceCount);
 }
 
 /** 
  * CFactory::Release
  */
-ULONG __stdcall CFactory::Release() {
+UINT32 __stdcall CFactory::Release() {
 	if (0 == InterlockedDecrement(&m_referenceCount)) {
 		delete this; // This might cause trouble like in the past.
 		return 0;
@@ -289,7 +289,7 @@ HRESULT __stdcall Ball::QueryInterface(const IID& interfaceid, void** objectInte
  * 
  * Increment the refence count on Ball.
  */
-ULONG __stdcall Ball::AddRef() {
+UINT32 __stdcall Ball::AddRef() {
 	return InterlockedIncrement(&m_referenceCount);
 }
 
@@ -299,7 +299,7 @@ ULONG __stdcall Ball::AddRef() {
  * Decrement the reference count on Ball. Ball will be destroyed if 
  * the reference count drops to zero.
  */
-ULONG __stdcall Ball::Release() {
+UINT32 __stdcall Ball::Release() {
 	if (0 == InterlockedDecrement(&m_referenceCount))
 	{
 		delete this;

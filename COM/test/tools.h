@@ -31,6 +31,8 @@
 #ifndef tools_h
 #define tools_h
 
+#include <stdio.h>
+
 #define db printf("%s:%d\n",__FILE__,__LINE__)
 #define dbm(message) printf("%s:%d %s\n",__FILE__,__LINE__,message)
 #define dbn(message) printf("%s:%d %s",__FILE__,__LINE__,message)

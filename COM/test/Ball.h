@@ -42,8 +42,8 @@ public:
 
 	// IUnknown functions
 	virtual HRESULT __stdcall QueryInterface(const IID& interfaceid, void** objectInterface);
-	virtual ULONG __stdcall AddRef();
-	virtual ULONG __stdcall Release();
+	virtual UINT32 __stdcall AddRef();
+	virtual UINT32 __stdcall Release();
 	
 	// Bounce this ball
 	virtual HRESULT bounce(void);
@@ -78,14 +78,14 @@ class CFactory : public IClassFactory
 public:
 	// IUnknown functions
 	virtual HRESULT __stdcall QueryInterface(const IID& interfaceid, void** objectInterface);
-	virtual ULONG __stdcall AddRef();
-	virtual ULONG __stdcall Release();
+	virtual UINT32 __stdcall AddRef();
+	virtual UINT32 __stdcall Release();
 
 	// IClassFactory functions
 	virtual HRESULT __stdcall CreateInstance(IUnknown* outerAggregateIUnknown, const IID& interfaceid, void** objectInterface);
 	virtual HRESULT __stdcall LockServer(BOOL shouldLock);
 
-	CFactory() : m_referenceCount((LONG)1) {
+	CFactory() : m_referenceCount(1) {
 		// RegisterFactory(CLSID_Ball, static_cast<IClassFactory*>(this));
 	}
 

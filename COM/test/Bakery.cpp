@@ -161,14 +161,14 @@ HRESULT __stdcall CFactory::QueryInterface(const IID& interfaceid, void** object
 /**
  * CFactory::AddRef
  */
-ULONG __stdcall CFactory::AddRef() {
+UINT32 __stdcall CFactory::AddRef() {
 	return InterlockedIncrement(&m_referenceCount);
 }
 
 /** 
  * CFactory::Release
  */
-ULONG __stdcall CFactory::Release() {
+UINT32 __stdcall CFactory::Release() {
 	if (0 == InterlockedDecrement(&m_referenceCount)) {
 		delete this; // TODO This might cause trouble like in the past.
 		return 0;
@@ -300,7 +300,7 @@ HRESULT __stdcall Bakery::QueryInterface(const IID& interfaceid, void** objectIn
  * 
  * Increment the refence count on Bakery.
  */
-ULONG __stdcall Bakery::AddRef() {
+UINT32 __stdcall Bakery::AddRef() {
 	return InterlockedIncrement(&m_referenceCount);
 }
 
@@ -310,7 +310,7 @@ ULONG __stdcall Bakery::AddRef() {
  * Decrement the reference count on Bakery. Bakery will be destroyed if 
  * the reference count drops to zero.
  */
-ULONG __stdcall Bakery::Release() {
+UINT32 __stdcall Bakery::Release() {
 	if (0 == InterlockedDecrement(&m_referenceCount))
 	{
 		delete this;
