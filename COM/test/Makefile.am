@@ -45,7 +45,7 @@ lib_LTLIBRARIES = ball.la bakery.la wall.la bag.la
 INCLUDES = \
 	$(all_includes) \
 	-I$(top_srcdir)/include \
-	$(shell icu-config --cppflags) 
+	$$(icu-config --cppflags)
 	
 if USE_FW_GENERIC_FACTORY
 INCLUDES += \
@@ -76,7 +76,7 @@ bag_la_LIBADD += \
 endif
 bag_la_LDFLAGS = -module $(all_libraries) \
 	-luuid \
-	$(shell icu-config --ldflags)
+	$$(icu-config --ldflags)
 
 
 wall_la_SOURCES = \
@@ -93,7 +93,7 @@ wall_la_LIBADD += \
 endif
 wall_la_LDFLAGS = -module $(all_libraries) \
 	-luuid \
-	$(shell icu-config --ldflags)
+	$$(icu-config --ldflags)
 
 bakery_la_SOURCES = \
 	Bakery.cpp \
@@ -110,7 +110,7 @@ bakery_la_LIBADD += \
 endif
 bakery_la_LDFLAGS = -module $(all_libraries) \
 	-luuid \
-	$(shell icu-config --ldflags)
+	$$(icu-config --ldflags)
 
 
 ball_la_SOURCES = \
@@ -128,7 +128,7 @@ ball_la_LIBADD += \
 endif
 ball_la_LDFLAGS = -module $(all_libraries) \
 	-luuid \
-	$(shell icu-config --ldflags)
+	$$(icu-config --ldflags)
 
 comtest_SOURCES = CClient.cc
 comtest_LDADD = IBall_GUIDs.o ../src/libcom.la
@@ -136,7 +136,7 @@ comtest_LDFLAGS = \
 	$(all_libraries) \
 	-luuid \
 	-ldl \
-	$(shell icu-config --ldflags)
+	$$(icu-config --ldflags)
 
 EXTRA_DIST = \
 	test.sh \
@@ -206,13 +206,13 @@ IWall_GUIDs.cpp: IWall.h extract_iids.sh
 # TODO do in a way that isn't a dirty hack with manually removing IBall,Ball GUID definitions from IBag_GUIDs.cpp since IBagLib.idl #includes IBall.idh
 IBag_GUIDs.cpp: IBag.h extract_iids.sh
 	./extract_iids.sh $< >$@
-	TMPFILE="$(shell mktemp -t)" && \
+	TMPFILE="$$(mktemp -t)" && \
 	mv IBag_GUIDs.cpp "$$TMPFILE" && \
 	grep -v -e "__uuidof(IBall)" -e "__uuidof(Ball)" "$$TMPFILE" > IBag_GUIDs.cpp
 
 IWall.h: IWall.idl fix-midl.sh
 	$(MIDL) "$(REMOTE_WIN32_DEV_HOST)" /I $(midlIncludeDir) /Oicf /env win32 /tlb IWall.tlb /h IWall.h IWall.idl
-	TMPFILE="$(shell mktemp -t)" && \
+	TMPFILE="$$(mktemp -t)" && \
 	mv IWall.h "$$TMPFILE" && \
 	./fix-midl.sh "$$TMPFILE" > IWall.h
 
@@ -225,7 +225,7 @@ IBag.h: IBagLib_.idl fix-midl.sh
 	$(MIDL) "$(REMOTE_WIN32_DEV_HOST)" /I $(midlIncludeDir) /Oicf /env win32 /tlb IBagLib_.tlb /h IBagLib_.h IBagLib_.idl
 	mv IBagLib_.tlb IBag.tlb
 	mv IBagLib_.h IBag.h
-	TMPFILE="$(shell mktemp -t)" && \
+	TMPFILE="$$(mktemp -t)" && \
 	mv IBag.h "$$TMPFILE" && \
 	./fix-midl.sh "$$TMPFILE" > IBag.h
 
