@@ -36,6 +36,11 @@ AC_LANG_CPLUSPLUS
 AC_PROG_CXX
 AM_PROG_LIBTOOL
 
-AM_CONDITIONAL([USE_FW_GENERIC_FACTORY], [true])
+AC_ARG_WITH([fw-generic-factory],
+  [AS_HELP_STRING([--with-fw-generic-factory @<:@default=yes@:>@],
+    [Use FieldWorks GenericFactory class in testing])],
+  [],
+  [with_fw_generic_factory=yes])
+AM_CONDITIONAL([USE_FW_GENERIC_FACTORY], [test x$with_fw_generic_factory != xno])
 
 AC_OUTPUT(Makefile src/Makefile test/Makefile)
