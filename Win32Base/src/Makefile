@@ -30,7 +30,7 @@ CPPFLAGS = \
 	$(shell icu-config --cppflags) \
 	-I../include \
 
-CXXFLAGS = -Wall -g -O0 -fPIC -fvisibility=hidden -Werror
+CXXFLAGS = -Wall -g -O0 -fPIC -fvisibility=hidden -Werror -Wno-error=unused-but-set-variable
 
 ARFLAGS = -crs
 
