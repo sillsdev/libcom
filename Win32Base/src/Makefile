@@ -25,12 +25,19 @@
 # http://www.gnu.org/licenses/lgpl.html
 # 
 
+# GCC46 is 1 if running GCC >= 4.6, otherwise 0
+GCC46 := $(shell expr `gcc -dumpversion | cut -f1-2 -d.` \>= 4.6)
+
 CPPFLAGS = \
 	-MMD \
 	$(shell icu-config --cppflags) \
 	-I../include \
 
-CXXFLAGS = -Wall -g -O0 -fPIC -fvisibility=hidden -Werror
+CXXFLAGS := -Wall -g -O0 -fPIC -fvisibility=hidden -Werror
+
+ifeq "$(GCC46)" "1"
+CXXFLAGS := $(CXXFLAGS) -Wno-error=unused-but-set-variable
+endif
 
 ARFLAGS = -crs
 
