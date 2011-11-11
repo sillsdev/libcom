@@ -93,6 +93,7 @@ namespace ErrorObjects
 		else
 			return E_NOINTERFACE;
 
+		AddRef();
 		return S_OK;
 	}
 
