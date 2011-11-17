@@ -37,7 +37,7 @@ setup:
 	@mkdir -p $(OBJ_DIR)
 
 $(OBJ_DIR)/RegisterServer: $(OBJ_DIR)/RegisterServer.o
-	$(LINK.cc) -o $@ $^ -ldl
+	$(LINK.cc) -o $@ $^ -ldl -lpthread
 
 $(OBJ_DIR)/RegisterServer.o: RegisterServer.cpp
 	$(COMPILE.cc) $(CXXFLAGS) -o $(OBJ_DIR)/RegisterServer.o RegisterServer.cpp
