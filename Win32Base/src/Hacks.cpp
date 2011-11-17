@@ -142,7 +142,7 @@ bool __IsBadReadPtr(const void* lp, UINT cb)
 		return true;
 
 	UINT i;
-	BYTE b1;
+	volatile BYTE b1 __attribute((unused));
 
 	for (i = 0; i < cb; i++)
 		b1 = ((BYTE*)lp)[i];
