@@ -32,7 +32,7 @@
 #include <ExtendedTypes.h>
 #include <COMInterfaces.h>
 
-class IErrorInfo : public IUnknown
+interface IErrorInfo : public IUnknown
 {
 public:
 	virtual HRESULT STDMETHODCALLTYPE GetGUID(
@@ -54,7 +54,7 @@ public:
 
 #define IID_IErrorInfo __uuidof(IErrorInfo)
 
-class ICreateErrorInfo : public IUnknown
+interface ICreateErrorInfo : public IUnknown
 {
 public:
 	virtual HRESULT STDMETHODCALLTYPE SetGUID(
@@ -76,7 +76,7 @@ public:
 
 #define IID_ICreateErrorInfo __uuidof(ICreateErrorInfo)
 
-class ISupportErrorInfo : public IUnknown
+interface ISupportErrorInfo : public IUnknown
 {
 public:
 	virtual HRESULT STDMETHODCALLTYPE InterfaceSupportsErrorInfo(

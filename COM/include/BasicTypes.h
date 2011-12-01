@@ -162,8 +162,10 @@ typedef unsigned char byte;
 #define STDAPICALLTYPE  __stdcall
 #define STDAPIVCALLTYPE __cdecl
 #define EXTERN_C extern "C"
+#define EXPORT __attribute__ ((visibility("default")))
 
 #define STDAPI EXTERN_C HRESULT STDAPICALLTYPE
+#define STDAPI_IMPL EXTERN_C EXPORT HRESULT STDAPICALLTYPE
 
 // On Windows HRESULT is defined as long. However, Microsoft decided to make 'long' always 
 // 32bit, even on 64bit Windows. Since long is 64bit on 64-bit Linux we better use 'int' instead.

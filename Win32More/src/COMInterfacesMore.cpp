@@ -34,7 +34,7 @@
 // Define GUIDs
 
 #define DEFINE_INTERFACE_GUID(N, G)	\
-	template<> const GUID __uuidof(N)(G)
+	template<> const GUID EXPORT __uuidof(N)(G)
 
 DEFINE_INTERFACE_GUID(IErrorInfo, "1CF2B120-547D-101B-8E65-08002B2BD119");
 DEFINE_INTERFACE_GUID(ICreateErrorInfo, "22F03340-547D-101B-8E65-08002B2BD119");
@@ -51,44 +51,38 @@ DEFINE_INTERFACE_GUID(ITypeInfo, "00020401-0000-0000-C000-000000000046");
 
 #undef DEFINE_INTERFACE_GUID
 
-// Globel Thread local storage object
-ThreadLocalStorage g_ErrorInfo;
+// Global Thread local storage object
+__thread IErrorInfo* g_ErrorInfo;
 
-/* Store the passed IErrorInfo* into Thrad local storage g_ErrorInfo
-   if IerrorInfo* not null increment ref count.
-   If g_ErrorInfo already contains a non null value decrement existing 
+/* Store the passed IErrorInfo* into Thread local storage g_ErrorInfo.
+   If IErrorInfo* not NULL increment ref count by calling QueryInterface.
+   If g_ErrorInfo already contains a non-null value decrement existing
    values ref count.
  */
-STDAPI SetErrorInfo(UINT32 dwReserved, IErrorInfo* perrinfo)
+STDAPI_IMPL SetErrorInfo(UINT32 dwReserved, IErrorInfo* perrinfo)
 {
-	IErrorInfo* pErrorInfoOld = NULL;
-	
-	// g_ErrorInfo stores void** ptr value hence need to reinterpret_cast.
-	void **pvoidTemp = reinterpret_cast<void **>(&pErrorInfoOld);
-	
-	if (g_ErrorInfo.Get(pvoidTemp) && pErrorInfoOld != NULL)
-	{
-		pErrorInfoOld->Release();
-	}
+	if (g_ErrorInfo != NULL)
+		g_ErrorInfo->Release();
 
 	if (perrinfo != NULL)
-	{
-		perrinfo->AddRef();
-	}
-	
-	return (g_ErrorInfo.Set(perrinfo)?S_OK:S_FALSE);		
+		perrinfo->QueryInterface(IID_IErrorInfo, (void**)&g_ErrorInfo);
+	else
+		g_ErrorInfo = NULL;
+
+	return S_OK;
 }
 
-STDAPI GetErrorInfo(UINT32 dwReserved, IErrorInfo** pperrinfo)
-{	
-	// g_ErrorInfo stores void** ptr value hence need to reinterpret_cast.
-	return (g_ErrorInfo.Get(reinterpret_cast<void**>(pperrinfo))?S_OK:S_FALSE);	
+STDAPI_IMPL GetErrorInfo(UINT32 dwReserved, IErrorInfo** pperrinfo)
+{
+	*pperrinfo = g_ErrorInfo;
+	g_ErrorInfo = NULL;
+	return *pperrinfo != NULL ? S_OK : S_FALSE;
 }
 
-STDAPI CreateErrorInfo(ICreateErrorInfo** pperrinfo)
+STDAPI_IMPL CreateErrorInfo(ICreateErrorInfo** pperrinfo)
 {
 	*pperrinfo = new ErrorObjects::ErrorInfo();
-	return *pperrinfo?S_OK:E_OUTOFMEMORY;
+	return *pperrinfo ? S_OK : E_OUTOFMEMORY;
 }
 
 

@@ -26,7 +26,7 @@
 # 
 
 CPPFLAGS = -MMD $(shell icu-config --cppflags) -I../include -I../../COM/include -I../../Win32Base/include
-CXXFLAGS = -Wall -g -O0 -fPIC -fvisibility=hidden -Werror
+CXXFLAGS = -Wall -g -O0 -fPIC -fvisibility=hidden -Werror -ftls-model=global-dynamic -fstack-check
 
 ARFLAGS = -crs
 
