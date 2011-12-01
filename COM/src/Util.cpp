@@ -31,6 +31,9 @@
 
 #include <cwchar>
 #include <vector>
+#include <stdlib.h>
+#include <string.h>
+#include <execinfo.h>
 #include <BasicTypes.h>
 
 // TODO not a hack
@@ -42,8 +45,32 @@ static wchar_t module_name[] = L"Unknown Module";
 
 unsigned int GetModuleFileName(HMODULE, wchar_t* buf, unsigned int max)
 {
-	std::wcsncpy(buf, module_name, max);
-	buf[max - 1] = 0;
+	void * frames[2];
+	int size = backtrace(frames, 2);
+
+	char ** symbols = backtrace_symbols(frames, size);
+	if (size > 1)
+	{
+		// Get name of module (executing binary) from stack. We skip the first frame because
+		// that's this current method (and thus libcom).
+		char* name = symbols[1];
+		char* p = strchr(name, '(');
+		if (p)
+			*p = '\0';
+		p = strrchr(name, '/');
+		if (p)
+			name = p + 1;
+		size_t n = std::min(strlen(name), (size_t)max - 1);
+		std::copy(name, name + n, buf);
+		buf[n] = 0;
+	}
+	else
+	{
+		std::wcsncpy(buf, module_name, max - 1);
+		buf[max - 1] = 0;
+	}
+	free (symbols);
+
 	return std::wcslen(buf);
 }
 
