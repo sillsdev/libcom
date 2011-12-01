@@ -24,6 +24,11 @@ public:
 	// virual destructor
 	virtual ~ErrorInfo();
 
+	// IUnknown Methods
+	virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void ** ppv);
+	virtual UINT32  STDMETHODCALLTYPE AddRef();
+	virtual UINT32  STDMETHODCALLTYPE Release();
+
 	// IErrorInfo methods
 	virtual HRESULT STDMETHODCALLTYPE GetGUID(
 		/* [out] */ GUID *pGUID);
@@ -55,12 +60,6 @@ public:
 		
 	virtual HRESULT STDMETHODCALLTYPE SetHelpContext(
 		/* [in] */ DWORD dwHelpContext);
-
-	// IUknown Methods
-        virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void ** ppv);
-        virtual UINT32   STDMETHODCALLTYPE AddRef();
-        virtual UINT32   STDMETHODCALLTYPE Release();
-
 	
 protected:
 

@@ -2,6 +2,13 @@
 
 #include<assert.h>
 
+#define BEGIN_COM_METHOD \
+	try { \
+
+#define END_COM_METHOD \
+	} catch (...) { return E_UNEXPECTED; }\
+	return S_OK; \
+
 namespace ErrorObjects
 {
 	///////////////////////////////////////////////////////////////////////////////
@@ -15,70 +22,87 @@ namespace ErrorObjects
 
 	ErrorInfo::~ErrorInfo()
 	{
+		::SysFreeString(m_BstrSource);
+		::SysFreeString(m_BstrDescript);
+		::SysFreeString(m_BstrHelpFile);
 	}
 
 	HRESULT STDMETHODCALLTYPE ErrorInfo::GetGUID(/* [out] */ GUID *pGUID)
 	{
+		BEGIN_COM_METHOD
 		*pGUID = m_GUID;
-		return S_OK;
+		END_COM_METHOD
 	}
 
 	HRESULT STDMETHODCALLTYPE ErrorInfo::GetSource(/* [out] */ BSTR *pBstrSource)
 	{
-		*pBstrSource = m_BstrSource;
-		return S_OK;
+		BEGIN_COM_METHOD
+		*pBstrSource = ::SysAllocString(m_BstrSource);
+		END_COM_METHOD
 	}
 
 	HRESULT STDMETHODCALLTYPE ErrorInfo::GetDescription(/* [out] */ BSTR *pBstrDescription)
 	{
-		*pBstrDescription = m_BstrDescript;
-		return S_OK;
+		BEGIN_COM_METHOD
+		*pBstrDescription = ::SysAllocString(m_BstrDescript);
+		END_COM_METHOD
 	}
 
 	HRESULT STDMETHODCALLTYPE ErrorInfo::GetHelpFile(/* [out] */ BSTR *pBstrHelpFile)
 	{
-		*pBstrHelpFile = m_BstrHelpFile;
-		return S_OK;
+		BEGIN_COM_METHOD
+		*pBstrHelpFile = ::SysAllocString(m_BstrHelpFile);
+		END_COM_METHOD
 	}
 
 	HRESULT STDMETHODCALLTYPE ErrorInfo::GetHelpContext(/* [out] */ DWORD *pdwHelpContext)
 	{
+		BEGIN_COM_METHOD
 		*pdwHelpContext = m_dwHelpContext;
-		return S_OK;
+		END_COM_METHOD
 	}
 
 	HRESULT STDMETHODCALLTYPE ErrorInfo::SetGUID(/* [in] */ REFGUID rguid)
 	{
+		BEGIN_COM_METHOD
 		m_GUID = rguid;
-		return S_OK;
+		END_COM_METHOD
 	}
 
 	HRESULT STDMETHODCALLTYPE ErrorInfo::SetSource(/* [in] */ LPOLESTR szSource)
 	{
-		m_BstrSource = szSource;
-		return S_OK;
+		BEGIN_COM_METHOD
+		::SysFreeString(m_BstrSource);
+		m_BstrSource = ::SysAllocString(szSource);
+		END_COM_METHOD
 	}
 
 	HRESULT STDMETHODCALLTYPE ErrorInfo::SetDescription(/* [in] */ LPOLESTR szDescription)
 	{
-		m_BstrDescript = szDescription;
-		return S_OK;
+		BEGIN_COM_METHOD
+		::SysFreeString(m_BstrDescript);
+		m_BstrDescript = ::SysAllocString(szDescription);
+		END_COM_METHOD
 	}
 
 	HRESULT STDMETHODCALLTYPE ErrorInfo::SetHelpFile(/* [in] */ LPOLESTR szHelpFile)
 	{
-		m_BstrHelpFile = szHelpFile;
-		return S_OK;
+		BEGIN_COM_METHOD
+		::SysFreeString(m_BstrHelpFile);
+		m_BstrHelpFile = ::SysAllocString(szHelpFile);
+		END_COM_METHOD
 	}
 
 	HRESULT STDMETHODCALLTYPE ErrorInfo::SetHelpContext(/* [in] */ DWORD dwHelpContext)
 	{
+		BEGIN_COM_METHOD
 		m_dwHelpContext = dwHelpContext;
-		return S_OK;
+		END_COM_METHOD
 	}
 
 	HRESULT STDMETHODCALLTYPE ErrorInfo::QueryInterface(REFIID riid, void ** ppv)
 	{
+		BEGIN_COM_METHOD
 		assert(ppv != NULL);
 		if (!ppv)
 			return E_POINTER;
@@ -86,7 +110,7 @@ namespace ErrorObjects
 		*ppv = NULL;
 		if (riid == IID_IUnknown)
 			*ppv = static_cast<IUnknown *>(static_cast<IErrorInfo *>(this));
-		if (riid == IID_IErrorInfo)
+		else if (riid == IID_IErrorInfo)
 			*ppv = static_cast<IErrorInfo *>(this);
 		else if (riid == IID_ICreateErrorInfo)
 			*ppv = static_cast<ICreateErrorInfo *>(this);
@@ -94,7 +118,7 @@ namespace ErrorObjects
 			return E_NOINTERFACE;
 
 		AddRef();
-		return S_OK;
+		END_COM_METHOD
 	}
 
 	UINT32 STDMETHODCALLTYPE ErrorInfo::AddRef()
