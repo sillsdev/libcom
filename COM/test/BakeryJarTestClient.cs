@@ -48,10 +48,10 @@ public class BakeryJarTestClient {
 		
 		int totalCookiesBaked = bakery.getNumberCookiesBaked();
 		if (11 != totalCookiesBaked) {
-			System.Console.Write("Error: Did not bake correct number of cookies.");
+			System.Console.WriteLine("Error: Did not bake correct number of cookies.");
 			throw new Exception("error"); // TODO right way
 		} else {
-			System.Console.Write("Successfully baked a total of " + totalCookiesBaked + " cookies.");
+			System.Console.WriteLine("Successfully baked a total of " + totalCookiesBaked + " cookies.");
 		}
 	}
 }
