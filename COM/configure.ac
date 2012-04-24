@@ -40,14 +40,14 @@ AC_ARG_WITH([fieldworks],
   [AS_HELP_STRING([--with-fieldworks],
     [Use the FieldWorks GenericFactory class in testing
      (from the already-built FieldWorks source tree in $FWROOT using architecture $FWARCH)
-     @<:@default=yes@:>@])],
+     @<:@default=no@:>@])],
   [],
-  [with_fieldworks=yes])
+  [with_fieldworks=no])
 
 AC_ARG_VAR(FWROOT, [The root of the FieldWorks source tree @<:@default=$top_srcdir/../FieldWorks@:>@])
 AC_ARG_VAR(FWARCH, [The architecture of the FieldWorks source tree @<:@default=$(uname -m)@:>@])
 
-AM_CONDITIONAL([USE_FW_GENERIC_FACTORY], [test "x$with_fieldworks" != xno])
+AM_CONDITIONAL([USE_FW_GENERIC_FACTORY], [test "x$with_fieldworks" = xyes])
 test "${FWROOT+set}" = set || FWROOT='$(top_srcdir)'/../FieldWorks
 test "${FWARCH+set}" = set || FWARCH=$(uname -m)
 
