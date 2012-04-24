@@ -1,7 +1,13 @@
-/buildi686
-/buildx86_64
-/installeri686/
-/installerx86_64/
+*.in~
+.deps/
+buildi686/
+buildx86_64/
+obji686/
+objx86_64/
+bini686/
+binx86_64/
+installeri686/
+installerx86_64/
 /Makefile.in
 /aclocal.m4
 /autom4te.cache/
@@ -15,5 +21,3 @@
 /missing
 /src/Makefile.in
 /test/Makefile.in
-/bini686/
-/binx86_64/
