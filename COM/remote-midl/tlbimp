@@ -33,8 +33,9 @@ if [ $# -lt 3 ]; then
 fi
 
 REMOTE_HOST=$1
-INFILE="$2"
-shift
+TLBFILE=$2
+INTEROP=${3#/out:}
+shift 3
 
 # Choose temporary directory on remote machine
 DIR=$(ssh "$REMOTE_HOST" "mktemp -dt")
@@ -43,10 +44,16 @@ if [ -z "$DIR" ]
   exit 1
 fi
 
-CMD="cd \"$DIR\" && tlbimp $*"
-STEM=$(basename "$INFILE" .tlb)
+INFILE=$(basename "$TLBFILE")
+OUTFILE=$(basename "$INTEROP")
+
+# Need to run vsvars32.bat, so have to use cmd.exe /c ... && tlbimp ...
+# Also have to double-quote text for both bash here and cygwin bash there.
+# When cygwin bash calls cmd.exe it re-inserts quoting as needed.
+VCVARSBAT='C:\Program Files\Microsoft Visual Studio 9.0\Common7\Tools\vsvars32.bat'
+CMD="cd '$DIR' && cmd /c '$VCVARSBAT' '&&' tlbimp '$INFILE' /out:'$OUTFILE' $@"
 
 scp "$INFILE" "$REMOTE_HOST:$DIR"/ && 
 	ssh "$REMOTE_HOST" "$CMD" && 
-	scp "$REMOTE_HOST:$DIR"/${STEM}Interop.dll . ||
+	scp "$REMOTE_HOST:$DIR/$OUTFILE" "$INTEROP" ||
 	(echo $(basename "$0"): Error communicating with remote host.; exit 1)
