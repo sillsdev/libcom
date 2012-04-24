@@ -25,6 +25,12 @@
 # http://www.gnu.org/licenses/lgpl.html
 # 
 
+# Ensure targets like components.map get removed if they're not generated
+# completely, otherwise a second run of make check thinks they're up to date
+# and doesn't try to rebuild them (eg tries to run the tests with an incomplete
+# components.map)
+.DELETE_ON_ERROR:
+
 Win32BaseInc = $(top_srcdir)/../Win32Base/include
 Win32MoreInc = $(top_srcdir)/../Win32More/include
 Win32BaseLib = $(top_srcdir)/../Win32Base/src/build$(FWARCH)
