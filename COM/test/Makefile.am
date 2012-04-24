@@ -35,11 +35,12 @@ AM_CPPFLAGS = -DUSE_FW_GENERIC_FACTORY -DUSE_FW_MODULE_ENTRY -DCOM_NO_WINDOWS_H
 FieldWorksRootDir = $(FWROOT)
 FieldWorksOutputDebugDir = $(FieldWorksRootDir)/Output_$(FWARCH)/Debug
 FieldWorksObjDebugDir = $(FieldWorksRootDir)/Obj_$(FWARCH)/Debug
-FieldWorksIcuLibDir = $(FieldWorksRootDir)/Lib/src/icu/install/lib # TODO use icu-config --libdir possibly?
+IcuConfig = $(FieldWorksRootDir)/Lib/src/icu/install$(FWARCH)/bin/icu-config
 BUILD_ROOT = $(FieldWorksRootDir)
 -include $(BUILD_ROOT)/Bld/_user.mak.lnx
 else
 AM_CPPFLAGS = -DNO_FW
+IcuConfig = icu-config
 endif
 
 AUTOMAKE_OPTIONS = color-tests
@@ -53,8 +54,13 @@ INCLUDES = \
 	-I$(top_srcdir)/include \
 	-I$(Win32BaseInc) \
 	-I$(Win32MoreInc) \
-	$$(icu-config --cppflags)
-	
+	$$($(IcuConfig) --cppflags)
+
+AM_LDFLAGS = \
+	$$($(IcuConfig) --ldflags) \
+	$(all_libraries) \
+	-luuid
+
 if USE_FW_GENERIC_FACTORY
 INCLUDES += \
 	-I$(FieldWorksRootDir)/Include \
@@ -81,9 +87,7 @@ bag_la_LIBADD += \
 	-L$(Win32MoreLib) -lWin32More \
 	-lpthread
 endif
-bag_la_LDFLAGS = -module $(all_libraries) \
-	-luuid \
-	$$(icu-config --ldflags)
+bag_la_LDFLAGS = -module $(AM_LDFLAGS)
 
 
 wall_la_SOURCES = \
@@ -99,9 +103,7 @@ wall_la_LIBADD += \
 	-L$(Win32MoreLib) -lWin32More \
 	-lpthread
 endif
-wall_la_LDFLAGS = -module $(all_libraries) \
-	-luuid \
-	$$(icu-config --ldflags)
+wall_la_LDFLAGS = -module $(AM_LDFLAGS)
 
 bakery_la_SOURCES = \
 	Bakery.cpp \
@@ -117,9 +119,7 @@ bakery_la_LIBADD += \
 	-L$(Win32MoreLib) -lWin32More \
 	-lpthread
 endif
-bakery_la_LDFLAGS = -module $(all_libraries) \
-	-luuid \
-	$$(icu-config --ldflags)
+bakery_la_LDFLAGS = -module $(AM_LDFLAGS)
 
 
 ball_la_SOURCES = \
@@ -136,17 +136,11 @@ ball_la_LIBADD += \
 	-L$(Win32MoreLib) -lWin32More \
 	-lpthread
 endif
-ball_la_LDFLAGS = -module $(all_libraries) \
-	-luuid \
-	$$(icu-config --ldflags)
+ball_la_LDFLAGS = -module $(AM_LDFLAGS)
 
 comtest_SOURCES = CClient.cc
 comtest_LDADD = IBall_GUIDs.o ../src/libcom.la
-comtest_LDFLAGS = \
-	$(all_libraries) \
-	-luuid \
-	-ldl \
-	$$(icu-config --ldflags)
+comtest_LDFLAGS = -ldl $(AM_LDFLAGS)
 
 EXTRA_DIST = \
 	test.sh \
@@ -266,7 +260,7 @@ components.map: bakery.la ball.la wall.la bag.la
 check_PROGRAMS = components.map
 
 TESTS = .libs/comtest ComClient.exe BakeryJarTestClient.exe Tester.exe
-TESTS_ENVIRONMENT = COMPONENTS_MAP_PATH=. LD_LIBRARY_PATH=$(FieldWorksIcuLibDir):.libs:../src/.libs
+TESTS_ENVIRONMENT = COMPONENTS_MAP_PATH=. LD_LIBRARY_PATH=:.libs:../src/.libs:$$($(IcuConfig) --libdir)
 
 MOSTLYCLEANFILES = IBall_idl.h IBall_GUIDs.cpp ComClient.exe.mdb Tester.exe.mdb IBakery_idl.h IBakery_GUIDs.cpp IWall_GUIDs.cpp IBag_GUIDs.cpp
 CLEANFILES = IBallMetadata.dll IBakeryMetadata.dll Jar.dll Jar.dll.mdb BakeryJarTestClient.exe.mdb IWall.h IWall.tlb IWallInterop.dll IBag.h IBag.tlb IBagInterop.dll IBagLib_.idl
