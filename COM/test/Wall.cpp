@@ -43,13 +43,21 @@ typedef  INT32  COMINT32;
 typedef UINT32 UCOMINT32;
 #include "BinTree.h"
 #include "GenericFactory.h"
-#include "UnicodeString8.h"
-#else // !USE_FW_GENERIC_FACTORY
-#define UnicodeString8(x) "Error: no UnicodeString8 implementation"
 #endif // !USE_FW_GENERIC_FACTORY
 
 #include <ExtendedTypes.h>
 #include <WinError.h>
+#include <unicode/ustring.h>
+
+// Write a UnicodeString (UTF-16) to an ostream (UTF-8)
+std::ostream& operator << (std::ostream& o, const UnicodeString& s)
+{
+	std::vector<char> buffer(s.length()*4+1); // 4 bytes is the maximum UTF-8 sequence
+	UErrorCode error = U_ZERO_ERROR;
+	u_strToUTF8(&buffer[0], buffer.size(), 0, s.getBuffer(), s.length(), &error);
+	assert(U_SUCCESS(error));
+	return o << &buffer[0];
+}
 
 // Begin copied code from Wine's winbase.h, modified 2007-02-01 by Neil Mayhew
 
@@ -263,7 +271,7 @@ Wall::~Wall(void) {
  */
 HRESULT Wall::readWallBSTR(BSTR* text) {
 	
-	std::cout << "readWallBSTR(). We will return the contents of wall, which are basically (length of "<<contents.length()<<"): '"<<UnicodeString8(contents.getTerminatedBuffer())<<"'" << std::endl;
+	std::cout << "readWallBSTR(). We will return the contents of wall, which are basically (length of "<<contents.length()<<"): '"<<contents<<"'" << std::endl;
 
 	
 	*text = SysAllocString(contents.getTerminatedBuffer());
@@ -295,10 +303,10 @@ HRESULT Wall::readWallBSTR(BSTR* text) {
 HRESULT Wall::writeBSTROnWall(BSTR text) {
 
 
-	std::cout << "writeBSTROnWall(). Before, wall contains '"<< UnicodeString8(contents.getTerminatedBuffer()) <<"'" << std::endl;
+	std::cout << "writeBSTROnWall(). Before, wall contains '"<< contents <<"'" << std::endl;
 	std::cout << "writeBSTROnWall(). appending string of length '"<<SysStringLen(text)<<"'/2" << std::endl;
 	contents.append(text,SysStringLen(text)/2);
-	std::cout << "writeBSTROnWall().  After, wall contains '"<< UnicodeString8(contents.getTerminatedBuffer()) <<"'" << std::endl;
+	std::cout << "writeBSTROnWall().  After, wall contains '"<< contents <<"'" << std::endl;
 
 	
 	return S_OK;
