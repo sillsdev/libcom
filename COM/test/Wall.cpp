@@ -338,7 +338,7 @@ HRESULT __stdcall Wall::QueryInterface(const IID& interfaceid, void** objectInte
  * 
  * Increment the refence count on Wall.
  */
-ULONG __stdcall Wall::AddRef() {
+UINT32 __stdcall Wall::AddRef() {
 	return InterlockedIncrement(&m_referenceCount);
 }
 
@@ -348,7 +348,7 @@ ULONG __stdcall Wall::AddRef() {
  * Decrement the reference count on Wall. Wall will be destroyed if 
  * the reference count drops to zero.
  */
-ULONG __stdcall Wall::Release() {
+UINT32 __stdcall Wall::Release() {
 	if (0 == InterlockedDecrement(&m_referenceCount))
 	{
 		delete this;

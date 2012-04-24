@@ -162,14 +162,14 @@ HRESULT __stdcall BagCFactory::QueryInterface(const IID& interfaceid, void** obj
 /**
  * BagCFactory::AddRef
  */
-ULONG __stdcall BagCFactory::AddRef() {
+UINT32 __stdcall BagCFactory::AddRef() {
 	return InterlockedIncrement(&m_referenceCount);
 }
 
 /** 
  * BagCFactory::Release
  */
-ULONG __stdcall BagCFactory::Release() {
+UINT32 __stdcall BagCFactory::Release() {
 	if (0 == InterlockedDecrement(&m_referenceCount)) {
 		delete this; // TODO This might cause trouble like in the past.
 		return 0;
@@ -305,7 +305,7 @@ HRESULT __stdcall Bag::QueryInterface(const IID& interfaceid, void** objectInter
  * 
  * Increment the refence count on Bag.
  */
-ULONG __stdcall Bag::AddRef() {
+UINT32 __stdcall Bag::AddRef() {
 	return InterlockedIncrement(&m_referenceCount);
 }
 
@@ -315,7 +315,7 @@ ULONG __stdcall Bag::AddRef() {
  * Decrement the reference count on Bag. Bag will be destroyed if 
  * the reference count drops to zero.
  */
-ULONG __stdcall Bag::Release() {
+UINT32 __stdcall Bag::Release() {
 	if (0 == InterlockedDecrement(&m_referenceCount))
 	{
 		delete this;
