@@ -24,25 +24,24 @@
 # http://www.gnu.org/licenses/lgpl.html
 #
 
-ARCH = $(shell uname -m)
-BUILD_DIR = build$(ARCH)
+top_srcdir = @top_srcdir@
+srcdir     = @srcdir@
+VPATH      = @srcdir@
 
-export LD_LIBRARY_PATH := ../$(BUILD_DIR)/src/.libs:$(LD_LIBRARY_PATH)
+export LD_LIBRARY_PATH := ../src/.libs:$(LD_LIBRARY_PATH)
 
 CXXFLAGS ?= -g -O0
 CXXFLAGS += -Wall -Wextra -Werror -MMD
-CPPFLAGS += -I../include -I../src
-LDFLAGS  += -L../$(BUILD_DIR)/src/.libs -lcom
+CPPFLAGS += -I$(top_srcdir)/include -I$(top_srcdir)/src
+LDFLAGS  += -L../src/.libs -lcom
 LDLIBS = -lboost_unit_test_framework
 
-PROGNAMES = TestCOM
-PROGS = $(PROGNAMES:%=$(BUILD_DIR)/%)
+PROGS = TestCOM
 
 all: $(PROGS)
 
-$(BUILD_DIR)/%: %.cpp
-	@mkdir -p $(@D)
-	$(LINK.cc) -o $@ $< $(LDLIBS)
+%: %.cpp
+	$(LINK.cpp) $< $(LDLIBS) -o $@
 
 GDB ?= # Use make check GDB="gdb --args" to debug tests
 TESTFLAGS ?= --report_level=short
@@ -54,6 +53,6 @@ check: all
 	done
 
 clean:
-	$(RM) -rf $(BUILD_DIR)
+	$(RM) *.o *.d $(PROGS)
 
--include $(BUILD_DIR)/*.d
+-include *.d

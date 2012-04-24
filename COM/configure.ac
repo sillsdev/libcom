@@ -51,4 +51,4 @@ AM_CONDITIONAL([USE_FW_GENERIC_FACTORY], [test "x$with_fieldworks" != xno])
 test "${FWROOT+set}" = set || FWROOT='$(top_srcdir)'/../FieldWorks
 test "${FWARCH+set}" = set || FWARCH=$(uname -m)
 
-AC_OUTPUT(Makefile src/Makefile test/Makefile)
+AC_OUTPUT(Makefile src/Makefile test/Makefile unit-test/Makefile)
