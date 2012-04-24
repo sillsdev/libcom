@@ -52,8 +52,7 @@ HRESULT WINAPI CLSIDFromString(LPCOLESTR inWideString, LPCLSID outClassID)
 	std::vector<char> text(inWideString, inWideString + wcslen(inWideString) + 1);
 	try
 	{
-		GUID clsid(&text[0]);
-		*outClassID = clsid;
+		outClassID->initialize(&text[0]);
 		return ERROR_SUCCESS;
 	}
 	catch (...)

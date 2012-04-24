@@ -35,20 +35,54 @@
 #include <algorithm>
 #include <cassert>
 
-// SmartGUID class
+// PlainGUID class
 
-SmartGUID::SmartGUID(bool create)
+/**
+ * @brief Test whether the GUID value is null
+ */
+bool PlainGUID::isNull() const
 {
-	if (create)
-	{
-		uuid_generate(buf());
+	// Assume null value is independent of byte order
+	return uuid_is_null(buf());
+}
 
-		Data1 = ntohl(Data1);
-		Data2 = ntohs(Data2);
-		Data3 = ntohs(Data3);
-	}
-	else
-		uuid_clear(buf());
+/**
+ * @brief Convert the GUID value to to a string
+ */
+std::string PlainGUID::str() const
+{
+	PlainGUID temp(*this);
+	// Convert from host byte order
+	temp.Data1 = htonl(temp.Data1);
+	temp.Data2 = htons(temp.Data2);
+	temp.Data3 = htons(temp.Data3);
+	char text[37];
+	uuid_unparse(temp.buf(), text);
+	return text;
+}
+
+/**
+ * @brief Set the GUID value to null
+ */
+PlainGUID& PlainGUID::clear()
+{
+	uuid_clear(buf());
+	return *this;
+}
+
+/**
+ * @brief Set the GUID value to a newly generated one
+ */
+PlainGUID& PlainGUID::create()
+{
+	uuid_generate(buf());
+
+	// Convert to host byte order
+	Data1 = ntohl(Data1);
+	Data2 = ntohs(Data2);
+	Data3 = ntohs(Data3);
+
+	return *this;
 }
 
 /**
@@ -56,7 +90,7 @@ SmartGUID::SmartGUID(bool create)
  * @param text GUID string
  * @throw std::runtime_error if text could not be parsed
  */
-SmartGUID::SmartGUID(const char* text) 
+PlainGUID& PlainGUID::initialize(const char* text)
 	throw (std::runtime_error)
 {
 	if (uuid_parse(text, buf()))
@@ -66,30 +100,48 @@ SmartGUID::SmartGUID(const char* text)
 		throw std::runtime_error(s);
 	}
 
+	// Convert to host byte order
 	Data1 = ntohl(Data1);
 	Data2 = ntohs(Data2);
 	Data3 = ntohs(Data3);
+
+	return *this;
 }
 
-std::string SmartGUID::str() const
+// SmartGUID class
+
+/**
+ * @brief Create a SmartGUID
+ * @param creating Generate a new GUID instead of initializing to null
+ */
+SmartGUID::SmartGUID(bool creating)
 {
-	PlainGUID temp;
-	temp.Data1 = htonl(Data1);
-	temp.Data2 = htons(Data2);
-	temp.Data3 = htons(Data3);
-	memcpy(temp.Data4, Data4, sizeof(Data4));
-	char text[37];
-	uuid_unparse(reinterpret_cast<const unsigned char *>(&temp.Data1), text);
-	return text;
+	if (creating)
+		create();
+	else
+		clear();
 }
 
-bool SmartGUID::isNull() const
+/**
+ * @brief Create a SmartGUID from a text GUID string
+ * @param text GUID string
+ * @throw std::runtime_error if text could not be parsed
+ */
+SmartGUID::SmartGUID(const char* text)
+	throw (std::runtime_error)
 {
-	// Assume null value is independent of byte order
-	return uuid_is_null(buf());
+	initialize(text);
 }
 
-GUID GUID_NULL;
+// GUID values
+
+PlainGUID PlainGUID::null;
+
+HRESULT CoCreateGuid(GUID* pguid)
+{
+	pguid->create();
+	return S_OK;
+}
 
 // Translation of IDs
 
@@ -97,7 +149,7 @@ int StringFromGUID2(REFGUID rguid, LPOLESTR lpsz, int cchMax)
 {
 	assert(lpsz);
 
-	std::string text = SmartGUID(rguid).str();
+	std::string text = rguid.str();
 
 	if (cchMax <= int(text.size()))
 		return 0;
@@ -232,13 +284,7 @@ UINT SysStringByteLen(BSTR bstr)
 	return *(UINT32*)(bstr - 2);
 }
 
-// Class registration and object creation
-
-HRESULT CoCreateGuid(GUID* pguid)
-{
-	*pguid = GUID(true);
-	return S_OK;
-}
+// Class registration
 
 HRESULT CoRegisterClassObject(REFCLSID rclsid, class IUnknown* pObj, DWORD dwClsContext, DWORD flags, LPDWORD lpdwRegister)
 {
@@ -251,4 +297,3 @@ HRESULT CoRevokeClassObject(DWORD dwRegister)
 	// PORT-TODO
 	return E_NOTIMPL;
 }
-

@@ -273,11 +273,11 @@ void ComRegistry::dumpComponentMap(std::ostream& out)
 {
 	for (ComponentMap::const_iterator iterator = m_componentMap.begin(); iterator != m_componentMap.end(); ++iterator)
 	{
-		GUID guid = iterator->first;
+		string guid = iterator->first.str();
 		LPCLASSFACTORY factory = iterator->second.factory;
 		string dllfilename = iterator->second.dllfilename;
 		
-		out << guid.str() << " -> " << factory << ", " << dllfilename << "\n";
+		out << guid << " -> " << factory << ", " << dllfilename << "\n";
 	}
 }
 
@@ -424,8 +424,7 @@ void ComRegistry::populateFromComponentsMapFile(const string mapfilename)
 
 		CLSID clsid;
 		try {
-			CLSID tmp_clsid(classIdString.c_str());
-			clsid = tmp_clsid;
+			clsid.initialize(classIdString.c_str());
 		}
 		catch (std::runtime_error) {
 			fprintf(stderr, "libcom: Warning: malformed GUID string at %s:%d\n",

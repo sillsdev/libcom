@@ -42,23 +42,59 @@ struct PlainGUID
 	UINT16 			Data2; // 16 bit
 	UINT16 			Data3; // 16 bit
 	unsigned char   Data4[8];
-};
 
-struct SmartGUID : public PlainGUID
-{
-	// These are not in Win32, but we need them to make our emulation work
-	explicit SmartGUID(bool create = false);
-	explicit SmartGUID(const char*) throw (std::runtime_error);
-	SmartGUID(const PlainGUID& other)
-		: PlainGUID(other) {}
+	// No explicit constructors, to allow static initialization
 
-	SmartGUID& operator = (const PlainGUID& other)
+	// Comparison
+
+	int compare(const PlainGUID& other) const
 	{
-		PlainGUID::operator = (other);
-		return *this;
+		return std::memcmp(this, &other, sizeof(other));
 	}
-	
-	// Functions to allow easier use of libuuid functions
+
+	bool operator == (const PlainGUID& other) const
+	{
+		return compare(other) == 0;
+	}
+
+	bool operator != (const PlainGUID& other) const
+	{
+		return compare(other) != 0;
+	}
+
+	bool operator < (const PlainGUID& other) const
+	{
+		return compare(other) < 0;
+	}
+
+	bool operator > (const PlainGUID& other) const
+	{
+		return compare(other) > 0;
+	}
+
+	bool operator <= (const PlainGUID& other) const
+	{
+		return compare(other) <= 0;
+	}
+
+	bool operator >= (const PlainGUID& other) const
+	{
+		return compare(other) >= 0;
+	}
+
+	// Testing and conversion
+
+	bool isNull() const;
+	std::string str() const;
+
+	// Creation and initialization
+
+	PlainGUID& clear();
+	PlainGUID& create();
+	PlainGUID& initialize(const char*) throw (std::runtime_error);
+
+	// Allow easier use of libuuid functions
+
 	unsigned char* buf()
 	{
 		return reinterpret_cast<unsigned char *>(&Data1);
@@ -68,28 +104,28 @@ struct SmartGUID : public PlainGUID
 		return reinterpret_cast<const unsigned char *>(&Data1);
 	}
 
-	// Functions to allow easier display
-	std::string str() const;
-	
-	bool isNull() const;
+	// Null value
+
+	static PlainGUID null;
 };
 
-inline bool operator == (const PlainGUID& left, const PlainGUID& right)
+struct SmartGUID : public PlainGUID
 {
-	return std::memcmp(&left, &right, sizeof(left)) == 0;
-}
+	explicit SmartGUID(bool create = false);
+	explicit SmartGUID(const char*) throw (std::runtime_error);
 
-inline bool operator != (const PlainGUID& left, const PlainGUID& right)
-{
-	return !(left == right);
-}
+	SmartGUID(const PlainGUID& p) : PlainGUID(p)
+	{
+	}
 
-inline bool operator < (const PlainGUID& left, const PlainGUID& right)
-{
-	return std::memcmp(&left, &right, sizeof(left)) < 0;
-}
+	SmartGUID& operator = (const PlainGUID& p)
+	{
+		PlainGUID::operator = (p);
+		return *this;
+	}
+};
 
-typedef SmartGUID GUID;
+typedef PlainGUID GUID;
 
 typedef const GUID& REFGUID;
 typedef       GUID* LPGUID;
@@ -101,18 +137,10 @@ typedef GUID CLSID;
 typedef REFGUID REFCLSID;
 typedef LPGUID LPCLSID;
 
-extern GUID GUID_NULL;
+#define GUID_NULL GUID::null
 #define IID_NULL GUID_NULL
 #define CLSID_NULL GUID_NULL
 
-#ifdef INITGUID
-#define DEFINE_GUID(name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8) \
-        EXTERN_C const PlainGUID name \
-                = { l, w1, w2, {b1, b2,  b3,  b4,  b5,  b6,  b7,  b8 } }
-#else
-#define DEFINE_GUID(name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8) \
-        EXTERN_C const PlainGUID name 
-#endif // INITGUID
 HRESULT CoCreateGuid(GUID* pguid);
 
 #define interface struct
@@ -125,6 +153,18 @@ public:
 };
 
 #define __uuidof(T) __interface_traits<T>::uuid
+
+#define DEFINE_UUIDOF(NAME, L, W1, W2, B1, B2, B3, B4, B5, B6, B7, B8) \
+	class NAME; \
+	template<> const GUID __uuidof(NAME) = {L, W1, W2, {B1, B2, B3, B4, B5, B6, B7, B8}}
+
+#ifdef INITGUID
+#define DEFINE_GUID(NAME, L, W1, W2, B1, B2, B3, B4, B5, B6, B7, B8) \
+	extern const GUID NAME = {L, W1, W2, {B1, B2, B3, B4, B5, B6, B7, B8}}
+#else
+#define DEFINE_GUID(NAME, L, W1, W2, B1, B2, B3, B4, B5, B6, B7, B8) \
+	extern const GUID NAME
+#endif // INITGUID
 
 #define DECLSPEC_UUID(X) // Can't be done
 #define MIDL_INTERFACE(X) DECLSPEC_UUID(X) interface

@@ -22,9 +22,6 @@ Last reviewed: Not yet.
 #include <COMInterfaces.h> // For IClassFactory
 #include <map>
 
-static const GUID CLSID_ManagedComBridge("1490e147-f2d2-4909-a4b8-3533d2f264d1");
-
-
 /*----------------------------------------------------------------------------------------------
 Class: ManagedComBridge (Generic Factory class)
 Description: This allows creating Managed COM objects

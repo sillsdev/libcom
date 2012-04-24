@@ -297,5 +297,3 @@ HRESULT ManagedComBridge::CreateInstance(IUnknown * /*pUnkOuter*/, REFIID riid, 
 	// Execute Marshal.QueryInterfaceInternal - return its result
 	return queryInterfaceInternal(pCCW ,(guint8*)&riid, (void**)ppvObject);
 }
-
-template<> const GUID __uuidof(ManagedComBridge)("0490E147-F2D2-4909-A4B8-3533D2F264D0");

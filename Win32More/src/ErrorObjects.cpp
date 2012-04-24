@@ -15,9 +15,12 @@ namespace ErrorObjects
 	// ErrorInfo class definition
 	///////////////////////////////////////////////////////////////////////////////
 
-	ErrorInfo::ErrorInfo() : m_GUID(false), m_BstrSource(NULL), m_BstrDescript(NULL),
-		m_BstrHelpFile(NULL), m_dwHelpContext(0), m_cref(1)
+	ErrorInfo::ErrorInfo()
+	:	m_BstrSource(NULL), m_BstrDescript(NULL),
+		m_BstrHelpFile(NULL), m_dwHelpContext(0),
+		m_cref(1)
 	{
+		m_GUID.clear();
 	}
 
 	ErrorInfo::~ErrorInfo()
