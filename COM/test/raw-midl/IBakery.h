@@ -3,8 +3,8 @@
 /* this ALWAYS GENERATED file contains the definitions for the interfaces */
 
 
- /* File created by MIDL compiler version 6.00.0366 */
-/* at Tue Nov 06 14:11:08 2007
+ /* File created by MIDL compiler version 7.00.0500 */
+/* at Fri Feb 03 15:16:46 2012
  */
 /* Compiler settings for IBakery.idl:
     Oicf, W1, Zp8, env=Win32 (32b run)
@@ -32,8 +32,8 @@
 #endif // __RPCNDR_H_VERSION__
 
 
-#ifndef __IBakery_idl_h__
-#define __IBakery_idl_h__
+#ifndef __IBakery_h__
+#define __IBakery_h__
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1020)
 #pragma once
@@ -67,8 +67,6 @@ typedef struct Bakery Bakery;
 extern "C"{
 #endif 
 
-void * __RPC_USER MIDL_user_allocate(size_t);
-void __RPC_USER MIDL_user_free( void * ); 
 
 
 #ifndef __IBakeryLib_LIBRARY_DEFINED__
@@ -113,7 +111,8 @@ EXTERN_C const IID IID_IBakery;
         HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
             IBakery * This,
             /* [in] */ REFIID riid,
-            /* [iid_is][out] */ void **ppvObject);
+            /* [iid_is][out] */ 
+            __RPC__deref_out  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             IBakery * This);
@@ -144,51 +143,26 @@ EXTERN_C const IID IID_IBakery;
 
 
 #define IBakery_QueryInterface(This,riid,ppvObject)	\
-    (This)->lpVtbl -> QueryInterface(This,riid,ppvObject)
+    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
 
 #define IBakery_AddRef(This)	\
-    (This)->lpVtbl -> AddRef(This)
+    ( (This)->lpVtbl -> AddRef(This) ) 
 
 #define IBakery_Release(This)	\
-    (This)->lpVtbl -> Release(This)
+    ( (This)->lpVtbl -> Release(This) ) 
 
 
 #define IBakery_getNumberCookiesBaked(This,number)	\
-    (This)->lpVtbl -> getNumberCookiesBaked(This,number)
+    ( (This)->lpVtbl -> getNumberCookiesBaked(This,number) ) 
 
 #define IBakery_bakeCookies(This,amount,jar)	\
-    (This)->lpVtbl -> bakeCookies(This,amount,jar)
+    ( (This)->lpVtbl -> bakeCookies(This,amount,jar) ) 
 
 #endif /* COBJMACROS */
 
 
 #endif 	/* C style interface */
 
-
-
-/* [helpstring][id] */ HRESULT STDMETHODCALLTYPE IBakery_getNumberCookiesBaked_Proxy( 
-    IBakery * This,
-    /* [retval][out] */ long *number);
-
-
-void __RPC_STUB IBakery_getNumberCookiesBaked_Stub(
-    IRpcStubBuffer *This,
-    IRpcChannelBuffer *_pRpcChannelBuffer,
-    PRPC_MESSAGE _pRpcMessage,
-    DWORD *_pdwStubPhase);
-
-
-/* [helpstring][id] */ HRESULT STDMETHODCALLTYPE IBakery_bakeCookies_Proxy( 
-    IBakery * This,
-    /* [in] */ long amount,
-    /* [in] */ IUnknown *jar);
-
-
-void __RPC_STUB IBakery_bakeCookies_Stub(
-    IRpcStubBuffer *This,
-    IRpcChannelBuffer *_pRpcChannelBuffer,
-    PRPC_MESSAGE _pRpcMessage,
-    DWORD *_pdwStubPhase);
 
 
 
