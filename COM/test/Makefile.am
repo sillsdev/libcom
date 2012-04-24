@@ -27,11 +27,13 @@
 
 if USE_FW_GENERIC_FACTORY
 AM_CPPFLAGS = -DUSE_FW_GENERIC_FACTORY -DUSE_FW_MODULE_ENTRY -DCOM_NO_WINDOWS_H
-FieldWorksRootDir = ../../FieldWorks
-FieldWorksOutputDebugDir = $(FieldWorksRootDir)/Output/Debug
-FieldWorksObjDebugDir = $(FieldWorksRootDir)/Obj/Debug
-Win32BaseDir = ../../Win32Base
-Win32MoreDir = ../../Win32More
+FieldWorksRootDir = $(FWROOT)
+FieldWorksOutputDebugDir = $(FieldWorksRootDir)/Output_$(FWARCH)/Debug
+FieldWorksObjDebugDir = $(FieldWorksRootDir)/Obj_$(FWARCH)/Debug
+Win32BaseInc = $(top_srcdir)/../Win32Base/include
+Win32MoreInc = $(top_srcdir)/../Win32More/include
+Win32BaseLib = $(top_srcdir)/../Win32Base/src/build$(FWARCH)
+Win32MoreLib = $(top_srcdir)/../Win32More/src/build$(FWARCH)
 BUILD_ROOT = $(FieldWorksRootDir)
 -include $(BUILD_ROOT)/Bld/_user.mak.lnx
 else
@@ -51,8 +53,8 @@ if USE_FW_GENERIC_FACTORY
 INCLUDES += \
 	-I$(FieldWorksRootDir)/Include \
 	-I$(FieldWorksRootDir)/Src/Generic \
-	-I$(Win32BaseDir)/include \
-	-I$(Win32MoreDir)/include 
+	-I$(Win32BaseInc) \
+	-I$(Win32MoreInc)
 endif
 
 MIDL = $(top_srcdir)/remote-midl/midl
@@ -71,8 +73,9 @@ if USE_FW_GENERIC_FACTORY
 bag_la_LIBADD += \
 	$(FieldWorksOutputDebugDir)/libGeneric.a \
 	$(FieldWorksObjDebugDir)/Generic/ModuleEntry.o \
-	-L$(Win32BaseDir)/src -lWin32Base \
-	-L$(Win32MoreDir)/src -lWin32More 
+	-L$(Win32BaseLib) -lWin32Base \
+	-L$(Win32MoreLib) -lWin32More \
+	-lpthread
 endif
 bag_la_LDFLAGS = -module $(all_libraries) \
 	-luuid \
@@ -88,8 +91,9 @@ if USE_FW_GENERIC_FACTORY
 wall_la_LIBADD += \
 	$(FieldWorksOutputDebugDir)/libGeneric.a \
 	$(FieldWorksObjDebugDir)/Generic/ModuleEntry.o \
-	-L$(Win32BaseDir)/src -lWin32Base \
-	-L$(Win32MoreDir)/src -lWin32More 
+	-L$(Win32BaseLib) -lWin32Base \
+	-L$(Win32MoreLib) -lWin32More \
+	-lpthread
 endif
 wall_la_LDFLAGS = -module $(all_libraries) \
 	-luuid \
@@ -105,8 +109,9 @@ if USE_FW_GENERIC_FACTORY
 bakery_la_LIBADD += \
 	$(FieldWorksOutputDebugDir)/libGeneric.a \
 	$(FieldWorksObjDebugDir)/Generic/ModuleEntry.o \
-	-L$(Win32BaseDir)/src -lWin32Base \
-	-L$(Win32MoreDir)/src -lWin32More 
+	-L$(Win32BaseLib) -lWin32Base \
+	-L$(Win32MoreLib) -lWin32More \
+	-lpthread
 endif
 bakery_la_LDFLAGS = -module $(all_libraries) \
 	-luuid \
@@ -123,8 +128,9 @@ if USE_FW_GENERIC_FACTORY
 ball_la_LIBADD += \
 	$(FieldWorksOutputDebugDir)/libGeneric.a \
 	$(FieldWorksObjDebugDir)/Generic/ModuleEntry.o \
-	-L$(Win32BaseDir)/src -lWin32Base \
-	-L$(Win32MoreDir)/src -lWin32More 
+	-L$(Win32BaseLib) -lWin32Base \
+	-L$(Win32MoreLib) -lWin32More \
+	-lpthread
 endif
 ball_la_LDFLAGS = -module $(all_libraries) \
 	-luuid \
@@ -179,14 +185,13 @@ Jar_dll_CSC_FLAGS_NonAM = -target:library
 
 #IWall.idl
 Tester.exe: $(Tester_exe_SOURCES) $(Tester_exe_REFERENCES)
-	$(CSC) $(CSC_FLAGS) -out:$@ $(Tester_exe_SOURCES) $(Tester_exe_REFERENCES:%=-r:%)
-
+	$(CSC) $(CSC_FLAGS) -out:$@ $(^:%.dll=-r:%)
 ComClient.exe: $(ComClient_exe_SOURCES) $(ComClient_exe_REFERENCES)
-	$(CSC) $(CSC_FLAGS) -out:$@ $(ComClient_exe_SOURCES) $(ComClient_exe_REFERENCES:%=-r:%)
+	$(CSC) $(CSC_FLAGS) -out:$@ $(^:%.dll=-r:%)
 BakeryJarTestClient.exe: $(BakeryJarTestClient_exe_SOURCES) $(BakeryJarTestClient_exe_REFERENCES)
-	$(CSC) $(CSC_FLAGS) -out:$@ $(BakeryJarTestClient_exe_SOURCES) $(BakeryJarTestClient_exe_REFERENCES:%=-r:%)
+	$(CSC) $(CSC_FLAGS) -out:$@ $(^:%.dll=-r:%)
 Jar.dll: $(Jar_dll_SOURCES_NonAM) $(Jar_dll_REFERENCES_NonAM)
-	$(CSC) $(CSC_FLAGS) $(Jar_dll_CSC_FLAGS_NonAM) -out:$@ $(Jar_dll_SOURCES_NonAM) $(Jar_dll_REFERENCES_NonAM:%=-r:%)
+	$(CSC) $(CSC_FLAGS) $(Jar_dll_CSC_FLAGS_NonAM) -out:$@ $(^:%.dll=-r:%)
 
 IBall_idl.h: raw-midl/IBall_idl.h fix-midl.sh
 	$(srcdir)/fix-midl.sh $< >$@
@@ -246,16 +251,17 @@ Wall.lo: IWall.h
 Bag.lo: IBag.h
 
 IBallMetadata.dll:
-	ln -s raw-midl/$@
+	ln -sf $(srcdir)/raw-midl/$@
 
 IBakeryMetadata.dll:
-	ln -s raw-midl/$@
+	ln -sf $(srcdir)/raw-midl/$@
 
 components.map: bakery.la ball.la wall.la bag.la
-	LD_LIBRARY_PATH=$(FieldWorksRootDir)/Lib/src/icu/install/lib:$(FieldWorksRootDir)/../../libraries/COM/src/.libs PATH=$(PATH):"$$(cd $(top_srcdir)&&pwd)/bin" make-map.sh .libs/bakery.so .libs/ball.so .libs/wall.so .libs/bag.so
+	LD_LIBRARY_PATH=$(FieldWorksRootDir)/Lib/src/icu/install$(FWARCH)/lib:$(abs_top_builddir)/src/.libs PATH=$(abs_top_srcdir)/bin$(FWARCH):$(PATH) make-map.sh .libs/bakery.so .libs/ball.so .libs/wall.so .libs/bag.so
 
-check:
-	sh test.sh
+TESTS = test.sh
+TESTS_ENVIRONMENT = sh
+check_PROGRAMS = components.map
 
 MOSTLYCLEANFILES = IBall_idl.h IBall_GUIDs.cpp ComClient.exe.mdb Tester.exe.mdb IBakery_idl.h IBakery_GUIDs.cpp IWall_GUIDs.cpp IBag_GUIDs.cpp
 CLEANFILES = IBallMetadata.dll IBakeryMetadata.dll Jar.dll Jar.dll.mdb BakeryJarTestClient.exe.mdb IWall.h IWall.tlb IWallInterop.dll IBag.h IBag.tlb IBagInterop.dll IBagLib_.idl
