@@ -39,6 +39,8 @@
 #include "jar.tlh"
 
 #ifdef USE_FW_GENERIC_FACTORY
+typedef  INT32  COMINT32;
+typedef UINT32 UCOMINT32;
 #include "BinTree.h"
 #include "GenericFactory.h"
 #endif // USE_FW_GENERIC_FACTORY

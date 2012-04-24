@@ -38,6 +38,8 @@
 #include "tools.h"
 
 #ifdef USE_FW_GENERIC_FACTORY
+typedef  INT32  COMINT32;
+typedef UINT32 UCOMINT32;
 #include "BinTree.h"
 #include "GenericFactory.h"
 #include "UnicodeString8.h"
