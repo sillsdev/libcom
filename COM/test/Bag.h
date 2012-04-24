@@ -30,7 +30,7 @@
 
 #include "COMLibrary.h"
 #include "IBag.h"
-#include "IBall_idl.h"
+#include "IBall.h"
 
 /**
  * Bag class.

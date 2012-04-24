@@ -29,7 +29,7 @@
 #define _Ball_h_
 
 #include "COMLibrary.h"
-#include "IBall_idl.h"
+#include "IBall.h"
 
 /**
  * Ball class.

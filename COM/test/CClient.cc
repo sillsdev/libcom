@@ -31,7 +31,7 @@
 
 #include <COMInterfaces.h>
 
-#include "IBall_idl.h"
+#include "IBall.h"
 #include "Ball.h"
 
 #include <WinError.h>

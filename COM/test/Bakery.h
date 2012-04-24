@@ -29,7 +29,7 @@
 #define _Bakery_h_
 
 #include "COMLibrary.h"
-#include "IBakery_idl.h"
+#include "IBakery.h"
 
 /**
  * Bakery class.

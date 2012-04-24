@@ -164,9 +164,9 @@ EXTRA_DIST = \
 	jar.tli \
 	Ball.h \
 	tools.h \
-	raw-midl/IBakery_idl.h \
+	raw-midl/IBakery.h \
 	raw-midl/IBakeryMetadata.dll \
-	raw-midl/IBall_idl.h \
+	raw-midl/IBall.h \
 	raw-midl/IBall_iid.h \
 	raw-midl/IBallMetadata.dll \
 	raw-midl/IBall.tlb \
@@ -201,16 +201,16 @@ BakeryJarTestClient.exe: $(BakeryJarTestClient_exe_SOURCES) $(BakeryJarTestClien
 Jar.dll: $(Jar_dll_SOURCES_NonAM) $(Jar_dll_REFERENCES_NonAM)
 	$(CSC) $(CSC_FLAGS) $(Jar_dll_CSC_FLAGS_NonAM) -out:$@ $(^:%.dll=-r:%)
 
-IBall_idl.h: raw-midl/IBall_idl.h fix-midl.sh
+IBall.h: raw-midl/IBall.h fix-midl.sh
 	$(srcdir)/fix-midl.sh $< >$@
 
-IBakery_idl.h: raw-midl/IBakery_idl.h fix-midl.sh
+IBakery.h: raw-midl/IBakery.h fix-midl.sh
 	$(srcdir)/fix-midl.sh $< >$@
 
-IBall_GUIDs.cpp: IBall_idl.h extract_iids.sh
+IBall_GUIDs.cpp: IBall.h extract_iids.sh
 	$(srcdir)/extract_iids.sh $< >$@
 
-IBakery_GUIDs.cpp: IBakery_idl.h extract_iids.sh
+IBakery_GUIDs.cpp: IBakery.h extract_iids.sh
 	$(srcdir)/extract_iids.sh $< >$@
 
 IWall_GUIDs.cpp: IWall.h extract_iids.sh
@@ -251,8 +251,8 @@ IBagLib_.idl: IBagLib.idl IBag.idh IBall.idh
 #Jar_GUIDs.cpp: jar.tlh extract_iids.sh
 #	$(srcdir)/extract_iids.sh $< >$@
 
-Ball.lo: IBall_idl.h
-Bakery.lo: IBakery_idl.h
+Ball.lo: IBall.h
+Bakery.lo: IBakery.h
 Wall.lo: IWall.h
 Bag.lo: IBag.h
 
@@ -275,7 +275,7 @@ check_PROGRAMS = components.map ole32.dll
 TESTS = .libs/comtest ComClient.exe BakeryJarTestClient.exe Tester.exe
 TESTS_ENVIRONMENT = COMPONENTS_MAP_PATH=. LD_LIBRARY_PATH=:.libs:../src/.libs:$$($(IcuConfig) --libdir)
 
-MOSTLYCLEANFILES = IBall_idl.h IBall_GUIDs.cpp ComClient.exe.mdb Tester.exe.mdb IBakery_idl.h IBakery_GUIDs.cpp IWall_GUIDs.cpp IBag_GUIDs.cpp
+MOSTLYCLEANFILES = IBall.h IBall_GUIDs.cpp ComClient.exe.mdb Tester.exe.mdb IBakery.h IBakery_GUIDs.cpp IWall_GUIDs.cpp IBag_GUIDs.cpp
 CLEANFILES = IBallMetadata.dll IBakeryMetadata.dll Jar.dll Jar.dll.mdb BakeryJarTestClient.exe.mdb IWall.h IWall.tlb IWallInterop.dll IBag.h IBag.tlb IBagInterop.dll IBagLib_.idl
 if USE_FW_GENERIC_FACTORY
 # Only clean components.map if the pieces are available to regenerate it.
