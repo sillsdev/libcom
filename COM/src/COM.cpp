@@ -86,7 +86,7 @@ std::string SmartGUID::str() const
 bool SmartGUID::isNull() const
 {
 	// Assume null value is independent of byte order
-	return !uuid_is_null(buf());
+	return uuid_is_null(buf());
 }
 
 GUID GUID_NULL;
