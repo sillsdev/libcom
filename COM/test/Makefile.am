@@ -261,7 +261,10 @@ components.map: bakery.la ball.la wall.la bag.la
 	PATH=$(abs_top_srcdir)/bin$(FWARCH):$(PATH) \
 	make-map.sh .libs/bakery.so .libs/ball.so .libs/wall.so .libs/bag.so
 
-check_PROGRAMS = components.map
+ole32.dll:
+	ln -sf ../src/.libs/libcom.so $@
+
+check_PROGRAMS = components.map ole32.dll
 
 TESTS = .libs/comtest ComClient.exe BakeryJarTestClient.exe Tester.exe
 TESTS_ENVIRONMENT = COMPONENTS_MAP_PATH=. LD_LIBRARY_PATH=:.libs:../src/.libs:$$($(IcuConfig) --libdir)
