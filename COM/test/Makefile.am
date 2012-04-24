@@ -30,6 +30,7 @@ AM_CPPFLAGS = -DUSE_FW_GENERIC_FACTORY -DUSE_FW_MODULE_ENTRY -DCOM_NO_WINDOWS_H
 FieldWorksRootDir = $(FWROOT)
 FieldWorksOutputDebugDir = $(FieldWorksRootDir)/Output_$(FWARCH)/Debug
 FieldWorksObjDebugDir = $(FieldWorksRootDir)/Obj_$(FWARCH)/Debug
+FieldWorksIcuLibDir = $(FieldWorksRootDir)/Lib/src/icu/install/lib # TODO use icu-config --libdir possibly?
 Win32BaseInc = $(top_srcdir)/../Win32Base/include
 Win32MoreInc = $(top_srcdir)/../Win32More/include
 Win32BaseLib = $(top_srcdir)/../Win32Base/src/build$(FWARCH)
@@ -39,6 +40,8 @@ BUILD_ROOT = $(FieldWorksRootDir)
 else
 AM_CPPFLAGS = -DNO_FW
 endif
+
+AUTOMAKE_OPTIONS = color-tests
 
 noinst_PROGRAMS = comtest ComClient.exe BakeryJarTestClient.exe Tester.exe
 # TODO: ball.so shouldn't be installed, just built.
@@ -215,31 +218,29 @@ IBag_GUIDs.cpp: IBag.h extract_iids.sh
 	mv IBag_GUIDs.cpp "$$TMPFILE" && \
 	grep -v -e "__uuidof(IBall)" -e "__uuidof(Ball)" "$$TMPFILE" > IBag_GUIDs.cpp
 
-IWall.h: IWall.idl fix-midl.sh
-	$(MIDL) "$(REMOTE_WIN32_DEV_HOST)" /I $(midlIncludeDir) /Oicf /env win32 /tlb IWall.tlb /h IWall.h IWall.idl
+IWall.tlb IWall.h: IWall.idl fix-midl.sh
+	$(MIDL) "$(REMOTE_WIN32_DEV_HOST)" /I $(midlIncludeDir) /Oicf /env win32 /tlb IWall.tlb /h IWall.h $<
 	TMPFILE="$$(mktemp -t)" && \
 	mv IWall.h "$$TMPFILE" && \
 	$(srcdir)/fix-midl.sh "$$TMPFILE" > IWall.h
 
-# IWallInterop.dll actually depends on IWall.tlb, not IWall.h
-IWallInterop.dll: IWall.idl IWall.h
-	$(TLBIMP) "$(REMOTE_WIN32_DEV_HOST)" IWall.tlb /out:IWallInterop.dll
+IWallInterop.dll: IWall.tlb
+	$(TLBIMP) "$(REMOTE_WIN32_DEV_HOST)" $< /out:IWallInterop.dll
 
 # TODO not dirty hack
-IBag.h: IBagLib_.idl fix-midl.sh
-	$(MIDL) "$(REMOTE_WIN32_DEV_HOST)" /I $(midlIncludeDir) /Oicf /env win32 /tlb IBagLib_.tlb /h IBagLib_.h IBagLib_.idl
+IBag.tlb IBag.h: IBagLib_.idl fix-midl.sh
+	$(MIDL) "$(REMOTE_WIN32_DEV_HOST)" /I $(midlIncludeDir) /Oicf /env win32 /tlb IBagLib_.tlb /h IBagLib_.h $<
 	mv IBagLib_.tlb IBag.tlb
 	mv IBagLib_.h IBag.h
 	TMPFILE="$$(mktemp -t)" && \
 	mv IBag.h "$$TMPFILE" && \
 	$(srcdir)/fix-midl.sh "$$TMPFILE" > IBag.h
 
-# IBagInterop.dll actually depends on IBag.tlb, not IBag.h
-IBagInterop.dll: IBagLib_.idl IBag.h
-	$(TLBIMP) "$(REMOTE_WIN32_DEV_HOST)" IBag.tlb /out:IBagInterop.dll
+IBagInterop.dll: IBag.tlb
+	$(TLBIMP) "$(REMOTE_WIN32_DEV_HOST)" $< /out:IBagInterop.dll
 
 IBagLib_.idl: IBagLib.idl IBag.idh IBall.idh
-	gcc -E -P -x c -o $@ IBagLib.idl
+	gcc -E -P -x c -o $@ $<
 
 # Auto-generate Jar_GUIDs.cpp when the script handles it properly
 #Jar_GUIDs.cpp: jar.tlh extract_iids.sh
@@ -257,11 +258,14 @@ IBakeryMetadata.dll:
 	ln -sf $(srcdir)/raw-midl/$@
 
 components.map: bakery.la ball.la wall.la bag.la
-	LD_LIBRARY_PATH=$(FieldWorksRootDir)/Lib/src/icu/install$(FWARCH)/lib:$(abs_top_builddir)/src/.libs PATH=$(abs_top_srcdir)/bin$(FWARCH):$(PATH) make-map.sh .libs/bakery.so .libs/ball.so .libs/wall.so .libs/bag.so
+	LD_LIBRARY_PATH=$(FieldWorksRootDir)/Lib/src/icu/install$(FWARCH)/lib:$(abs_top_builddir)/src/.libs \
+	PATH=$(abs_top_srcdir)/bin$(FWARCH):$(PATH) \
+	make-map.sh .libs/bakery.so .libs/ball.so .libs/wall.so .libs/bag.so
 
-TESTS = test.sh
-TESTS_ENVIRONMENT = sh
 check_PROGRAMS = components.map
+
+TESTS = .libs/comtest ComClient.exe BakeryJarTestClient.exe Tester.exe
+TESTS_ENVIRONMENT = COMPONENTS_MAP_PATH=. LD_LIBRARY_PATH=$(FieldWorksIcuLibDir):.libs:../src/.libs
 
 MOSTLYCLEANFILES = IBall_idl.h IBall_GUIDs.cpp ComClient.exe.mdb Tester.exe.mdb IBakery_idl.h IBakery_GUIDs.cpp IWall_GUIDs.cpp IBag_GUIDs.cpp
 CLEANFILES = IBallMetadata.dll IBakeryMetadata.dll Jar.dll Jar.dll.mdb BakeryJarTestClient.exe.mdb IWall.h IWall.tlb IWallInterop.dll IBag.h IBag.tlb IBagInterop.dll IBagLib_.idl
