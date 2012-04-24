@@ -224,17 +224,17 @@ IBag_GUIDs.cpp: IBag.h extract_iids.sh
 	grep -v -e "__uuidof(IBall)" -e "__uuidof(Ball)" "$$TMPFILE" > IBag_GUIDs.cpp
 
 IWall.tlb IWall.h: IWall.idl fix-midl.sh
-	$(MIDL) "$(REMOTE_WIN32_DEV_HOST)" /I $(midlIncludeDir) /Oicf /env win32 /tlb IWall.tlb /h IWall.h $<
+	$(MIDL) "$(REMOTE_WIN32_DEV_HOST)" /I $(midlIncludeDir) /nologo /Oicf /env win32 /tlb IWall.tlb /h IWall.h $<
 	TMPFILE="$$(mktemp -t)" && \
 	mv IWall.h "$$TMPFILE" && \
 	$(srcdir)/fix-midl.sh "$$TMPFILE" > IWall.h
 
 IWallInterop.dll: IWall.tlb
-	$(TLBIMP) "$(REMOTE_WIN32_DEV_HOST)" $< /out:IWallInterop.dll
+	$(TLBIMP) "$(REMOTE_WIN32_DEV_HOST)" $< /out:IWallInterop.dll /silent
 
 # TODO not dirty hack
 IBag.tlb IBag.h: IBagLib_.idl fix-midl.sh
-	$(MIDL) "$(REMOTE_WIN32_DEV_HOST)" /I $(midlIncludeDir) /Oicf /env win32 /tlb IBagLib_.tlb /h IBagLib_.h $<
+	$(MIDL) "$(REMOTE_WIN32_DEV_HOST)" /I $(midlIncludeDir) /nologo /Oicf /env win32 /tlb IBagLib_.tlb /h IBagLib_.h $<
 	mv IBagLib_.tlb IBag.tlb
 	mv IBagLib_.h IBag.h
 	TMPFILE="$$(mktemp -t)" && \
@@ -242,7 +242,7 @@ IBag.tlb IBag.h: IBagLib_.idl fix-midl.sh
 	$(srcdir)/fix-midl.sh "$$TMPFILE" > IBag.h
 
 IBagInterop.dll: IBag.tlb
-	$(TLBIMP) "$(REMOTE_WIN32_DEV_HOST)" $< /out:IBagInterop.dll
+	$(TLBIMP) "$(REMOTE_WIN32_DEV_HOST)" $< /out:IBagInterop.dll /silent
 
 IBagLib_.idl: IBagLib.idl IBag.idh IBall.idh
 	gcc -E -P -x c -o $@ $<
