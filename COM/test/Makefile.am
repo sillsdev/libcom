@@ -73,8 +73,8 @@ INCLUDES += \
 	-I$(FieldWorksRootDir)/Src/Generic
 endif
 
-MIDL = $(top_srcdir)/remote-midl/midl
-TLBIMP = $(top_srcdir)/remote-midl/tlbimp
+MIDL = $(top_srcdir)/remote-midl/midl "$(REMOTE_WIN32_DEV_HOST)"
+TLBIMP = $(top_srcdir)/remote-midl/tlbimp "$(REMOTE_WIN32_DEV_HOST)"
 midlIncludeDir = "C:/MicrosoftPlatformSDKforWindowsServer2003R2/Include"
 
 bag_la_SOURCES = \
@@ -169,7 +169,10 @@ EXTRA_DIST = \
 	raw-midl/IBall.h \
 	raw-midl/IBall_iid.h \
 	raw-midl/IBallMetadata.dll \
-	raw-midl/IBall.tlb \
+	raw-midl/IWall.h \
+	raw-midl/IWallInterop.dll \
+	raw-midl/IBag.h \
+	raw-midl/IBagInterop.dll \
 	raw-midl/jar.tlh \
 	raw-midl/jar.tli \
 	raw-midl/README \
@@ -201,12 +204,6 @@ BakeryJarTestClient.exe: $(BakeryJarTestClient_exe_SOURCES) $(BakeryJarTestClien
 Jar.dll: $(Jar_dll_SOURCES_NonAM) $(Jar_dll_REFERENCES_NonAM)
 	$(CSC) $(CSC_FLAGS) $(Jar_dll_CSC_FLAGS_NonAM) -out:$@ $(^:%.dll=-r:%)
 
-IBall.h: raw-midl/IBall.h fix-midl.sh
-	$(srcdir)/fix-midl.sh $< >$@
-
-IBakery.h: raw-midl/IBakery.h fix-midl.sh
-	$(srcdir)/fix-midl.sh $< >$@
-
 IBall_GUIDs.cpp: IBall.h extract_iids.sh
 	$(srcdir)/extract_iids.sh $< >$@
 
@@ -218,34 +215,54 @@ IWall_GUIDs.cpp: IWall.h extract_iids.sh
 
 # TODO do in a way that isn't a dirty hack with manually removing IBall,Ball GUID definitions from IBag_GUIDs.cpp since IBagLib.idl #includes IBall.idh
 IBag_GUIDs.cpp: IBag.h extract_iids.sh
-	$(srcdir)/extract_iids.sh $< >$@
-	TMPFILE="$$(mktemp -t)" && \
-	mv IBag_GUIDs.cpp "$$TMPFILE" && \
-	grep -v -e "__uuidof(IBall)" -e "__uuidof(Ball)" "$$TMPFILE" > IBag_GUIDs.cpp
+	$(srcdir)/extract_iids.sh $< | \
+	grep -v -e "__uuidof(IBall)" -e "__uuidof(Ball)" >$@
 
-IWall.tlb IWall.h: IWall.idl fix-midl.sh
-	$(MIDL) "$(REMOTE_WIN32_DEV_HOST)" /I $(midlIncludeDir) /nologo /Oicf /env win32 /tlb IWall.tlb /h IWall.h $<
-	TMPFILE="$$(mktemp -t)" && \
-	mv IWall.h "$$TMPFILE" && \
-	$(srcdir)/fix-midl.sh "$$TMPFILE" > IWall.h
-
-IWallInterop.dll: IWall.tlb
-	$(TLBIMP) "$(REMOTE_WIN32_DEV_HOST)" $< /out:IWallInterop.dll /silent
-
-# TODO not dirty hack
-IBag.tlb IBag.h: IBagLib_.idl fix-midl.sh
-	$(MIDL) "$(REMOTE_WIN32_DEV_HOST)" /I $(midlIncludeDir) /nologo /Oicf /env win32 /tlb IBagLib_.tlb /h IBagLib_.h $<
-	mv IBagLib_.tlb IBag.tlb
-	mv IBagLib_.h IBag.h
-	TMPFILE="$$(mktemp -t)" && \
-	mv IBag.h "$$TMPFILE" && \
-	$(srcdir)/fix-midl.sh "$$TMPFILE" > IBag.h
-
-IBagInterop.dll: IBag.tlb
-	$(TLBIMP) "$(REMOTE_WIN32_DEV_HOST)" $< /out:IBagInterop.dll /silent
+if USE_REMOTE_MIDL
 
 IBagLib_.idl: IBagLib.idl IBag.idh IBall.idh
 	gcc -E -P -x c -o $@ $<
+
+IBall_.idl: IBall.idl IBall.idh
+	gcc -E -P -x c -o $@ $<
+
+$(srcdir)/raw-midl/IBall.h: IBall_.idl
+	$(MIDL) /I $(midlIncludeDir) /nologo /Oicf /env win32 /h $@ $<
+
+$(srcdir)/raw-midl/IBakery.h: IBakery.idl
+	$(MIDL) /I $(midlIncludeDir) /nologo /Oicf /env win32 /h $@ $<
+
+$(srcdir)/raw-midl/IWall.h IWall.tlb: IWall.idl
+	$(MIDL) /I $(midlIncludeDir) /nologo /Oicf /env win32 /tlb IWall.tlb /h $(srcdir)/raw-midl/IWall.h $<
+
+$(srcdir)/raw-midl/IBag.h IBag.tlb: IBagLib_.idl
+	$(MIDL) /I $(midlIncludeDir) /nologo /Oicf /env win32 /tlb IBag.tlb /h $(srcdir)/raw-midl/IBag.h $<
+
+$(srcdir)/raw-midl/IWallInterop.dll: IWall.tlb
+	$(TLBIMP) $< /out:$@ /silent
+
+$(srcdir)/raw-midl/IBagInterop.dll: IBag.tlb
+	$(TLBIMP) $< /out:$@ /silent
+
+endif #USE_REMOTE_MIDL
+
+IBall.h: raw-midl/IBall.h fix-midl.sh
+	$(srcdir)/fix-midl.sh $< >$@
+
+IBakery.h: raw-midl/IBakery.h fix-midl.sh
+	$(srcdir)/fix-midl.sh $< >$@
+
+IWall.h: raw-midl/IWall.h fix-midl.sh
+	$(srcdir)/fix-midl.sh $< >$@
+
+IBag.h: raw-midl/IBag.h fix-midl.sh
+	$(srcdir)/fix-midl.sh $< >$@
+
+IWallInterop.dll: raw-midl/IWallInterop.dll
+	cp $< $@
+
+IBagInterop.dll: raw-midl/IBagInterop.dll
+	cp $< $@
 
 # Auto-generate Jar_GUIDs.cpp when the script handles it properly
 #Jar_GUIDs.cpp: jar.tlh extract_iids.sh
@@ -276,7 +293,7 @@ TESTS = .libs/comtest ComClient.exe BakeryJarTestClient.exe Tester.exe
 TESTS_ENVIRONMENT = COMPONENTS_MAP_PATH=. LD_LIBRARY_PATH=:.libs:../src/.libs:$$($(IcuConfig) --libdir)
 
 MOSTLYCLEANFILES = IBall.h IBall_GUIDs.cpp ComClient.exe.mdb Tester.exe.mdb IBakery.h IBakery_GUIDs.cpp IWall_GUIDs.cpp IBag_GUIDs.cpp
-CLEANFILES = IBallMetadata.dll IBakeryMetadata.dll Jar.dll Jar.dll.mdb BakeryJarTestClient.exe.mdb IWall.h IWall.tlb IWallInterop.dll IBag.h IBag.tlb IBagInterop.dll IBagLib_.idl
+CLEANFILES = IBallMetadata.dll IBakeryMetadata.dll Jar.dll Jar.dll.mdb BakeryJarTestClient.exe.mdb IWall.h IWall.tlb IWallInterop.dll IBag.h IBag.tlb IBagInterop.dll IBagLib_.idl IBall_.idl IBall.tlb IBakery.tlb
 if USE_FW_GENERIC_FACTORY
 # Only clean components.map if the pieces are available to regenerate it.
 CLEANFILES += components.map
