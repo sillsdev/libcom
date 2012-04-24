@@ -216,7 +216,7 @@ IWall_GUIDs.cpp: IWall.h extract_iids.sh
 # TODO do in a way that isn't a dirty hack with manually removing IBall,Ball GUID definitions from IBag_GUIDs.cpp since IBagLib.idl #includes IBall.idh
 IBag_GUIDs.cpp: IBag.h extract_iids.sh
 	$(srcdir)/extract_iids.sh $< | \
-	grep -v -e "__uuidof(IBall)" -e "__uuidof(Ball)" >$@
+	grep -v -e "DEFINE_UUIDOF(IBall," -e "DEFINE_UUIDOF(Ball," >$@
 
 if USE_REMOTE_MIDL
 

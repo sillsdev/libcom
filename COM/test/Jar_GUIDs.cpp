@@ -3,6 +3,6 @@
 //#include <COM.h>
 #include "jar.tlh"
 
-template<> const GUID __uuidof(Jar::__Jar)("bd3e3a20-f839-3460-b3ae-95c9d6816906");
-template<> const GUID __uuidof(Jar::IJar)("5e139206-aca8-4530-b2b9-308e16f81bda");
-template<> const GUID __uuidof(Jar::Jar)("b1de8884-c20c-4743-a1b3-851daad6d188");
+template<> const GUID __uuidof(Jar::__Jar) = {0xbd3e3a20, 0xf839, 0x3460, {0xb3, 0xae, 0x95, 0xc9, 0xd6, 0x81, 0x69, 0x06}};
+template<> const GUID __uuidof(Jar::IJar) = {0x5e139206, 0xaca8, 0x4530, {0xb2, 0xb9, 0x30, 0x8e, 0x16, 0xf8, 0x1b, 0xda}};
+template<> const GUID __uuidof(Jar::Jar) = {0xb1de8884, 0xc20c, 0x4743, {0xa1, 0xb3, 0x85, 0x1d, 0xaa, 0xd6, 0xd1, 0x88}};
