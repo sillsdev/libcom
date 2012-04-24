@@ -37,8 +37,7 @@ shift
 
 if [ "$1" == "-p" ]; then
 	REMOTE_PORT=$2
-	shift
-	shift
+	shift 2
 else
 	REMOTE_PORT=22
 fi
@@ -51,41 +50,60 @@ if [ -z "$DIR" ]
 fi
 DIR_FROM_WIN_PERSPECTIVE=$(ssh -p $REMOTE_PORT "$REMOTE_HOST" cygpath -w "$DIR")
 
-# Remove extra path information from the last and second last argument since it won't be helpful on Windows
-arguments=($@)
-arguments_size=${#arguments[@]}
-INFILE=${arguments[$arguments_size-1]}
-arguments[$arguments_size-1]=$(basename ${arguments[$arguments_size-1]})
-OUTFILE_ORIG=${arguments[$arguments_size-2]}
-arguments[$arguments_size-2]=$(basename ${arguments[$arguments_size-2]})
+# Remove extra path information from the filename arguments since it won't be helpful on Windows
+isSwitch()
+{
+	[ "$(dirname "$1")" = / ] # Unlikely to match a real filename
+}
+ARGS=()
+FOLLOWS=
+for ARG
+do
+	case "$FOLLOWS" in
+	(/H)
+		HFILE=$ARG
+		ARG=$(basename "$ARG")
+		;;
+	(/TLB)
+		TLBFILE=$ARG
+		ARG=$(basename "$ARG")
+		;;
+	(/I|/ENV)
+		# Pass this arg through unchanged
+		;;
+	(*)
+		if ! isSwitch "$ARG"; then
+			IDLFILE=$ARG
+			ARG=$(basename "$ARG")
+		fi
+	esac
+	ARGS+=("$ARG")
+	FOLLOWS=${ARG^^} # Uppercase
+done
 
-LAST=${arguments[$arguments_size-1]}
-STEM=$(echo "$LAST" | sed 's/\.idl$//')
-
-CMD="cd $DIR_FROM_WIN_PERSPECTIVE && midl"
-CMD="$CMD ${arguments[@]}"
-
-LOCAL_TMPDIR=$(mktemp -dt)
+CMD="cd $DIR_FROM_WIN_PERSPECTIVE && midl ${ARGS[@]}"
 
 # Hack to avoid rewriting script in python to be more robust and happily handle commandline arguments:
 # (eg could run: remote-midl.py --send ../input.idl --send ../fooDependency.tlb midl_arguments_here --get-back /foo/out.h --get-back ../output/out.tlb)
 # If FwCellarTlb.idl, ViewsTlb.idl, or WorldPadTlb.idl are to be processed, then we need to send over FwKernelTlb.tlb
 # There are probably other dependencies but they aren't necessarily used yet in the files in the IDLMakefile.
-FILES_TO_SEND_TO_REMOTE_HOST=("$(dirname "$INFILE")/$LAST")
-if [ "x$LAST" = "xFwCellarTlb.idl" ]; then
-	FILES_TO_SEND_TO_REMOTE_HOST=("${FILES_TO_SEND_TO_REMOTE_HOST[@]}" "$(dirname "$INFILE")/FwKernelTlb.tlb")
+IDLNAME=$(basename "$IDLFILE")
+IDLDIR=$(dirname "$IDLFILE")
+FILES_TO_SEND_TO_REMOTE_HOST=("$IDLFILE")
+if [ "$IDLNAME" = FwCellarTlb.idl ]; then
+	FILES_TO_SEND_TO_REMOTE_HOST+=("$IDLDIR/FwKernelTlb.tlb")
 fi
-if [ "x$LAST" = "xViewsTlb.idl" ]; then
-	FILES_TO_SEND_TO_REMOTE_HOST=("${FILES_TO_SEND_TO_REMOTE_HOST[@]}" "$(dirname "$INFILE")/FwKernelTlb.tlb")
+if [ "$IDLNAME" = ViewsTlb.idl ]; then
+	FILES_TO_SEND_TO_REMOTE_HOST+=("$IDLDIR/FwKernelTlb.tlb")
 fi
-if [ "x$LAST" = "xDbAccessTlb.idl" ]; then
-	FILES_TO_SEND_TO_REMOTE_HOST=("${FILES_TO_SEND_TO_REMOTE_HOST[@]}" "$(dirname "$INFILE")/FwKernelTlb.tlb")
+if [ "$IDLNAME" = DbAccessTlb.idl ]; then
+	FILES_TO_SEND_TO_REMOTE_HOST+=("$IDLDIR/FwKernelTlb.tlb")
 fi
-if [ "x$LAST" = "xWorldPadTlb.idl" ]; then
-	FILES_TO_SEND_TO_REMOTE_HOST=("${FILES_TO_SEND_TO_REMOTE_HOST[@]}" "$(dirname "$INFILE")/FwKernelTlb.tlb" "$(dirname "$INFILE")/ViewsTlb.tlb")
+if [ "$IDLNAME" = WorldPadTlb.idl ]; then
+	FILES_TO_SEND_TO_REMOTE_HOST+=("$IDLDIR/FwKernelTlb.tlb" "$IDLDIR/ViewsTlb.tlb")
 fi
-if [ "x$LAST" = "xCmnFwDlgsTlb.idl" ]; then
-	FILES_TO_SEND_TO_REMOTE_HOST=("${FILES_TO_SEND_TO_REMOTE_HOST[@]}" "$(dirname "$INFILE")/FwKernelTlb.tlb" "$(dirname "$INFILE")/ViewsTlb.tlb" "$(dirname "$INFILE")/LanguageTlb.tlb")
+if [ "$IDLNAME" = CmnFwDlgsTlb.idl ]; then
+	FILES_TO_SEND_TO_REMOTE_HOST+=("$IDLDIR/FwKernelTlb.tlb" "$IDLDIR/ViewsTlb.tlb" "$IDLDIR/LanguageTlb.tlb")
 fi
 
 # cmd.exe /C seems to have trouble with double-quote handling and the spaces in
@@ -98,6 +116,7 @@ VSVARSCMD="cmd /C echo \"C:\\Program Files\\Microsoft Visual Studio 9.0\\Common7
 scp -P $REMOTE_PORT "${FILES_TO_SEND_TO_REMOTE_HOST[@]}" "$REMOTE_HOST:$DIR" && 
 	ssh -p $REMOTE_PORT "$REMOTE_HOST" "$VSVARSCMD" && 
 	ssh -p $REMOTE_PORT "$REMOTE_HOST" "cmd /C '$VCVARSBAT && $CMD'" && 
-	scp -P $REMOTE_PORT "$REMOTE_HOST:$DIR"/$STEM{.h,.tlb} "$LOCAL_TMPDIR" && 
-	cp -a "$LOCAL_TMPDIR/$STEM"{.h,.tlb} $(dirname "$OUTFILE_ORIG") ||
+	[ -z "$HFILE" ] || scp -P $REMOTE_PORT "$REMOTE_HOST:$DIR/$(basename "$HFILE")" "$HFILE" &&
+	[ -z "$TLBFILE" ] || scp -P $REMOTE_PORT "$REMOTE_HOST:$DIR/$(basename "$TLBFILE")" "$TLBFILE" &&
+	ssh -p $REMOTE_PORT "$REMOTE_HOST" "rm -r $DIR" ||
 	(echo $(basename "$0"): Error communicating with remote host.; exit 1)
