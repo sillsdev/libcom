@@ -83,6 +83,7 @@ if USE_FW_GENERIC_FACTORY
 bag_la_LIBADD += \
 	$(FieldWorksOutputDebugDir)/libGeneric.a \
 	$(FieldWorksObjDebugDir)/Generic/ModuleEntry.o \
+	$(FieldWorksObjDebugDir)/DebugProcs/DebugProcs.o \
 	-L$(Win32BaseLib) -lWin32Base \
 	-L$(Win32MoreLib) -lWin32More \
 	-lpthread
@@ -99,6 +100,7 @@ if USE_FW_GENERIC_FACTORY
 wall_la_LIBADD += \
 	$(FieldWorksOutputDebugDir)/libGeneric.a \
 	$(FieldWorksObjDebugDir)/Generic/ModuleEntry.o \
+	$(FieldWorksObjDebugDir)/DebugProcs/DebugProcs.o \
 	-L$(Win32BaseLib) -lWin32Base \
 	-L$(Win32MoreLib) -lWin32More \
 	-lpthread
@@ -115,6 +117,7 @@ if USE_FW_GENERIC_FACTORY
 bakery_la_LIBADD += \
 	$(FieldWorksOutputDebugDir)/libGeneric.a \
 	$(FieldWorksObjDebugDir)/Generic/ModuleEntry.o \
+	$(FieldWorksObjDebugDir)/DebugProcs/DebugProcs.o \
 	-L$(Win32BaseLib) -lWin32Base \
 	-L$(Win32MoreLib) -lWin32More \
 	-lpthread
@@ -132,6 +135,7 @@ if USE_FW_GENERIC_FACTORY
 ball_la_LIBADD += \
 	$(FieldWorksOutputDebugDir)/libGeneric.a \
 	$(FieldWorksObjDebugDir)/Generic/ModuleEntry.o \
+	$(FieldWorksObjDebugDir)/DebugProcs/DebugProcs.o \
 	-L$(Win32BaseLib) -lWin32Base \
 	-L$(Win32MoreLib) -lWin32More \
 	-lpthread
