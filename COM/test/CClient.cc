@@ -54,6 +54,7 @@ int main() {
   REFIID objectInterfaceID = IID_IBall;
   LPVOID* objectInterface = NULL; // we want a pointer to an IUnknown interface
   HRESULT hr;
+  bool success = false;
 
   handle = dlopen("libcom.so", RTLD_LAZY);
 
@@ -93,11 +94,12 @@ int main() {
 	  printf("dist is %d\n.",dist);
 
 		fprintf(stderr, "Success!\n");
+		success = true;
 
 	} else {
 		fprintf(stderr,"hr did not succeed.\n");
 	}
 
   dlclose(handle);
-  return 0;
+  return success ? 0 : 1;
 }
