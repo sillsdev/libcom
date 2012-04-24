@@ -29,11 +29,10 @@ ARCH = $(shell uname -m)
 BUILD_DIR = build$(ARCH)
 
 CXXFLAGS = -g -Wall
-CPPFLAGS = -MMD -I.. -I../include -I../../COM/include $(shell icu-config --cppflags)
-LDFLAGS = $(shell icu-config --ldflags) -L../../COM/$(BUILD_DIR)/src/.libs -lcom
-# LDLIBS = -licucore -luuid
+CPPFLAGS = $(shell icu-config --cppflags) -MMD -I.. -I../include
+LDFLAGS  = $(shell icu-config --ldflags)
 
-PROGNAMES   = TestOutputDebugString TestGUID TestHacks TestMessageBox
+PROGNAMES   = TestOutputDebugString TestHacks TestMessageBox
 SCRIPTNAMES = messageboxdouble
 PROGS       = $(PROGNAMES:%=$(BUILD_DIR)/%)
 SCRIPTS     = $(SCRIPTNAMES:%=$(BUILD_DIR)/%)
@@ -54,7 +53,7 @@ $(WIN32BASELIB)::
 	@$(MAKE) -C $(WIN32BASEDIR) -q || \
 	 $(MAKE) -C $(WIN32BASEDIR)
 
-run-test: all
+check run-test: all
 	sh test.sh $(PROGNAMES)
 
 clean:
