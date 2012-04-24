@@ -108,21 +108,70 @@ static const PlainGUID base_guid = {0x0c733a30,0x2a1c,0x11ce,{0xad,0xe5,0x00,0xa
 static const char      base_text[] = "0c733a30-2a1c-11ce-ade5-00aa0044773d";
 static const PlainGUID copy_guid = {0x0c733a30,0x2a1c,0x11ce,{0xad,0xe5,0x00,0xaa,0x00,0x44,0x77,0x3d}};
 
+BOOST_AUTO_TEST_CASE( test_PlainGUID )
+{
+	// Copy constructor
+	PlainGUID plain(base_guid);
+	CHECK_EQUAL_GUID( plain, base_guid );
+
+	// Equality
+	BOOST_CHECK_EQUAL( copy_guid, base_guid );
+	BOOST_CHECK_EQUAL( copy_guid.compare(base_guid), 0 );
+	BOOST_CHECK_EQUAL( plain, base_guid );
+	BOOST_CHECK_EQUAL( plain.compare(base_guid), 0 );
+	BOOST_CHECK_NE   ( plain, zero_guid );
+	BOOST_CHECK_NE   ( plain.compare(zero_guid), 0 );
+
+	// Null-checking
+	BOOST_CHECK( !plain.isNull() );
+	BOOST_CHECK( zero_guid.isNull() );
+
+	// Clearing
+	plain.clear();
+	BOOST_CHECK_EQUAL( plain, zero_guid );
+
+	// Assignment
+	plain = base_guid;
+	BOOST_CHECK_EQUAL( plain, base_guid );
+
+	// String out
+	BOOST_CHECK_EQUAL( plain.str(), base_text );
+
+	// String in
+	plain.clear();
+	plain.initialize(base_text);
+	BOOST_CHECK_EQUAL( plain, base_guid );
+	BOOST_CHECK_THROW( plain.initialize("garbage"), std::runtime_error );
+	BOOST_CHECK_EQUAL( plain, base_guid );
+
+	// Comparison
+	plain.Data4[7] += 1;
+	BOOST_CHECK( plain > base_guid );
+	BOOST_CHECK( plain.compare(base_guid) > 0 );
+	plain.Data4[7] -= 2;
+	BOOST_CHECK( plain < base_guid );
+	BOOST_CHECK( plain.compare(base_guid) < 0 );
+
+	// Generating new values
+	plain.create();
+	BOOST_CHECK_NE( plain, zero_guid );
+	BOOST_CHECK_NE( plain, base_guid );
+
+	// Null value
+	BOOST_CHECK_EQUAL( PlainGUID::null, zero_guid );
+}
+
 BOOST_AUTO_TEST_CASE( test_SmartGUID )
 {
-	// Construct null value
+	PlainGUID plain(base_guid);
+
+	// Construct default value
 	SmartGUID null;
 	CHECK_EQUAL_GUID( null, zero_guid );
 
-	// Equality
-	BOOST_CHECK_EQUAL( base_guid, copy_guid );
-	BOOST_CHECK_NE   ( base_guid, zero_guid );
+	// Mixed equality
 	BOOST_CHECK_EQUAL( null, zero_guid );
 	BOOST_CHECK_EQUAL( zero_guid, null );
-
-	// Construct Plain from Plain
-	PlainGUID plain(base_guid);
-	BOOST_CHECK_EQUAL( plain, base_guid );
 
 	// Construct Smart from Plain
 	SmartGUID smart(plain);
@@ -134,12 +183,7 @@ BOOST_AUTO_TEST_CASE( test_SmartGUID )
 
 	// Construct Smart from Smart
 	SmartGUID smart2(smart);
-	BOOST_CHECK_EQUAL( smart2, smart );
-
-	// Assign Plain from Plain
-	PlainGUID plain3;
-	plain3 = plain;
-	BOOST_CHECK_EQUAL( plain3, plain );
+	BOOST_CHECK_EQUAL( smart2, plain );
 
 	// Assign Smart from Plain
 	SmartGUID smart3;
@@ -147,28 +191,38 @@ BOOST_AUTO_TEST_CASE( test_SmartGUID )
 	BOOST_CHECK_EQUAL( smart3, plain );
 
 	// Assign Plain from Smart
-	plain = zero_guid;
-	plain = smart;
-	BOOST_CHECK_EQUAL( plain, smart );
+	PlainGUID plain4;
+	plain4 = smart;
+	BOOST_CHECK_EQUAL( plain4, plain );
 
 	// Assign Smart from Smart
-	smart = zero_guid;
-	smart = plain;
-	BOOST_CHECK_EQUAL( smart, plain );
+	SmartGUID smart4;
+	smart4 = smart;
+	CHECK_EQUAL_GUID( smart4, smart );
+	BOOST_CHECK_EQUAL( smart4, smart );
 
-	// Null checks
+	// Null-checking
 	BOOST_CHECK( null.isNull() );
 	BOOST_CHECK( !smart.isNull() );
 
-	// Generate new GUID
-	SmartGUID guid(true);
-	BOOST_CHECK( !guid.isNull() );
+	// Construct new value (in cleared memory)
+	char raw_storage[sizeof(SmartGUID)];
+	std::fill(raw_storage, raw_storage + sizeof(SmartGUID), 0);
+	SmartGUID& smart5 = *new (raw_storage) SmartGUID(true);
+	BOOST_CHECK_NE( smart5, base_guid );
+	BOOST_CHECK_NE( smart5, zero_guid );
+	smart3.~SmartGUID();
+
+	// Construct from string
+	SmartGUID smart6(base_text);
+	BOOST_CHECK_EQUAL( smart6, base_guid );
+	BOOST_CHECK_THROW( SmartGUID("garbage"), std::runtime_error );
 }
 
 BOOST_AUTO_TEST_CASE( test_StringFromGUID2 )
 {
 	// Params to be passed
-	GUID guid("f350127b-de04-44c5-ad9c-e1bd72e68086");
+	GUID guid = {0xf350127b,0xde04,0x44c5,{0xad,0x9c,0xe1,0xbd,0x72,0xe6,0x80,0x86}};
 	std::vector<OLECHAR> output;
 
 	// Compute expected text data
