@@ -27,6 +27,7 @@
 
 #include <assert.h>
 #include <iostream>
+#include <vector>
 #include <stdexcept>
 
 // TODO AssertPtr, Assert, and ThrowHr should be pulled in correctly some time, once Generic starts to compile etc better.
@@ -45,6 +46,7 @@ typedef UINT32 UCOMINT32;
 #include "GenericFactory.h"
 #endif // USE_FW_GENERIC_FACTORY
 
+#include <ExtendedTypes.h>
 
 // Begin copied code from Wine's winbase.h, modified 2007-02-01 by Neil Mayhew
 
@@ -116,6 +118,18 @@ void Bakery::CreateCom(IUnknown *outerAggregateIUnknown, REFIID interfaceid, voi
 }
   
 #else /* !USE_FW_GENERIC_FACTORY */
+
+EXTERN_C BOOL WINAPI DllMain(HMODULE /*hmod*/, DWORD /*dwReason*/, PVOID /*pvReserved*/)
+{
+}
+
+STDAPI DllRegisterServer()
+{
+	std::vector<char> progID(g_ProgID, g_ProgID+wcslen(g_ProgID)+1);
+	std::vector<char> classDescription(g_classDescription, g_classDescription+wcslen(g_classDescription)+1);
+	CoRegisterClassInfo(&CLSID_Bakery, &progID[0], &classDescription[0]);
+	return S_OK;
+}
 
 // Upon being dlopen'ed, this will create our class factory (and as long as RegisterFactory() is still being used, will register a pointer to the class factory (as an IClassFactory)). TODO yeah, probably not any more, right? Or did we leave support for that in?
 static CFactory classFactory;

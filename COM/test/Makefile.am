@@ -25,16 +25,17 @@
 # http://www.gnu.org/licenses/lgpl.html
 # 
 
+Win32BaseInc = $(top_srcdir)/../Win32Base/include
+Win32MoreInc = $(top_srcdir)/../Win32More/include
+Win32BaseLib = $(top_srcdir)/../Win32Base/src/build$(FWARCH)
+Win32MoreLib = $(top_srcdir)/../Win32More/src/build$(FWARCH)
+
 if USE_FW_GENERIC_FACTORY
 AM_CPPFLAGS = -DUSE_FW_GENERIC_FACTORY -DUSE_FW_MODULE_ENTRY -DCOM_NO_WINDOWS_H
 FieldWorksRootDir = $(FWROOT)
 FieldWorksOutputDebugDir = $(FieldWorksRootDir)/Output_$(FWARCH)/Debug
 FieldWorksObjDebugDir = $(FieldWorksRootDir)/Obj_$(FWARCH)/Debug
 FieldWorksIcuLibDir = $(FieldWorksRootDir)/Lib/src/icu/install/lib # TODO use icu-config --libdir possibly?
-Win32BaseInc = $(top_srcdir)/../Win32Base/include
-Win32MoreInc = $(top_srcdir)/../Win32More/include
-Win32BaseLib = $(top_srcdir)/../Win32Base/src/build$(FWARCH)
-Win32MoreLib = $(top_srcdir)/../Win32More/src/build$(FWARCH)
 BUILD_ROOT = $(FieldWorksRootDir)
 -include $(BUILD_ROOT)/Bld/_user.mak.lnx
 else
@@ -50,14 +51,14 @@ lib_LTLIBRARIES = ball.la bakery.la wall.la bag.la
 INCLUDES = \
 	$(all_includes) \
 	-I$(top_srcdir)/include \
+	-I$(Win32BaseInc) \
+	-I$(Win32MoreInc) \
 	$$(icu-config --cppflags)
 	
 if USE_FW_GENERIC_FACTORY
 INCLUDES += \
 	-I$(FieldWorksRootDir)/Include \
-	-I$(FieldWorksRootDir)/Src/Generic \
-	-I$(Win32BaseInc) \
-	-I$(Win32MoreInc)
+	-I$(FieldWorksRootDir)/Src/Generic
 endif
 
 MIDL = $(top_srcdir)/remote-midl/midl
