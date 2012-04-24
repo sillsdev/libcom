@@ -166,14 +166,14 @@ HRESULT __stdcall CFactory::QueryInterface(const IID& interfaceid, void** object
 /**
  * CFactory::AddRef
  */
-ULONG __stdcall CFactory::AddRef() {
+UINT32 __stdcall CFactory::AddRef() {
 	return InterlockedIncrement(&m_referenceCount);
 }
 
 /** 
  * CFactory::Release
  */
-ULONG __stdcall CFactory::Release() {
+UINT32 __stdcall CFactory::Release() {
 	if (0 == InterlockedDecrement(&m_referenceCount)) {
 		delete this; // TODO This might cause trouble like in the past.
 		return 0;

@@ -73,8 +73,8 @@ class BagCFactory : public IClassFactory
 public:
 	// IUnknown functions
 	virtual HRESULT __stdcall QueryInterface(const IID& interfaceid, void** objectInterface);
-	virtual ULONG __stdcall AddRef();
-	virtual ULONG __stdcall Release();
+	virtual UINT32 __stdcall AddRef();
+	virtual UINT32 __stdcall Release();
 
 	// IClassFactory functions
 	virtual HRESULT __stdcall CreateInstance(IUnknown* outerAggregateIUnknown, const IID& interfaceid, void** objectInterface);
