@@ -55,4 +55,9 @@ check: all
 clean:
 	$(RM) *.o *.d $(PROGS)
 
+distclean: clean
+	$(RM) Makefile
+
+install uninstall:
+
 -include *.d
