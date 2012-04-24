@@ -32,6 +32,7 @@
 #include <vector>
 #include <algorithm>
 #include <ostream>
+#include <iomanip>
 #include <iterator>
 
 #define BOOST_TEST_DYN_LINK
@@ -51,6 +52,31 @@ namespace std
 	}
 }
 
+// Stream a PlainGUID
+std::ostream& operator << (std::ostream& out, const PlainGUID& g)
+{
+	using std::setw;
+
+	std::ios::fmtflags previous = out.flags();
+
+	out << std::hex << std::setfill('0') << std::setiosflags(std::ios::uppercase);
+
+	out << "{";
+
+	out << setw(8) << g.Data1 << "-"
+	    << setw(4) << g.Data2 << "-"
+	    << setw(4) << g.Data3 << "-";
+
+	for (int i = 0; i != sizeof(g.Data4); ++i)
+		out << std::setw(2) << int(g.Data4[i]);
+
+	out << "}";
+
+	out.flags(previous);
+
+	return out;
+}
+
 // Helper functions for iterating C-style arrays
 
 template<class T, size_t N>
@@ -63,6 +89,80 @@ template<class T, size_t N>
 inline const T* end(const T (&array)[N])
 {
 	return &array[N];
+}
+
+// Helper function for checking equality
+
+template<typename Left, typename Right>
+bool bytewise_equal(const Left& l, const Right& r)
+{
+	return sizeof(l) == sizeof(r) && memcmp(&l, &r, sizeof(r)) == 0;
+}
+
+#define CHECK_EQUAL_GUID(A, B) BOOST_CHECK_PREDICATE( (bytewise_equal<PlainGUID,PlainGUID>), (A) (B) )
+
+// Base values
+
+static const PlainGUID zero_guid = {0, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0}};
+static const PlainGUID base_guid = {0x0c733a30,0x2a1c,0x11ce,{0xad,0xe5,0x00,0xaa,0x00,0x44,0x77,0x3d}};
+static const char      base_text[] = "0c733a30-2a1c-11ce-ade5-00aa0044773d";
+static const PlainGUID copy_guid = {0x0c733a30,0x2a1c,0x11ce,{0xad,0xe5,0x00,0xaa,0x00,0x44,0x77,0x3d}};
+
+BOOST_AUTO_TEST_CASE( test_SmartGUID )
+{
+	// Construct null value
+	SmartGUID null;
+	CHECK_EQUAL_GUID( null, zero_guid );
+
+	// Equality
+	BOOST_CHECK_EQUAL( base_guid, copy_guid );
+	BOOST_CHECK_NE   ( base_guid, zero_guid );
+	BOOST_CHECK_EQUAL( null, zero_guid );
+	BOOST_CHECK_EQUAL( zero_guid, null );
+
+	// Construct Plain from Plain
+	PlainGUID plain(base_guid);
+	BOOST_CHECK_EQUAL( plain, base_guid );
+
+	// Construct Smart from Plain
+	SmartGUID smart(plain);
+	BOOST_CHECK_EQUAL( smart, plain );
+
+	// Construct Plain from Smart
+	SmartGUID plain2(smart);
+	BOOST_CHECK_EQUAL( plain2, plain );
+
+	// Construct Smart from Smart
+	SmartGUID smart2(smart);
+	BOOST_CHECK_EQUAL( smart2, smart );
+
+	// Assign Plain from Plain
+	PlainGUID plain3;
+	plain3 = plain;
+	BOOST_CHECK_EQUAL( plain3, plain );
+
+	// Assign Smart from Plain
+	SmartGUID smart3;
+	smart3 = plain;
+	BOOST_CHECK_EQUAL( smart3, plain );
+
+	// Assign Plain from Smart
+	plain = zero_guid;
+	plain = smart;
+	BOOST_CHECK_EQUAL( plain, smart );
+
+	// Assign Smart from Smart
+	smart = zero_guid;
+	smart = plain;
+	BOOST_CHECK_EQUAL( smart, plain );
+
+	// Null checks
+	BOOST_CHECK( null.isNull() );
+	BOOST_CHECK( !smart.isNull() );
+
+	// Generate new GUID
+	SmartGUID guid(true);
+	BOOST_CHECK( !guid.isNull() );
 }
 
 BOOST_AUTO_TEST_CASE( test_StringFromGUID2 )
