@@ -49,7 +49,7 @@ AM_CPPFLAGS = -DNO_FW
 IcuConfig = icu-config
 endif
 
-AUTOMAKE_OPTIONS = color-tests
+AUTOMAKE_OPTIONS = color-tests parallel-tests
 
 noinst_PROGRAMS = comtest ComClient.exe BakeryJarTestClient.exe Tester.exe
 # TODO: ball.so shouldn't be installed, just built.
@@ -290,6 +290,8 @@ check_PROGRAMS = components.map ole32.dll
 
 TESTS = .libs/comtest ComClient.exe BakeryJarTestClient.exe Tester.exe
 TESTS_ENVIRONMENT = COMPONENTS_MAP_PATH=. LD_LIBRARY_PATH=:.libs:../src/.libs:$$($(IcuConfig) --libdir)
+TEST_EXTENSIONS = .exe
+EXE_LOG_COMPILER = cli
 
 MOSTLYCLEANFILES = IBall.h IBall_GUIDs.cpp ComClient.exe.mdb Tester.exe.mdb IBakery.h IBakery_GUIDs.cpp IWall_GUIDs.cpp IBag_GUIDs.cpp
 CLEANFILES = IBallMetadata.dll IBakeryMetadata.dll Jar.dll Jar.dll.mdb BakeryJarTestClient.exe.mdb IWall.h IWall.tlb IWallInterop.dll IBag.h IBag.tlb IBagInterop.dll IBagLib_.idl IBall_.idl IBall.tlb IBakery.tlb

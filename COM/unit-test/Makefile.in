@@ -29,6 +29,7 @@ srcdir     = @srcdir@
 VPATH      = @srcdir@
 
 export LD_LIBRARY_PATH := ../src/.libs:$(LD_LIBRARY_PATH)
+export PATH := :$(PATH)
 
 CXXFLAGS ?= -g -O0
 CXXFLAGS += -Wall -Wextra -Werror -MMD
