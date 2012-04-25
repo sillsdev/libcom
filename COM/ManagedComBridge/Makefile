@@ -37,7 +37,7 @@ CPPFLAGS = -MMD \
 
 CXXFLAGS = -g -O0 -Werror -Wall -Wextra -fPIC -fvisibility=hidden
 
-LDFLAGS = \
+LDLIBS = \
 	-L$(LIBRARIES)/COM/build$(ARCH)/src/.libs -lcom \
 	-L$(LIBRARIES)/Win32Base/src/build$(ARCH) -lWin32Base \
 	-L$(LIBRARIES)/Win32More/src/build$(ARCH) -lWin32More \
@@ -56,7 +56,7 @@ DEPS = $(OBJS:%.o=%.d)
 all: libManagedComBridge.so
 
 libManagedComBridge.so: setup $(addprefix $(BUILD_DIR)/, $(OBJS))
-	$(LINK.cc) -shared -o $(BUILD_DIR)/$@ $(addprefix $(BUILD_DIR)/, $(OBJS)) $(LDFLAGS)
+	$(LINK.cc) -shared -o $(BUILD_DIR)/$@ $(addprefix $(BUILD_DIR)/, $(OBJS)) $(LDLIBS)
 
 setup:
 	-mkdir -p $(BUILD_DIR)

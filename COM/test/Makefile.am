@@ -149,8 +149,7 @@ endif
 ball_la_LDFLAGS = -module $(AM_LDFLAGS)
 
 comtest_SOURCES = CClient.cc
-comtest_LDADD = IBall_GUIDs.o ../src/libcom.la
-comtest_LDFLAGS = -ldl $(AM_LDFLAGS)
+comtest_LDADD = IBall_GUIDs.o ../src/libcom.la -ldl
 
 EXTRA_DIST = \
 	test.sh \

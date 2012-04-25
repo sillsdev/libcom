@@ -53,7 +53,7 @@ INCLUDES = \
 	-I$(top_srcdir)/include
 
 # the library search path.
-libcom_la_LDFLAGS = \
+libcom_la_LIBADD = \
 	$(all_libraries) \
 	-luuid \
 	-ldl

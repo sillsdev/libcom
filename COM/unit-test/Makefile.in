@@ -33,8 +33,7 @@ export LD_LIBRARY_PATH := ../src/.libs:$(LD_LIBRARY_PATH)
 CXXFLAGS ?= -g -O0
 CXXFLAGS += -Wall -Wextra -Werror -MMD
 CPPFLAGS += -I$(top_srcdir)/include -I$(top_srcdir)/src
-LDFLAGS  += -L../src/.libs -lcom
-LDLIBS = -lboost_unit_test_framework
+LDLIBS += -L../src/.libs -lcom -lboost_unit_test_framework
 
 PROGS = TestCOM
 
