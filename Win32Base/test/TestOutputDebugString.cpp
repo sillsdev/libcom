@@ -25,17 +25,13 @@
 // http://www.gnu.org/licenses/lgpl.html
 // 
 
-//#include <wchar.h>
 #include "Hacks.h"
-#include <iostream>
-#include <cstdlib>
 
 int main(int argc, char** argv)
 {
-	std::cerr.sync_with_stdio(false);
-	std::wcerr.sync_with_stdio(false);
-	OutputDebugString(L"WideWideWide\n");
-	OutputDebugString("NarrowNarrowNarrow\n");
-	OLECHAR buf[] = {'O', 'l', 'e', 'O', 'l', 'e', '\n', 0};
+	// \u2022 == \xE2\x80\xA2 == bullet, \u00E9 == e acute
+	OutputDebugString(L"Wide\u2022Wide\u2022Wide\n");
+	OutputDebugString("Narrow\xE2\x80\xA2Narrow\xe2\x80\xa2Narrow\n");
+	OLECHAR buf[] = {'O', 'l', 0xE9, 0x2022, 'O', 'l', 0xE9, '\n', 0};
 	OutputDebugString(buf);
 }

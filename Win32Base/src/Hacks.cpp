@@ -25,7 +25,6 @@
 // http://www.gnu.org/licenses/lgpl.html
 // 
 
-#include <wchar.h>
 #include "Hacks.h"
 
 #include <cwchar>
@@ -226,24 +225,35 @@ void OutputDebugString(const char* str)
 
 void OutputDebugString(const wchar_t* str)
 {
-	std::wcerr << str;
-	std::wcerr.flush();
+	int32_t len = wcslen(str);
+	std::vector<OLECHAR> buf(len*2 + 1); // Max required (surrogates == 2)
+
+	UErrorCode status = U_ZERO_ERROR;
+	u_strFromWCS(&buf[0], buf.size(), &len, str, len, &status);
+
+	if (U_SUCCESS(status))
+		OutputDebugString(&buf[0]);
+	else
+	{
+		std::cerr << "ICU error " << status;
+		std::cerr.flush();
+	}
 }
 
 void OutputDebugString(const OLECHAR* str)
 {
 	int32_t len = u_strlen(str);
-	std::vector<wchar_t> buf(len + 1);	// Max required
+	std::vector<char> buf(len*3 + 1); // Max required (BMP <= 3, surrogates <= 6)
 
 	UErrorCode status = U_ZERO_ERROR;
-	u_strToWCS(&buf[0], buf.size(), &len, str, len, &status);
+	u_strToUTF8(&buf[0], buf.size(), &len, str, len, &status);
 
 	if (U_SUCCESS(status))
-		std::wcerr.write(&buf[0], len);
+		std::cerr.write(&buf[0], len);
 	else
-		std::wcerr << "ICU error " << status;
+		std::cerr << "ICU error " << status;
 
-	std::wcerr.flush();
+	std::cerr.flush();
 }
 
 // TODO-P4CL23677-Merge
