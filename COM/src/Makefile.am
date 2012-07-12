@@ -25,6 +25,8 @@
 # http://www.gnu.org/licenses/lgpl.html
 #
 
+SUBDIRS = RegisterServer
+
 AM_CXXFLAGS = -Werror -Wall -Wextra -Wno-unused-parameter
 
 lib_LTLIBRARIES = libcom.la

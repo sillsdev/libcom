@@ -25,34 +25,11 @@
 # http://www.gnu.org/licenses/lgpl.html
 #
 
-CXXFLAGS = -g -O3
+AM_CXXFLAGS = -Werror -Wall -Wextra
 
-ARCH = $(shell uname -m)
-INSTALL_DIR = ../../bin$(ARCH)
-OBJ_DIR = obj$(ARCH)
+bin_PROGRAMS = RegisterServer
 
-all: setup $(OBJ_DIR)/RegisterServer
+RegisterServer_SOURCES = RegisterServer.cpp
+RegisterServer_LDADD = -ldl -lpthread
 
-setup:
-	@mkdir -p $(OBJ_DIR)
-
-$(OBJ_DIR)/RegisterServer: $(OBJ_DIR)/RegisterServer.o
-	$(LINK.cc) -o $@ $^ -ldl -lpthread
-
-$(OBJ_DIR)/RegisterServer.o: RegisterServer.cpp
-	$(COMPILE.cc) $(CXXFLAGS) -o $(OBJ_DIR)/RegisterServer.o RegisterServer.cpp
-
--include *.d
-
-install: $(OBJ_DIR)/RegisterServer
-	mkdir -p $(INSTALL_DIR)
-	install $(OBJ_DIR)/RegisterServer make-map.sh generate-map.sh $(INSTALL_DIR)
-
-uninstall:
-	rm -f $(INSTALL_DIR)/RegisterServer
-	rm -f $(INSTALL_DIR)/make-map.sh
-	rm -f $(INSTALL_DIR)/generate-map.sh
-
-clean:
-	$(RM) $(OBJ_DIR)/RegisterServer $(OBJ_DIR)/*.[od] $(OBJ_DIR)/*.gch
-	-rmdir $(OBJ_DIR)
+dist_bin_SCRIPTS = make-map.sh generate-map.sh

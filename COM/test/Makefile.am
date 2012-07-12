@@ -280,7 +280,7 @@ IBakeryMetadata.dll:
 
 components.map: bakery.la ball.la wall.la bag.la
 	LD_LIBRARY_PATH=$(FieldWorksRootDir)/Lib/src/icu/install$(FWARCH)/lib:$(abs_top_builddir)/src/.libs:$(LD_LIBRARY_PATH) \
-	PATH=$(abs_top_srcdir)/bin$(FWARCH):$(PATH) \
+	PATH=$(abs_top_builddir)/src/RegisterServer:$(abs_top_srcdir)/src/RegisterServer:$(PATH) \
 	make-map.sh .libs/bakery.so .libs/ball.so .libs/wall.so .libs/bag.so
 
 ole32.dll:
