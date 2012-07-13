@@ -53,9 +53,8 @@ int main( void )
 		tBuf,
 		256);
 	cout << ' ' << (char*)tBuf;
-	
+
 	cout << endl;
-	
+
 	return 0;
 }
-

@@ -10,18 +10,18 @@
 
 
 <title>Greenwich Mean Time offsets and the Map control panel</title>
-        
+
 
 
 <meta name="keywords" content="Mac OS 8 Virtual Memory Management Unlockmemory lockmemory">
-<meta name="Description" content="Technical Q&amp;A OPS24: Q&amp;A decsribes the effect of a call to 
+<meta name="Description" content="Technical Q&amp;A OPS24: Q&amp;A decsribes the effect of a call to
 LockMemory and UnlockMemory on a page of Virtual Memory.">
 
 
 </HEAD>
 
 
-<BODY BGCOLOR="#FFFFFF" TEXT="#000000"> 
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000">
 
 <!-- white background -->
 
@@ -50,7 +50,7 @@ LockMemory and UnlockMemory on a page of Virtual Memory.">
 
 
 			<!-- -->
-			
+
 			<!-- Document Body -->
 
 <CENTER><table cellspacing="0" cellpadding="0" border="0" WIDTH="600">
@@ -62,7 +62,7 @@ LockMemory and UnlockMemory on a page of Virtual Memory.">
          <P id=p2>
          Q: Is there a way to read Greenwich Mean Time offsets from
          the Map control panel?</P>
-                  
+
          <P id=p4>
          A: There's actually a system-level call to find out where
          you are. It's a Script Manager call named
@@ -70,7 +70,7 @@ LockMemory and UnlockMemory on a page of Virtual Memory.">
          by the Map control panel), which returns a structure giving
          you all the information you need. Here's a description of
          the call, copied from MPW 411:</P>
-         
+
          <TABLE BORDER=0>
             <TR>
                <TD BGCOLOR="#EEEEE0">
@@ -80,15 +80,15 @@ LockMemory and UnlockMemory on a page of Virtual Memory.">
 File {CIncludes}script.h</pre>
 
                   <P>In C:</P>
-                  
+
                   <pre>pascal void ReadLocation(MachineLocation *loc);
 pascal void WriteLocation(const MachineLocation *loc);
                   </pre>
                </TD>
             </TR>
          </TABLE>
-        
-         
+
+
          <P id=p4>
          These routines access the stored geographic location and
          time zone information for the Macintosh from parameter RAM.
@@ -101,7 +101,7 @@ pascal void WriteLocation(const MachineLocation *loc);
          in Tokyo on Tuesday and send it to Cupertino, where it's
          received and read on Monday.) Geographic information can
          also be used by applications that require it.</P>
-         
+
          <P id=p4>The <CODE>gmtDelta</CODE> field represents the current
          offset (in seconds) from Universal (Greenwich Mean) Time to the
          current time on the Macintosh. So, if the current Macintosh
@@ -109,7 +109,7 @@ pascal void WriteLocation(const MachineLocation *loc);
          <CODE>gmtDelta</CODE> should be -3600, since the current time
          is one hour (3600 seconds) less than GMT. The
          <CODE>gmtDelta</CODE> field is a signed three-byte value.</P>
-         
+
          <P id=p4>
          The high bit (bit 7) of the <CODE>dlsDelta</CODE> field
          represents the current state of daylight savings time. If
@@ -121,7 +121,7 @@ pascal void WriteLocation(const MachineLocation *loc);
          of AOCE; the daylight savings time checkbox in the System 7
          Pro Date &amp; Time control panel uses these semantics as do
          several other utilities.)</P>
-         
+
          <P id=p4>
          The value in <code>gmtDelta</code> always represents current
          offset from GMT, regardless of the setting in
@@ -130,7 +130,7 @@ pascal void WriteLocation(const MachineLocation *loc);
          current time. That means that during daylight savings time,
          the value in <code>gmtDelta</code> will be different from the
          value during standard time.</P>
-         
+
          <P id=p4>
          If the <CODE>MachineLocation</CODE> has never been set, it
          should be &lt;0,0,0&gt;. The top byte of the
@@ -141,7 +141,7 @@ pascal void WriteLocation(const MachineLocation *loc);
          3600 seconds per hour). The latitude and longitude are in
          fractions of a great circle, giving them accuracy to within
          less than a foot, which should be sufficient for most
-         purposes. For example, <CODE>Fract</CODE> values of 
+         purposes. For example, <CODE>Fract</CODE> values of
          1.0 = 90deg., -1.0 = -90deg., and -2.0 = -180deg.</P>
          <P id=p4>In C:</P>
          <TABLE BORDER=0>
@@ -159,12 +159,12 @@ pascal void WriteLocation(const MachineLocation *loc);
                </TD>
             </TR>
          </TABLE>
-         
-         
+
+
          <P id=p4>The <code>gmtDelta</code> is really a three-byte value, so
          you must take care to get and set it properly, as in the
          following C code examples:</P>
-         
+
          <TABLE BORDER=0>
             <TR>
                <TD BGCOLOR="#EEEEE0">
@@ -204,11 +204,11 @@ Technical Q&amp;As by
 <A HREF="../indexes/dateindex.html">Date</A> |
 <A HREF="../indexes/numberindex.html">Number</A> |
 <A HREF="../index.html">Technology</A> |
-<A HREF="../indexes/titleindex.html">Title</A> 
-<BR> 
-<A HREF="http://developer.apple.com/techpubs/">Developer Documentation</A> | 
-<A HREF="../../technotes/index.html">Technical Notes</A> | 
-<A HREF="http://developer.apple.com/sdk/">Development Kits</A> | 
+<A HREF="../indexes/titleindex.html">Title</A>
+<BR>
+<A HREF="http://developer.apple.com/techpubs/">Developer Documentation</A> |
+<A HREF="../../technotes/index.html">Technical Notes</A> |
+<A HREF="http://developer.apple.com/sdk/">Development Kits</A> |
 <A HREF="http://developer.apple.com/samplecode/">Sample Code</A>
 
 </P>

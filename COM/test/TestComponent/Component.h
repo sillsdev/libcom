@@ -25,7 +25,7 @@ void ComponentLoaded(void);
 //	Component class declaration
 //
 class CA : public IX,
-           public IY 
+           public IY
 {
 public:
 	// IUnknown
@@ -37,7 +37,7 @@ public:
 	virtual void __stdcall Fx() { cout << "Fx" << endl ;}
 
 	// Interface IY
-	virtual void __stdcall Fy() { cout << "Fy" << endl ;} 
+	virtual void __stdcall Fy() { cout << "Fy" << endl ;}
 
 	// Constructor
 	CA() ;
@@ -58,7 +58,7 @@ class CFactory : public IClassFactory
 {
 public:
 	// IUnknown
-	virtual HRESULT __stdcall QueryInterface(const IID& iid, void** ppv) ;         
+	virtual HRESULT __stdcall QueryInterface(const IID& iid, void** ppv) ;
 	virtual ULONG   __stdcall AddRef() ;
 	virtual ULONG   __stdcall Release() ;
 
@@ -66,7 +66,7 @@ public:
 	virtual HRESULT __stdcall CreateInstance(IUnknown* pUnknownOuter,
 	                                         const IID& iid,
 	                                         void** ppv) ;
-	virtual HRESULT __stdcall LockServer(BOOL bLock) ; 
+	virtual HRESULT __stdcall LockServer(BOOL bLock) ;
 
 	// Constructor
 	CFactory() : m_cRef(1)

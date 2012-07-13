@@ -7,17 +7,17 @@
  *
  * COM Support Library Test
  * Copyright (C) 2007 SIL International
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
@@ -45,22 +45,22 @@ public:
 	virtual HRESULT __stdcall QueryInterface(const IID& interfaceid, void** objectInterface);
 	virtual UINT32 __stdcall AddRef();
 	virtual UINT32 __stdcall Release();
-	
+
 	virtual HRESULT ProvideBall(IBall** iball);
 	virtual HRESULT InspectBall(IBall* iball);
-	
+
 	/** Called to create the COM object. */
 	static void CreateCom(IUnknown* outerAggregateIUnknown, REFIID interfaceid, void** objectInterface);
 
 private:
 	/** Bag reference count */
-	volatile LONG m_referenceCount; 
+	volatile LONG m_referenceCount;
 };
 
 #ifndef USE_FW_GENERIC_FACTORY
 // BagCFactory class
-// TODO: this should probably be in a separate file and should probably be an 
-// interface or inheritable class or something that things like 
+// TODO: this should probably be in a separate file and should probably be an
+// interface or inheritable class or something that things like
 // Bag implement. (??)
 //
 
@@ -84,7 +84,7 @@ public:
 		// RegisterFactory(CLSID_Bag, static_cast<IClassFactory*>(this));
 	}
 
-	~BagCFactory() 
+	~BagCFactory()
 	{
 	}
 

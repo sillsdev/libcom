@@ -21,7 +21,7 @@ Added FindNextFile and modified FindFirstFile to handle empty pattern
 Added conditional for Mach-O compilation.
 	2002-09-19, GDLC
 Added p2cstrncpy() and used it in two places.
- 	2002-09-03, GDLC
+	2002-09-03, GDLC
 Added use of BUNDLE_INFO structure.
 	2002-08-27, GDLC
 Moved #pragma export directives from WinSupport.h.  Added .app folder name to the
@@ -142,7 +142,7 @@ void UTCMacToWin(const UTCDateTime &tMac, LPFILETIME tWin)
 	secs = secs * 10000000;
 	fractSecs = static_cast <unsigned long> (time64 & 0xFFFF);
 	fractNano = (fractSecs * 10000000) >> 16;
-	time64 = secs + fractNano;	
+	time64 = secs + fractNano;
 
 	//	Add no. of 100-nanosecond periods between 12:00AM January 1, 1601
 	//	and midnight January 1, 1904.
@@ -192,7 +192,7 @@ DWORD GetTimeZoneInformation( LPTIME_ZONE_INFORMATION lpTimeZoneInformation)
 	//	values read from the MacOS MachineLocation, so we set the lot to zero
 	//	before setting the one item we can deal with.
 	memset(&tZone, 0, sizeof tZone);
-	
+
 	//	gmtDelta
 	//	The signed integer is contained in the lower 3 bytes of the long.
 	//	The sign needs to be extended through the upper byte; this is done
@@ -319,13 +319,13 @@ bool	GetBundleInfo(void)
 	if (!haveBundleInfo)
 	{
 		bundleInfoPtr = new BUNDLE_INFO;
-		
+
 		//Get info about application bundle
 		CFBundleRef	appBundle = CFBundleGetMainBundle();
 		if (appBundle == NULL) goto CannotFindData;
 		CFURLRef appBundleURL = CFBundleCopyBundleURL(appBundle);
 		if (appBundleURL == NULL) goto CannotFindData;
-		
+
 		CFURLRef appBundleAbsURL = CFURLCopyAbsoluteURL(appBundleURL);
 		CFRelease(appBundleURL);
 
@@ -334,7 +334,7 @@ bool	GetBundleInfo(void)
 		if (!gotAppFSRef) goto CannotFindData;
 
 		FSGetCatalogInfo(&bundleInfoPtr->appFSRef, kFSCatInfoNone, NULL, NULL, &bundleInfoPtr->appFSSpec, NULL);
-		
+
 		// Extract pathname of application folder
 		if (!PathNameFromDirID(	bundleInfoPtr->appFSSpec.vRefNum,
 								bundleInfoPtr->appFSSpec.parID,
@@ -360,7 +360,7 @@ bool	GetBundleInfo(void)
 			if ((bundleInfoPtr->resPathName[0] + bundleInfoPtr->resFSSpec.name[0]) > 255) goto CannotFindData;
 			bundleInfoPtr->resPathName = bundleInfoPtr->resPathName + bundleInfoPtr->resFSSpec.name;
 		}
-		
+
 		haveBundleInfo = true;
 	}
 	return true;
@@ -378,8 +378,8 @@ int		PathNameFromDirID(	short	vRef,
 							long	dirID,
 							Str255	pathName)
 {
- 	CInfoPBRec		pb;
-	
+	CInfoPBRec		pb;
+
 	LStr255		path("\p");	// Initialize full pathname
 	LStr255		dirName;		// Directory name
 	OSErr		err;			// error code
@@ -398,7 +398,7 @@ int		PathNameFromDirID(	short	vRef,
 		if ((path[0] + dirName[0]) > 255) return 0;
 		path = dirName + path;
 	} while (pb.dirInfo.ioDrDirID != fsRtDirID);
-	
+
 	// Return full pathname
 	BlockMoveData(path, pathName, static_cast <long> (path[0]+1));
 	return path[0];
@@ -498,7 +498,7 @@ ResourceNotFound:
 	return NULL;
 }
 #pragma export off
-					 
+
 // ---------------------------------------------------------------------------
 //		¥ FindFirstFile
 //
@@ -524,11 +524,11 @@ HANDLE	FindFirstFile(
 {
 	// Assume success; change later if necessary
 	LastErrorCode = ERROR_SUCCESS;
-	
+
 	// Create MAC_FIND_FILE_PARAMS structure
 	MAC_FIND_FILE_PARAMS	**hProgress =
 					(MAC_FIND_FILE_PARAMS**)NewHandle(sizeof(MAC_FIND_FILE_PARAMS));
-	
+
 	// Length of supplied pathname including file name
 	int				n = static_cast <int> (strlen(lpFileName));
 
@@ -549,7 +549,7 @@ HANDLE	FindFirstFile(
 		(ast ? (strrchr(split, '*') == ast) : true)	// Not more than one '*'
 		)
 		wildcard = true;
-	
+
 	// Get pathname into Pascal string buffer
 	p = pathName;
 	int	nPath = static_cast <int> (min((split - lpFileName), (sizeof(pathName) - 1)));
@@ -620,10 +620,10 @@ HANDLE	FindFirstFile(
 //			wildcard = false;		Already initialsed to false!
 		}
 	}
-	
+
 	// Remember wildcard or not for FindNext()
 	(**hProgress).wildcard = wildcard;
-	
+
 	// Scan for first file
 	CInfoPBRec pb;
 	(**hProgress).index = 1;
@@ -660,7 +660,7 @@ HANDLE	FindFirstFile(
 	//TODO: Are the file times really necessary?
 
 	// File size
-	
+
 	// File Name
 	BlockMoveData(&pb.hFileInfo.ioNamePtr[1], lpFindFileData->cFileName,
 		pb.hFileInfo.ioNamePtr[0]);
@@ -695,7 +695,7 @@ SInt32 DirectoryIDFromName(
 	long			parDirID,
 	StringPtr		dName)
 {
- 	CInfoPBRec pb;
+	CInfoPBRec pb;
 
 	ClearObject(pb);
 
@@ -775,9 +775,9 @@ BOOL FindNextFile(
 
 	// Assume success; change later if necessary
 	LastErrorCode = ERROR_SUCCESS;
-	
+
 	MAC_FIND_FILE_PARAMS	** hProgress = (MAC_FIND_FILE_PARAMS **) hFindFile;
-	
+
 	// Scan for next file
 	CInfoPBRec pb;
 	if ((**hProgress).wildcard)
@@ -813,7 +813,7 @@ BOOL FindNextFile(
 	//TODO: Are the file times really necessary?
 
 	// File size
-	
+
 	BlockMoveData(&pb.hFileInfo.ioNamePtr[1], lpFindFileData->cFileName,
 		pb.hFileInfo.ioNamePtr[0]);
 	lpFindFileData->cFileName[pb.hFileInfo.ioNamePtr[0]] = '\0';
@@ -874,13 +874,13 @@ DWORD	SearchPath(
 	// The following line assumes that the Windows app doesn't mind colan separators
 	if (FFFPath[strlen(FFFPath)] != ':') strcat(FFFPath, ":");
 	strncat(FFFPath, lpFileName, sizeof(FFFPath)-1-strlen(lpPath));
-	
+
 	char *		p;					// Append extension if there is none
 	if (!(p=strrchr(FFFPath, '.')))
 		strncat(FFFPath, lpExtension, sizeof(FFFPath)-1-strlen(lpPath));
 
 	// Extend for directory the app was launched from?
-	
+
     WIN32_FIND_DATA	findFileData;
 	HANDLE search = FindFirstFile(FFFPath, &findFileData);
 	if (search == INVALID_HANDLE_VALUE) goto FileNotFound;
@@ -911,11 +911,11 @@ int	_strnicmp(const char *p, const char *q, size_t n)
 	{
 		char c = *p++;
 		char d = *q++;
-		
+
 		if (std::toupper(c) != std::toupper(d))
 			return c - d;
 	}
-	
+
 	return 0;
 }
 
@@ -923,7 +923,7 @@ int	_memicmp(const void *vp, const void *vq, size_t n)
 {
 	const char* p = static_cast<const char*>(vp);
 	const char* q = static_cast<const char*>(vq);
-	
+
 	return _strnicmp(p, q, n);
 }
 #pragma export off
@@ -956,4 +956,3 @@ int pstricmp(const unsigned char * p, const unsigned char * q)
 		else return 0;
 	}
 }
-

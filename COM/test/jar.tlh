@@ -31,7 +31,7 @@ struct /* coclass */ Jar;
 // Smart pointer typedef declarations
 //
 
-// TODO test this, too.  
+// TODO test this, too.
 // _COM_SMARTPTR_TYPEDEF(IJar, __uuidof(IJar));
 
 //

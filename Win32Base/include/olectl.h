@@ -1,6 +1,6 @@
 /*
  * Copyright (C) the Wine project
- * 
+ *
  * Modified 2008-01-14 MarkS
  *
  * This library is free software; you can redistribute it and/or

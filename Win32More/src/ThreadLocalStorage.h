@@ -31,7 +31,7 @@ protected:
 	bool m_error;
 };
 
-/* ThreadLocalStorage::ThreadLocalStorage() 
+/* ThreadLocalStorage::ThreadLocalStorage()
  * Default construtor that creates the TLS data
  */
 inline ThreadLocalStorage::ThreadLocalStorage()
@@ -51,7 +51,7 @@ inline bool ThreadLocalStorage::Set(const void* value)
 		if (pthread_setspecific(m_luTls, value) == 0)
 			rv = true;
 	}
-	
+
 	return rv;
 }
 

@@ -8,7 +8,7 @@ Reviewed:	Date		Reviewer
 			never
 
 	$Id$
-			
+
 Header file to provide substitutions and kludges when compiling FieldWorks for MacOS.
 Contains definitions copied and (sometimes modified) from the Windows headers:
 
@@ -671,7 +671,7 @@ VOID			OutputDebugStringMac(/*IN*/ LPCSTR lpOutputString);
 
 // For this Mac port there is no need to have a handle to an info block
 // about the resource, so we make FindResource() not only locate the resource
-// but also load it into the heap. Thus our kludge for LoadResource() 
+// but also load it into the heap. Thus our kludge for LoadResource()
 // will merely return the handle it is given, and HRSRC and HGLOBAL are
 // both merely Mac Handles.
 
@@ -744,17 +744,17 @@ inline int MAKEINTRESOURCE(int id) { return id; }
 #define RT_MESSAGETABLE     MAKEINTRESOURCE(11)
 
 #define DIFFERENCE          11
-#define RT_GROUP_CURSOR 	MAKEINTRESOURCE((ULONG_PTR)RT_CURSOR + DIFFERENCE)
-#define RT_GROUP_ICON   	MAKEINTRESOURCE((ULONG_PTR)RT_ICON + DIFFERENCE)
-#define RT_VERSION      	MAKEINTRESOURCE(16)
-#define RT_DLGINCLUDE   	MAKEINTRESOURCE(17)
+#define RT_GROUP_CURSOR	MAKEINTRESOURCE((ULONG_PTR)RT_CURSOR + DIFFERENCE)
+#define RT_GROUP_ICON	MAKEINTRESOURCE((ULONG_PTR)RT_ICON + DIFFERENCE)
+#define RT_VERSION	MAKEINTRESOURCE(16)
+#define RT_DLGINCLUDE	MAKEINTRESOURCE(17)
 //#if(WINVER >= 0x0400)
-#define RT_PLUGPLAY     	MAKEINTRESOURCE(19)
-#define RT_VXD          	MAKEINTRESOURCE(20)
-#define RT_ANICURSOR    	MAKEINTRESOURCE(21)
-#define RT_ANIICON      	MAKEINTRESOURCE(22)
+#define RT_PLUGPLAY	MAKEINTRESOURCE(19)
+#define RT_VXD	MAKEINTRESOURCE(20)
+#define RT_ANICURSOR	MAKEINTRESOURCE(21)
+#define RT_ANIICON	MAKEINTRESOURCE(22)
 //#endif /* WINVER >= 0x0400 */
-#define RT_HTML         	MAKEINTRESOURCE(23)
+#define RT_HTML	MAKEINTRESOURCE(23)
 
 //--end copy from WINDEF.H------------------------------------------------------------------
 

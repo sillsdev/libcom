@@ -193,27 +193,27 @@ typedef struct tagLOGFONT
 }LOGFONT, *PLOGFONT;
 
 typedef struct tagTEXTMETRIC
-{ 
-  LONG tmHeight; 
-  LONG tmAscent; 
-  LONG tmDescent; 
-  LONG tmInternalLeading; 
-  LONG tmExternalLeading; 
-  LONG tmAveCharWidth; 
-  LONG tmMaxCharWidth; 
-  LONG tmWeight; 
-  LONG tmOverhang; 
-  LONG tmDigitizedAspectX; 
-  LONG tmDigitizedAspectY; 
-  TCHAR tmFirstChar; 
-  TCHAR tmLastChar; 
-  TCHAR tmDefaultChar; 
-  TCHAR tmBreakChar; 
-  BYTE tmItalic; 
-  BYTE tmUnderlined; 
-  BYTE tmStruckOut; 
-  BYTE tmPitchAndFamily; 
-  BYTE tmCharSet; 
+{
+  LONG tmHeight;
+  LONG tmAscent;
+  LONG tmDescent;
+  LONG tmInternalLeading;
+  LONG tmExternalLeading;
+  LONG tmAveCharWidth;
+  LONG tmMaxCharWidth;
+  LONG tmWeight;
+  LONG tmOverhang;
+  LONG tmDigitizedAspectX;
+  LONG tmDigitizedAspectY;
+  TCHAR tmFirstChar;
+  TCHAR tmLastChar;
+  TCHAR tmDefaultChar;
+  TCHAR tmBreakChar;
+  BYTE tmItalic;
+  BYTE tmUnderlined;
+  BYTE tmStruckOut;
+  BYTE tmPitchAndFamily;
+  BYTE tmCharSet;
 } TEXTMETRIC, *PTEXTMETRIC;
 bool GetTextMetrics(HDC, PTEXTMETRIC);
 
@@ -255,7 +255,7 @@ enum nIndex
 	COLOR_WINDOWTEXT	= 8,
 	RC_PALETTE,
 	RASTERCAPS,
-	SM_CMONITORS,	
+	SM_CMONITORS,
 };
 DWORD GetSysColor(int);
 int GetDeviceCaps(HDC, int);
@@ -279,7 +279,7 @@ enum
 	PM_QS_PAINT,
 	PM_QS_POSTMESSAGE,
 	PM_QS_SENDMESSAGE,
-};	
+};
 bool PeekMessage(PMSG, HWND, UINT,	UINT, UINT);
 
 bool MessageBeep(unsigned int);
@@ -297,7 +297,7 @@ enum
 //int AbortDoc(HDC);
 
 enum
-{ 	
+{
 #ifdef WIN32_KEY_VALUES
 	VK_PRIOR = 33,
 	VK_NEXT = 34,
@@ -318,7 +318,7 @@ enum
 	VK_F5 = 0x74,
 	VK_F6 = 0x75,
 	VK_F7 = 0x76,
-	VK_F8 = 0x77, 
+	VK_F8 = 0x77,
 #else
 	VK_PRIOR = 0,
 	VK_NEXT = 1,
@@ -341,7 +341,7 @@ enum
 	VK_F7 = 118,
 	VK_F8 = 119,
 #endif
-};		
+};
 HKL GetKeyboardLayout(DWORD);
 #define LANGIDFROMLCID(localeIdentifier) ((WORD)localeIdentifier)
 
@@ -354,9 +354,9 @@ enum dwStyle
 };
 typedef struct tagCOMPOSITIONFORM
 {
-  DWORD  dwStyle;       
-  POINT  ptCurrentPos;  
-  RECT   rcArea;        
+  DWORD  dwStyle;
+  POINT  ptCurrentPos;
+  RECT   rcArea;
 } COMPOSITIONFORM, *PCOMPOSITIONFORM;
 bool ImmIsIME(HKL);
 bool ImmGetCompositionWindow(HIMC, PCOMPOSITIONFORM);
@@ -524,4 +524,3 @@ int sprintf_s(char *buffer, size_t sizeOfBuffer, const char *format, ...);
 int _snprintf_s(char *buffer, size_t sizeOfBuffer, size_t count, const char *format, ...);
 
 #endif //HACKS_H
-

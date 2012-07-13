@@ -89,4 +89,3 @@ int main(int argc, char** argv)
 		"_Abort:3,_Retry:4,_Ignore:5 _Ignore A  \"caption\" It's text", L"A  \"caption\"", L"It's text");
 	return nErr;
 }
-

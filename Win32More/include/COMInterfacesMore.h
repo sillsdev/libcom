@@ -7,17 +7,17 @@
  *
  * Win32More Compatibility Library
  * Copyright (C) 2007 SIL International
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
@@ -59,19 +59,19 @@ interface ICreateErrorInfo : public IUnknown
 public:
 	virtual HRESULT STDMETHODCALLTYPE SetGUID(
 		/* [in] */ REFGUID rguid) = 0;
-		
+
 	virtual HRESULT STDMETHODCALLTYPE SetSource(
 		/* [in] */ LPOLESTR szSource) = 0;
-		
+
 	virtual HRESULT STDMETHODCALLTYPE SetDescription(
 		/* [in] */ LPOLESTR szDescription) = 0;
-		
+
 	virtual HRESULT STDMETHODCALLTYPE SetHelpFile(
 		/* [in] */ LPOLESTR szHelpFile) = 0;
-		
+
 	virtual HRESULT STDMETHODCALLTYPE SetHelpContext(
 		/* [in] */ DWORD dwHelpContext) = 0;
-		
+
 };
 
 #define IID_ICreateErrorInfo __uuidof(ICreateErrorInfo)
@@ -81,7 +81,7 @@ interface ISupportErrorInfo : public IUnknown
 public:
 	virtual HRESULT STDMETHODCALLTYPE InterfaceSupportsErrorInfo(
 		/* [in] */ REFIID riid) = 0;
-	
+
 };
 
 #define IID_ISupportErrorInfo __uuidof(ISupportErrorInfo)
@@ -159,16 +159,16 @@ enum
 class ISequentialStream : public IUnknown
 {
 public:
-	virtual /* [local] */ HRESULT STDMETHODCALLTYPE Read( 
+	virtual /* [local] */ HRESULT STDMETHODCALLTYPE Read(
 		/* [length_is][size_is][out] */ void *pv,
 		/* [in] */ UINT32 cb,
 		/* [out] */ UINT32 *pcbRead) = 0;
-	
-	virtual /* [local] */ HRESULT STDMETHODCALLTYPE Write( 
+
+	virtual /* [local] */ HRESULT STDMETHODCALLTYPE Write(
 		/* [size_is][in] */ const void *pv,
 		/* [in] */ UINT32 cb,
 		/* [out] */ UINT32 *pcbWritten) = 0;
-	
+
 };
 
 #define IID_ISequentialStream __uuidof(ISequentialStream)
@@ -176,42 +176,42 @@ public:
 class IStream : public ISequentialStream
 {
 public:
-	virtual /* [local] */ HRESULT STDMETHODCALLTYPE Seek( 
+	virtual /* [local] */ HRESULT STDMETHODCALLTYPE Seek(
 		/* [in] */ LARGE_INTEGER dlibMove,
 		/* [in] */ DWORD dwOrigin,
 		/* [out] */ ULARGE_INTEGER *plibNewPosition) = 0;
-	
-	virtual HRESULT STDMETHODCALLTYPE SetSize( 
+
+	virtual HRESULT STDMETHODCALLTYPE SetSize(
 		/* [in] */ ULARGE_INTEGER libNewSize) = 0;
-	
-	virtual /* [local] */ HRESULT STDMETHODCALLTYPE CopyTo( 
+
+	virtual /* [local] */ HRESULT STDMETHODCALLTYPE CopyTo(
 		/* [unique][in] */ IStream *pstm,
 		/* [in] */ ULARGE_INTEGER cb,
 		/* [out] */ ULARGE_INTEGER *pcbRead,
 		/* [out] */ ULARGE_INTEGER *pcbWritten) = 0;
-	
-	virtual HRESULT STDMETHODCALLTYPE Commit( 
+
+	virtual HRESULT STDMETHODCALLTYPE Commit(
 		/* [in] */ DWORD grfCommitFlags) = 0;
-	
+
 	virtual HRESULT STDMETHODCALLTYPE Revert( void) = 0;
-	
-	virtual HRESULT STDMETHODCALLTYPE LockRegion( 
+
+	virtual HRESULT STDMETHODCALLTYPE LockRegion(
 		/* [in] */ ULARGE_INTEGER libOffset,
 		/* [in] */ ULARGE_INTEGER cb,
 		/* [in] */ DWORD dwLockType) = 0;
-	
-	virtual HRESULT STDMETHODCALLTYPE UnlockRegion( 
+
+	virtual HRESULT STDMETHODCALLTYPE UnlockRegion(
 		/* [in] */ ULARGE_INTEGER libOffset,
 		/* [in] */ ULARGE_INTEGER cb,
 		/* [in] */ DWORD dwLockType) = 0;
-	
-	virtual HRESULT STDMETHODCALLTYPE Stat( 
+
+	virtual HRESULT STDMETHODCALLTYPE Stat(
 		/* [out] */ STATSTG *pstatstg,
 		/* [in] */ DWORD grfStatFlag) = 0;
-	
-	virtual HRESULT STDMETHODCALLTYPE Clone( 
+
+	virtual HRESULT STDMETHODCALLTYPE Clone(
 		/* [out] */ IStream **ppstm) = 0;
-	
+
 };
 
 #define IID_IStream __uuidof(IStream)
@@ -235,22 +235,22 @@ class IPicture : public IUnknown
 {
 public:
 
-	virtual HRESULT STDMETHODCALLTYPE get_Handle( 
+	virtual HRESULT STDMETHODCALLTYPE get_Handle(
 	/* [out] */ OLE_HANDLE *pHandle) = 0;
 
-	virtual HRESULT STDMETHODCALLTYPE get_hPal( 
+	virtual HRESULT STDMETHODCALLTYPE get_hPal(
 	/* [out] */ OLE_HANDLE *phPal) = 0;
 
-	virtual HRESULT STDMETHODCALLTYPE get_Type( 
+	virtual HRESULT STDMETHODCALLTYPE get_Type(
 		/* [out] */ INT16 *pType) = 0;
 
-	virtual HRESULT STDMETHODCALLTYPE get_Width( 
+	virtual HRESULT STDMETHODCALLTYPE get_Width(
 		/* [out] */ OLE_XSIZE_HIMETRIC *pWidth) = 0;
-	
-	virtual HRESULT STDMETHODCALLTYPE get_Height( 
+
+	virtual HRESULT STDMETHODCALLTYPE get_Height(
 		/* [out] */ OLE_YSIZE_HIMETRIC *pHeight) = 0;
 
-	virtual HRESULT STDMETHODCALLTYPE Render( 
+	virtual HRESULT STDMETHODCALLTYPE Render(
 		/* [in] */ HDC hDC,
 		/* [in] */ INT32 x,
 		/* [in] */ INT32 y,
@@ -262,34 +262,34 @@ public:
 		/* [in] */ OLE_YSIZE_HIMETRIC cySrc,
 		/* [in] */ LPCRECT pRcWBounds) = 0;
 
-	virtual HRESULT STDMETHODCALLTYPE put_hPal( 
+	virtual HRESULT STDMETHODCALLTYPE put_hPal(
 	/* [in] */ OLE_HANDLE hPal) = 0;
-	
-	virtual HRESULT STDMETHODCALLTYPE get_CurDC( 
+
+	virtual HRESULT STDMETHODCALLTYPE get_CurDC(
 		/* [out] */ HDC *phDC) = 0;
-	
-	virtual HRESULT STDMETHODCALLTYPE SelectPicture( 
+
+	virtual HRESULT STDMETHODCALLTYPE SelectPicture(
 		/* [in] */ HDC hDCIn,
 		/* [out] */ HDC *phDCOut,
 		/* [out] */ OLE_HANDLE *phBmpOut) = 0;
-	
-	virtual HRESULT STDMETHODCALLTYPE get_KeepOriginalFormat( 
+
+	virtual HRESULT STDMETHODCALLTYPE get_KeepOriginalFormat(
 		/* [out] */ BOOL *pKeep) = 0;
-	
-	virtual HRESULT STDMETHODCALLTYPE put_KeepOriginalFormat( 
+
+	virtual HRESULT STDMETHODCALLTYPE put_KeepOriginalFormat(
 		/* [in] */ BOOL keep) = 0;
-	
+
 	virtual HRESULT STDMETHODCALLTYPE PictureChanged( void) = 0;
-	
-	virtual HRESULT STDMETHODCALLTYPE SaveAsFile( 
+
+	virtual HRESULT STDMETHODCALLTYPE SaveAsFile(
 		/* [in] */ LPSTREAM pStream,
 		/* [in] */ BOOL fSaveMemCopy,
 		/* [out] */ INT32 *pCbSize) = 0;
-	
-	virtual HRESULT STDMETHODCALLTYPE get_Attributes( 
+
+	virtual HRESULT STDMETHODCALLTYPE get_Attributes(
 		/* [out] */ DWORD *pDwAttr) = 0;
 
-	virtual HRESULT STDMETHODCALLTYPE get_Hdc( 
+	virtual HRESULT STDMETHODCALLTYPE get_Hdc(
 	/* [in] */ DWORD pDwAttr) = 0;
 };
 
@@ -467,7 +467,7 @@ HRESULT VariantCopy(VARIANT* to, const VARIANT* from);
 struct STGMEDIUM
 {
     DWORD tymed;
-    union 
+    union
 	{
         HBITMAP hBitmap;
         HMETAFILEPICT hMetaFilePict;
@@ -483,4 +483,3 @@ struct STGMEDIUM
 HRESULT GetActiveObject(REFCLSID rclsid, void* pvReserved, IUnknown** ppunk);
 
 #endif // COMInterfacesMore_h
-

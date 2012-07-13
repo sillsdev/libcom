@@ -1,6 +1,6 @@
 //	ComponentInterfaces.h
 //
-//	Adapted from Iface.h from Rogerson's book Chapter 7 
+//	Adapted from Iface.h from Rogerson's book Chapter 7
 //	- Declarations of interfaces, IIDs, and CLSID
 //    shared by the client and the component.
 //

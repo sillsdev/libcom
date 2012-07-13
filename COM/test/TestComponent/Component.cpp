@@ -62,23 +62,23 @@ static CFactory	classFactory;
 
 ///////////////////////////////////////////////////////////
 //
-// Component 
+// Component
 //
 
 //
 // Constructor
 //
 CA::CA() : m_cRef(1)
-{ 
-	InterlockedIncrement(&g_cComponents) ; 
+{
+	InterlockedIncrement(&g_cComponents) ;
 }
 
 //
 // Destructor
 //
-CA::~CA() 
-{ 
-	InterlockedDecrement(&g_cComponents) ; 
+CA::~CA()
+{
+	InterlockedDecrement(&g_cComponents) ;
 	trace("Component:\t\tDestroy self.") ;
 }
 
@@ -86,20 +86,20 @@ CA::~CA()
 // IUnknown implementation
 //
 HRESULT __stdcall CA::QueryInterface(const IID& iid, void** ppv)
-{    
+{
 	if (iid == IID_IUnknown)
 	{
-		*ppv = static_cast<IX*>(this) ; 
+		*ppv = static_cast<IX*>(this) ;
 	}
 	else if (iid == IID_IX)
 	{
 		*ppv = static_cast<IX*>(this) ;
-		trace("Component:\t\tReturn pointer to IX.") ; 
+		trace("Component:\t\tReturn pointer to IX.") ;
 	}
 	else if (iid == IID_IY)
 	{
-		*ppv = static_cast<IY*>(this) ; 
-		trace("Component:\t\tReturn pointer to IY.") ; 
+		*ppv = static_cast<IY*>(this) ;
+		trace("Component:\t\tReturn pointer to IY.") ;
 	}
 	else
 	{
@@ -115,7 +115,7 @@ ULONG __stdcall CA::AddRef()
 	return InterlockedIncrement(&m_cRef) ;
 }
 
-ULONG __stdcall CA::Release() 
+ULONG __stdcall CA::Release()
 {
 	if (InterlockedDecrement(&m_cRef) == 0)
 	{
@@ -134,10 +134,10 @@ ULONG __stdcall CA::Release()
 // IUnknown implementation
 //
 HRESULT __stdcall CFactory::QueryInterface(const IID& iid, void** ppv)
-{    
+{
 	if ((iid == IID_IUnknown) || (iid == IID_IClassFactory))
 	{
-		*ppv = static_cast<IClassFactory*>(this) ; 
+		*ppv = static_cast<IClassFactory*>(this) ;
 	}
 	else
 	{
@@ -153,7 +153,7 @@ ULONG __stdcall CFactory::AddRef()
 	return InterlockedIncrement(&m_cRef) ;
 }
 
-ULONG __stdcall CFactory::Release() 
+ULONG __stdcall CFactory::Release()
 {
 	if (InterlockedDecrement(&m_cRef) == 0)
 	{
@@ -168,7 +168,7 @@ ULONG __stdcall CFactory::Release()
 //
 HRESULT __stdcall CFactory::CreateInstance(IUnknown* pUnknownOuter,
                                            const IID& iid,
-                                           void** ppv) 
+                                           void** ppv)
 {
 	trace("Class factory:\t\tCreate component.") ;
 
@@ -195,11 +195,11 @@ HRESULT __stdcall CFactory::CreateInstance(IUnknown* pUnknownOuter,
 }
 
 // LockServer
-HRESULT __stdcall CFactory::LockServer(BOOL bLock) 
+HRESULT __stdcall CFactory::LockServer(BOOL bLock)
 {
 	if (bLock)
 	{
-		InterlockedIncrement(&g_cServerLocks) ; 
+		InterlockedIncrement(&g_cServerLocks) ;
 	}
 	else
 	{
@@ -268,7 +268,7 @@ HRESULT __stdcall CFactory::LockServer(BOOL bLock)
 //
 //STDAPI DllRegisterServer()
 //{
-//	return RegisterServer(g_hModule, 
+//	return RegisterServer(g_hModule,
 //	                      CLSID_Component1,
 //	                      g_szFriendlyName,
 //	                      g_szVerIndProgID,

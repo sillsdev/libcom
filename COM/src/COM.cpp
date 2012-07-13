@@ -7,17 +7,17 @@
  *
  * COM Support Library
  * Copyright (C) 2007 SIL International
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
@@ -204,7 +204,7 @@ BSTR SysAllocStringLen(const OLECHAR* pch, unsigned int cch)
 	else
 		memset(buf + 2, 0, *(INT32*)buf);	// Data
 	buf[2 + cch] = 0;						// Terminator
-	
+
 	return buf + 2;
 }
 
@@ -213,20 +213,20 @@ BSTR SysAllocStringLen(const OLECHAR* pch, unsigned int cch)
  * Note that there is no ANSI to Unicode translation.
  * This implementation will work only for little-endian systems.
  * @param psz input null-terminated string. If NULL, the BSTR string will be uninitialized.
- * @param len Number of bytes to copy from input string to output string. Most likely should be the length of psz, not including null-terminator. 
+ * @param len Number of bytes to copy from input string to output string. Most likely should be the length of psz, not including null-terminator.
  * @return pointer to the BSTR string, or NULL if not enough memory. The BSTR string will have len bytes copied from psz as well as a null-terminator appended.
  */
 BSTR SysAllocStringByteLen(LPCSTR psz, UINT len)
 {
-	OLECHAR* buf = Alloc(len + 3); 	// Space for length, data, terminator.
+	OLECHAR* buf = Alloc(len + 3);	// Space for length, data, terminator.
 		// Note: this allocates 2 * (len + 3) bytes if sizeof(OLECHAR) == 2
 
 	if (NULL == buf)
 		return NULL; // insufficient memory
-		
+
 	if (psz != NULL)
 	{
-	 	*(INT32*)buf = len;	
+		*(INT32*)buf = len;
 		memcpy(buf + 2, psz, len);
 		((char*)(buf + 2))[len] = 0;
 	}

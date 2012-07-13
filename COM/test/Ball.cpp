@@ -7,17 +7,17 @@
  *
  * Ball COM Support Library Test
  * Copyright (C) 2007 SIL International
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
@@ -77,7 +77,7 @@ extern inline LONG WINAPI InterlockedDecrement( LONG volatile *dest )
 
 // Global variables
 
-static volatile LONG g_serverLockCount = 0;   
+static volatile LONG g_serverLockCount = 0;
 /** version-independent ProgID */
 const wchar_t g_versionIndependentProgID[] = L"Yup.Ball";
 /** ProgID */
@@ -94,7 +94,7 @@ static GenericFactory g_factBall(
   g_classDescription, // Description of the class
   g_threadingModel, // Threading model
   &Ball::CreateCom); // Static create method
-  
+
 /**
  * Create a Ball COM object.
  * @param outerAggregateIUnknown should be NULL
@@ -102,7 +102,7 @@ static GenericFactory g_factBall(
  * @param objectInterface receives the interface through which to access Ball
  * @throws std::runtime_error if outerAggregateIUnknown is not NULL, or if the QueryInterface on Ball failed.
  */
-void Ball::CreateCom(IUnknown* outerAggregateIUnknown, REFIID interfaceid, 
+void Ball::CreateCom(IUnknown* outerAggregateIUnknown, REFIID interfaceid,
 	void** objectInterface) {
 //	AssertPtr(objectInterface);
 //	Assert(!*objectInterface);
@@ -112,13 +112,13 @@ void Ball::CreateCom(IUnknown* outerAggregateIUnknown, REFIID interfaceid,
 		throw std::runtime_error("CLASS_E_NOAGGREGATION in Ball.cpp");
 	}
 
-	Ball* ball = new Ball; 
+	Ball* ball = new Ball;
 	if (S_OK != ball->QueryInterface(interfaceid, objectInterface)) {
-		ball->Release(); // Um, shouldn't we NOT be doing this? If we SHOULD be, then update the CFactory::CreateInstance function to do likewise. 
+		ball->Release(); // Um, shouldn't we NOT be doing this? If we SHOULD be, then update the CFactory::CreateInstance function to do likewise.
 		throw std::runtime_error("ball createcom queryinterface failed in Ball.cpp.");
 	}
 }
-  
+
 #else /* !USE_FW_GENERIC_FACTORY */
 
 EXTERN_C BOOL WINAPI DllMain(HMODULE /*hmod*/, DWORD /*dwReason*/, PVOID /*pvReserved*/)
@@ -147,10 +147,10 @@ EXTERN_C HRESULT DllGetClassObject(REFCLSID requestedClassID, REFIID requestedIn
 	CFactory* factory = new CFactory();
 	if (NULL == factory)
 		return E_OUTOFMEMORY;
-	
+
 	HRESULT hr = factory->QueryInterface(requestedInterfaceID, objectInterface);
 	factory->Release();
-	
+
 	return hr;
 }
 
@@ -161,10 +161,10 @@ EXTERN_C HRESULT DllGetClassObject(REFCLSID requestedClassID, REFIID requestedIn
 /**
  * CFactory::QueryInterface
  */
-HRESULT __stdcall CFactory::QueryInterface(const IID& interfaceid, void** objectInterface) {    
-	if ((IID_IUnknown      == interfaceid) || 
+HRESULT __stdcall CFactory::QueryInterface(const IID& interfaceid, void** objectInterface) {
+	if ((IID_IUnknown      == interfaceid) ||
 	    (IID_IClassFactory == interfaceid)) {
-		*objectInterface = static_cast<IClassFactory*>(this); 
+		*objectInterface = static_cast<IClassFactory*>(this);
 	} else {
 		*objectInterface = NULL;
 		return E_NOINTERFACE;
@@ -182,7 +182,7 @@ UINT32 __stdcall CFactory::AddRef() {
 	return InterlockedIncrement(&m_referenceCount);
 }
 
-/** 
+/**
  * CFactory::Release
  */
 UINT32 __stdcall CFactory::Release() {
@@ -205,7 +205,7 @@ UINT32 __stdcall CFactory::Release() {
  * @param objectInterface interface to Ball requested by interfaceid, or NULL if Ball doesn't support interfaceid.
  * @return S_OK if successful Ball creation, E_OUTOFMEMORY if we failed to create Ball due to insufficient memory, CLASS_E_NOAGGREGATION if outerAggregateIUnknown is not NULL, or E_NOINTERFACE if Ball does not support the requested interface.
  */
-HRESULT __stdcall CFactory::CreateInstance(IUnknown* outerAggregateIUnknown, 
+HRESULT __stdcall CFactory::CreateInstance(IUnknown* outerAggregateIUnknown,
 	const IID& interfaceid, void** objectInterface) {
 	// We don't support aggregation.
 	if (outerAggregateIUnknown != NULL)
@@ -230,12 +230,12 @@ HRESULT __stdcall CFactory::CreateInstance(IUnknown* outerAggregateIUnknown,
 
 /**
  * CFactory::LockServer
- * 
+ *
  * http://msdn2.microsoft.com/en-us/library/ms682332.aspx
  */
 HRESULT __stdcall CFactory::LockServer(BOOL shouldLock) {
 	if (shouldLock) {
-		InterlockedIncrement(&g_serverLockCount); 
+		InterlockedIncrement(&g_serverLockCount);
 	} else {
 		InterlockedDecrement(&g_serverLockCount);
 	}
@@ -277,24 +277,24 @@ HRESULT Ball::roll(long distance, long* total) {
 
 /**
  * Ball::QueryInterface
- * 
+ *
  * Get a specific interface to Ball according to interfaceid.
  * http://msdn2.microsoft.com/en-us/library/ms682521.aspx
- * 
+ *
  * @param interfaceid interface to Ball requested
  * @param objectInterface will receive the interface to Ball requested
  * @return S_OK on success or E_NOINTERFACE if Ball does not support the requested interface.
  */
 HRESULT __stdcall Ball::QueryInterface(const IID& interfaceid, void** objectInterface) {
 	if (IID_IUnknown == interfaceid) {
-		*objectInterface = static_cast<IBall*>(this); 
+		*objectInterface = static_cast<IBall*>(this);
 	} else if (IID_IBall == interfaceid) {
 		*objectInterface = static_cast<IBall*>(this);
 	} else {
 		*objectInterface = NULL;
 		return E_NOINTERFACE;
 	}
-	
+
 	// Increment the reference count on the interface
 	reinterpret_cast<IUnknown*>(*objectInterface)->AddRef();
 	return S_OK;
@@ -302,7 +302,7 @@ HRESULT __stdcall Ball::QueryInterface(const IID& interfaceid, void** objectInte
 
 /**
  * Ball::AddRef
- * 
+ *
  * Increment the refence count on Ball.
  */
 UINT32 __stdcall Ball::AddRef() {
@@ -311,8 +311,8 @@ UINT32 __stdcall Ball::AddRef() {
 
 /**
  * Ball::Release
- * 
- * Decrement the reference count on Ball. Ball will be destroyed if 
+ *
+ * Decrement the reference count on Ball. Ball will be destroyed if
  * the reference count drops to zero.
  */
 UINT32 __stdcall Ball::Release() {

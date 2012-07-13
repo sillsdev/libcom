@@ -7,17 +7,17 @@
  *
  * COM Support Library Test
  * Copyright (C) 2007 SIL International
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
@@ -77,7 +77,7 @@ extern inline LONG WINAPI InterlockedDecrement( LONG volatile *dest )
 
 // Global variables
 
-static volatile LONG g_serverLockCount = 0;   
+static volatile LONG g_serverLockCount = 0;
 /** version-independent ProgID */
 const wchar_t g_versionIndependentProgID[] = L"Yup.Bakery";
 /** ProgID */
@@ -110,13 +110,13 @@ void Bakery::CreateCom(IUnknown *outerAggregateIUnknown, REFIID interfaceid, voi
 		throw std::runtime_error("CLASS_E_NOAGGREGATION in Bakery.cpp");
 	}
 
-	Bakery* bakery = new Bakery; 
+	Bakery* bakery = new Bakery;
 	if (S_OK != bakery->QueryInterface(interfaceid, objectInterface)) {
-		bakery->Release(); // Um, shouldn't we NOT be doing this? If we SHOULD be, then update the CFactory::CreateInstance function to do likewise. 
+		bakery->Release(); // Um, shouldn't we NOT be doing this? If we SHOULD be, then update the CFactory::CreateInstance function to do likewise.
 		throw std::runtime_error("Bakery createcom queryinterface failed in Bakery.cpp.");
 	}
 }
-  
+
 #else /* !USE_FW_GENERIC_FACTORY */
 
 EXTERN_C BOOL WINAPI DllMain(HMODULE /*hmod*/, DWORD /*dwReason*/, PVOID /*pvReserved*/)
@@ -146,10 +146,10 @@ EXTERN_C HRESULT DllGetClassObject(REFCLSID requestedClassID, REFIID requestedIn
 	CFactory* factory = new CFactory();
 	if (NULL == factory)
 		return E_OUTOFMEMORY;
-	
+
 	HRESULT hr = factory->QueryInterface(requestedInterfaceID, objectInterface);
 	factory->Release();
-	
+
 	return hr;
 }
 
@@ -160,10 +160,10 @@ EXTERN_C HRESULT DllGetClassObject(REFCLSID requestedClassID, REFIID requestedIn
 /**
  * CFactory::QueryInterface
  */
-HRESULT __stdcall CFactory::QueryInterface(const IID& interfaceid, void** objectInterface) {    
-	if ((IID_IUnknown      == interfaceid) || 
+HRESULT __stdcall CFactory::QueryInterface(const IID& interfaceid, void** objectInterface) {
+	if ((IID_IUnknown      == interfaceid) ||
 	    (IID_IClassFactory == interfaceid)) {
-		*objectInterface = static_cast<IClassFactory*>(this); 
+		*objectInterface = static_cast<IClassFactory*>(this);
 	} else {
 		*objectInterface = NULL;
 		return E_NOINTERFACE;
@@ -181,7 +181,7 @@ UINT32 __stdcall CFactory::AddRef() {
 	return InterlockedIncrement(&m_referenceCount);
 }
 
-/** 
+/**
  * CFactory::Release
  */
 UINT32 __stdcall CFactory::Release() {
@@ -204,7 +204,7 @@ UINT32 __stdcall CFactory::Release() {
  * @param objectInterface interface to Bakery requested by interfaceid, or NULL if Bakery doesn't support interfaceid.
  * @return S_OK if successful Bakery creation, E_OUTOFMEMORY if we failed to create Bakery due to insufficient memory, CLASS_E_NOAGGREGATION if outerAggregateIUnknown is not NULL, or E_NOINTERFACE if Bakery does not support the requested interface.
  */
-HRESULT __stdcall CFactory::CreateInstance(IUnknown* outerAggregateIUnknown, 
+HRESULT __stdcall CFactory::CreateInstance(IUnknown* outerAggregateIUnknown,
 	const IID& interfaceid, void** objectInterface) {
 	// We don't support aggregation.
 	if (outerAggregateIUnknown != NULL)
@@ -229,12 +229,12 @@ HRESULT __stdcall CFactory::CreateInstance(IUnknown* outerAggregateIUnknown,
 
 /**
  * CFactory::LockServer
- * 
+ *
  * http://msdn2.microsoft.com/en-us/library/ms682332.aspx
  */
 HRESULT __stdcall CFactory::LockServer(BOOL shouldLock) {
 	if (shouldLock) {
-		InterlockedIncrement(&g_serverLockCount); 
+		InterlockedIncrement(&g_serverLockCount);
 	} else {
 		InterlockedDecrement(&g_serverLockCount);
 	}
@@ -288,24 +288,24 @@ HRESULT Bakery::bakeCookies(long amount, IUnknown * jar) {
 
 /**
  * Bakery::QueryInterface
- * 
+ *
  * Get a specific interface to Bakery according to interfaceid.
  * http://msdn2.microsoft.com/en-us/library/ms682521.aspx
- * 
+ *
  * @param interfaceid interface to Bakery requested
  * @param objectInterface will receive the interface to Bakery requested
  * @return S_OK on success or E_NOINTERFACE if Bakery does not support the requested interface.
  */
 HRESULT __stdcall Bakery::QueryInterface(const IID& interfaceid, void** objectInterface) {
 	if (IID_IUnknown == interfaceid) {
-		*objectInterface = static_cast<IBakery*>(this); 
+		*objectInterface = static_cast<IBakery*>(this);
 	} else if (IID_IBakery == interfaceid) {
 		*objectInterface = static_cast<IBakery*>(this);
 	} else {
 		*objectInterface = NULL;
 		return E_NOINTERFACE;
 	}
-	
+
 	// Increment the reference count on the interface
 	reinterpret_cast<IUnknown*>(*objectInterface)->AddRef();
 	return S_OK;
@@ -313,7 +313,7 @@ HRESULT __stdcall Bakery::QueryInterface(const IID& interfaceid, void** objectIn
 
 /**
  * Bakery::AddRef
- * 
+ *
  * Increment the refence count on Bakery.
  */
 UINT32 __stdcall Bakery::AddRef() {
@@ -322,8 +322,8 @@ UINT32 __stdcall Bakery::AddRef() {
 
 /**
  * Bakery::Release
- * 
- * Decrement the reference count on Bakery. Bakery will be destroyed if 
+ *
+ * Decrement the reference count on Bakery. Bakery will be destroyed if
  * the reference count drops to zero.
  */
 UINT32 __stdcall Bakery::Release() {

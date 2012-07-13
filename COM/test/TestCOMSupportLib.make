@@ -36,7 +36,7 @@ TestCOMSupportLib: TestCOMSupportLib.o $(COMPONENT_DIR)/ComponentGUIDs.o ../src/
 	$(LINK.cc) $^ -ldl -o $@
 	mkdir -p $(COMPONENTS_DIR)
 	cp -a $(COMPONENT) $(COMPONENTS_DIR)/
-	
+
 clean:
 	rm -f *.[od] $(COMPONENT) TestCOMSupportLib
 

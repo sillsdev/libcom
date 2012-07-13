@@ -7,17 +7,17 @@
  *
  * COM Support Library
  * Copyright (C) 2007 SIL International
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
@@ -220,7 +220,7 @@ enum REGCLS
 
 // These must be extern "C" because Mono needs to access them using dlsym
 extern "C" HRESULT CoInitialize(LPVOID pvReserved);
-extern "C" HRESULT CoCreateInstance(REFCLSID rclsid, class IUnknown* pUnkOuter, DWORD dwClsContext, REFIID riid, LPVOID FAR* ppv); 
+extern "C" HRESULT CoCreateInstance(REFCLSID rclsid, class IUnknown* pUnkOuter, DWORD dwClsContext, REFIID riid, LPVOID FAR* ppv);
 
 // Closes the COM Library on the current apartment.
 extern "C" HRESULT CoUninitialize();
@@ -242,7 +242,7 @@ HRESULT CoRevokeClassObject(DWORD dwRegister);
  * @param requestedInterfaceID an interface ID that your desired class implements (such as IID_IClassFactory)
  * @param objectInterface interface to your desired class
  * @return S_OK upon success, E_OUTOFMEMORY upon running out of memory, E_NOINTERFACE if the class does not support the requested interface, CLASS_E_CLASSNOTAVAILABLE if this DLL doesn't support the requestedClassID
- * 
+ *
  * http://msdn2.microsoft.com/en-us/library/ms680760.aspx
  */
 EXTERN_C HRESULT DllGetClassObject(REFCLSID requestedClassID, REFIID requestedInterfaceID, LPVOID * objectInterface);

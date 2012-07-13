@@ -79,7 +79,7 @@ extern int _memicmp(const void *, const void *, std::size_t);
 
 //	Some of the structures obtained from MacOS by WinSupport.CarbonTest.Lib are
 //	needed by this test program for comparison purposes. They are transmitted from
-//	WinSupport.CarbonTest.Lib by means of global static identifiers. 
+//	WinSupport.CarbonTest.Lib by means of global static identifiers.
 extern	UTCDateTime			timeUTC;
 extern	MachineLocation		machLoc;
 extern	EventTime			secsFP;

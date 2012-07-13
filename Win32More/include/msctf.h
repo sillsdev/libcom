@@ -12,7 +12,7 @@ typedef struct {
   ULONG dwStaticFlags;
 } TS_STATUS;
 const	dwStaticFlags TS_SS_REGIONS = 0x2;
-const 	dwStaticFlags TS_SS_NOHIDDENTEXT = 0x8;
+const	dwStaticFlags TS_SS_NOHIDDENTEXT = 0x8;
 
 typedef GUID TS_ATTRID;
 typedef struct {
@@ -46,11 +46,11 @@ const	ULONG	TS_AS_LAYOUT_CHANGE = 0x4;
 const	ULONG	TF_DEFAULT_SELECTION = (ULONG)-1;
 const	ULONG	CONNECT_E_ADVISELIMIT = ~0;
 const	ULONG	CONNECT_E_NOCONNECTION = ~0;
-	
-typedef enum 
+
+typedef enum
 {
-  TS_RT_PLAIN, 
-  TS_RT_HIDDEN, 
+  TS_RT_PLAIN,
+  TS_RT_HIDDEN,
   TS_RT_OPAQUE
 } TsRunType;
 
@@ -66,8 +66,8 @@ typedef struct {
 } TS_TEXTCHANGE;
 
 typedef enum {
-  TS_AE_NONE = 0, 
-  TS_AE_START = 1, 
+  TS_AE_NONE = 0,
+  TS_AE_START = 1,
   TS_AE_END = 2
 } TsActiveSelEnd;
 
@@ -83,10 +83,10 @@ typedef struct {
 } TS_SELECTION_ACP;
 
 enum { TS_LF_READWRITE, TS_LC_CHANGE };
-	
+
 typedef enum {
-  TF_CT_NONE = 0, 
-  TF_CT_SYSCOLOR = 1, 
+  TF_CT_NONE = 0,
+  TF_CT_SYSCOLOR = 1,
   TF_CT_COLORREF = 2
 } TF_DA_COLORTYPE;
 
@@ -99,20 +99,20 @@ typedef struct {
 } TF_DA_COLOR;
 
 typedef enum {
-  TF_LS_NONE = 0, 
-  TF_LS_SOLID = 1, 
-  TF_LS_DOT = 2, 
-  TF_LS_DASH = 3, 
+  TF_LS_NONE = 0,
+  TF_LS_SOLID = 1,
+  TF_LS_DOT = 2,
+  TF_LS_DASH = 3,
   TF_LS_SQUIGGLE = 4
 } TF_DA_LINESTYLE;
 
 typedef enum {
-  TF_ATTR_INPUT = 0, 
-  TF_ATTR_TARGET_CONVERTED = 1, 
-  TF_ATTR_CONVERTED = 2, 
-  TF_ATTR_TARGET_NOTCONVERTED = 3, 
-  TF_ATTR_INPUT_ERROR = 4, 
-  TF_ATTR_FIXEDCONVERTED = 5, 
+  TF_ATTR_INPUT = 0,
+  TF_ATTR_TARGET_CONVERTED = 1,
+  TF_ATTR_CONVERTED = 2,
+  TF_ATTR_TARGET_NOTCONVERTED = 3,
+  TF_ATTR_INPUT_ERROR = 4,
+  TF_ATTR_FIXEDCONVERTED = 5,
   TF_ATTR_OTHER = -1
 } TF_DA_ATTR_INFO;
 
@@ -155,7 +155,7 @@ class ITfDisplayAttributeInfo : public IUnknown
 {
 public:
 	HRESULT GetAttributeInfo(TF_DISPLAYATTRIBUTE*);
-	
+
 };
 
 class ITfDisplayAttributeMgr : public IUnknown
@@ -216,7 +216,7 @@ public:
 class ITfMouseSink : public IUnknown
 {
 public:
-	HRESULT OnMouseEvent(ULONG, ULONG, DWORD, BOOL*);	
+	HRESULT OnMouseEvent(ULONG, ULONG, DWORD, BOOL*);
 };
 
 class ITfContextOwnerCompositionSink : public IUnknown

@@ -3,12 +3,12 @@ libcom COM Support Library, by SIL International <http://www.sil.org/>
 libcom implements a subset of Microsoft COM.
 
 Version 0.4.0, 2008-03-27
- 
+
 Release Notes:
 
 In many ways, libcom functions well. But it isn't necessarily finished yet. This is the first release.
 
-When invoking an application that is a COM client, make sure LD_LIBRARY_PATH can find libcom.so and/or ole32.dll (Note that ole32.dll is created as a symlink to libcom.so after you install libcom), make a components.map file (probably in the directory of the COM server .so file), and set COMPONENTS_MAP_PATH to point to the locations of any components.map files you need to use. 
+When invoking an application that is a COM client, make sure LD_LIBRARY_PATH can find libcom.so and/or ole32.dll (Note that ole32.dll is created as a symlink to libcom.so after you install libcom), make a components.map file (probably in the directory of the COM server .so file), and set COMPONENTS_MAP_PATH to point to the locations of any components.map files you need to use.
 
 The test directory contains examples of COM servers and COM client programs and how to run them.
 
@@ -35,19 +35,19 @@ SIL International <http://www.sil.org/>
 
 Legal:
 
- * The libcom COM Support Library is 
+ * The libcom COM Support Library is
  * Copyright (C) 2001, 2007, 2008 SIL International
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA

@@ -17,7 +17,7 @@ namespace ErrorObjects
 class ErrorInfo : public IErrorInfo, public ICreateErrorInfo
 {
 public:
-	
+
 	// default construtor
 	ErrorInfo();
 
@@ -48,19 +48,19 @@ public:
 	// ICreateErrorInfo methods
 	virtual HRESULT STDMETHODCALLTYPE SetGUID(
 		/* [in] */ REFGUID rguid);
-		
+
 	virtual HRESULT STDMETHODCALLTYPE SetSource(
 		/* [in] */ LPOLESTR szSource);
-		
+
 	virtual HRESULT STDMETHODCALLTYPE SetDescription(
 		/* [in] */ LPOLESTR szDescription);
-		
+
 	virtual HRESULT STDMETHODCALLTYPE SetHelpFile(
 		/* [in] */ LPOLESTR szHelpFile);
-		
+
 	virtual HRESULT STDMETHODCALLTYPE SetHelpContext(
 		/* [in] */ DWORD dwHelpContext);
-	
+
 protected:
 
 	// IErrorInfo Data members

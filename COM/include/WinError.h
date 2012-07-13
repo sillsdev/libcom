@@ -7,17 +7,17 @@
  *
  * Win32 Compatibility Library
  * Copyright (C) 2007 SIL International
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
@@ -2157,7 +2157,7 @@ static inline HRESULT HRESULT_FROM_WIN32(unsigned long x)
 #define SEC_E_NO_AUTHENTICATING_AUTHORITY                  _HRESULT_TYPEDEF_(0x80090311L)
 #define SEC_I_CONTINUE_NEEDED                              _HRESULT_TYPEDEF_(0x00090312L)
 #define SEC_I_COMPLETE_NEEDED                              _HRESULT_TYPEDEF_(0x00090313L)
-#define SEC_I_COMPLETE_AND_CONTINUE                        _HRESULT_TYPEDEF_(0x00090314L) 
+#define SEC_I_COMPLETE_AND_CONTINUE                        _HRESULT_TYPEDEF_(0x00090314L)
 #define SEC_E_BAD_PKGID                                    _HRESULT_TYPEDEF_(0x80090316L)
 #define SEC_E_CONTEXT_EXPIRED                              _HRESULT_TYPEDEF_(0x80090317L)
 #define SEC_E_INCOMPLETE_MESSAGE                           _HRESULT_TYPEDEF_(0x80090318L)

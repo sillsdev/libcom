@@ -77,6 +77,3 @@ exec DefineCreateOwnedProc$$ kclid${Class}, 'CreateOwned_${Class}'
 go
 
 $endif$
-
-
-

@@ -139,9 +139,9 @@ int main()
 	IX* pIX = NULL ;
 
 	HRESULT hr = CoCreateInstance(CLSID_Component1,
-	                                (IUnknown *)NULL, 
+	                                (IUnknown *)NULL,
 	                                (DWORD)CLSCTX_INPROC_SERVER,
-	                                IID_IX, 
+	                                IID_IX,
 	                                (void **)&pIX) ;
 	if (SUCCEEDED(hr))
 	{
@@ -185,7 +185,7 @@ int main()
 	else
 	{
 		cout << "Client: \t\tCould not create component. hr = "
-		     << hex << hr << endl ;    
+		     << hex << hr << endl ;
 	}
 
 	return 0;

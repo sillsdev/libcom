@@ -7,17 +7,17 @@
  *
  * COM Support Library Test
  * Copyright (C) 2007 SIL International
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
@@ -78,7 +78,7 @@ extern inline LONG WINAPI InterlockedDecrement( LONG volatile *dest )
 
 // Global variables
 
-static volatile LONG g_serverLockCount = 0;   
+static volatile LONG g_serverLockCount = 0;
 /** version-independent ProgID */
 const wchar_t g_versionIndependentProgID[] = L"Yup.Bag";
 /** ProgID */
@@ -111,13 +111,13 @@ void Bag::CreateCom(IUnknown* outerAggregateIUnknown, REFIID interfaceid, void**
 		throw std::runtime_error("CLASS_E_NOAGGREGATION in Bag.cpp");
 	}
 
-	Bag* bag = new Bag; 
+	Bag* bag = new Bag;
 	if (S_OK != bag->QueryInterface(interfaceid, objectInterface)) {
-		bag->Release(); // Um, shouldn't we NOT be doing this? If we SHOULD be, then update the BagCFactory::CreateInstance function to do likewise. 
+		bag->Release(); // Um, shouldn't we NOT be doing this? If we SHOULD be, then update the BagCFactory::CreateInstance function to do likewise.
 		throw std::runtime_error("Bag createcom queryinterface failed in Bag.cpp.");
 	}
 }
-  
+
 #else /* !USE_FW_GENERIC_FACTORY */
 
 EXTERN_C BOOL WINAPI DllMain(HMODULE /*hmod*/, DWORD /*dwReason*/, PVOID /*pvReserved*/)
@@ -147,10 +147,10 @@ EXTERN_C HRESULT DllGetClassObject(REFCLSID requestedClassID, REFIID requestedIn
 	BagCFactory* factory = new BagCFactory();
 	if (NULL == factory)
 		return E_OUTOFMEMORY;
-	
+
 	HRESULT hr = factory->QueryInterface(requestedInterfaceID, objectInterface);
 	factory->Release();
-	
+
 	return hr;
 }
 
@@ -161,10 +161,10 @@ EXTERN_C HRESULT DllGetClassObject(REFCLSID requestedClassID, REFIID requestedIn
 /**
  * BagCFactory::QueryInterface
  */
-HRESULT __stdcall BagCFactory::QueryInterface(const IID& interfaceid, void** objectInterface) {    
-	if ((IID_IUnknown      == interfaceid) || 
+HRESULT __stdcall BagCFactory::QueryInterface(const IID& interfaceid, void** objectInterface) {
+	if ((IID_IUnknown      == interfaceid) ||
 	    (IID_IClassFactory == interfaceid)) {
-		*objectInterface = static_cast<IClassFactory*>(this); 
+		*objectInterface = static_cast<IClassFactory*>(this);
 	} else {
 		*objectInterface = NULL;
 		return E_NOINTERFACE;
@@ -182,7 +182,7 @@ UINT32 __stdcall BagCFactory::AddRef() {
 	return InterlockedIncrement(&m_referenceCount);
 }
 
-/** 
+/**
  * BagCFactory::Release
  */
 UINT32 __stdcall BagCFactory::Release() {
@@ -205,7 +205,7 @@ UINT32 __stdcall BagCFactory::Release() {
  * @param objectInterface interface to Bag requested by interfaceid, or NULL if Bag doesn't support interfaceid.
  * @return S_OK if successful Bag creation, E_OUTOFMEMORY if we failed to create Bag due to insufficient memory, CLASS_E_NOAGGREGATION if outerAggregateIUnknown is not NULL, or E_NOINTERFACE if Bag does not support the requested interface.
  */
-HRESULT __stdcall BagCFactory::CreateInstance(IUnknown* outerAggregateIUnknown, 
+HRESULT __stdcall BagCFactory::CreateInstance(IUnknown* outerAggregateIUnknown,
 	const IID& interfaceid, void** objectInterface) {
 	// We don't support aggregation.
 	if (outerAggregateIUnknown != NULL)
@@ -230,12 +230,12 @@ HRESULT __stdcall BagCFactory::CreateInstance(IUnknown* outerAggregateIUnknown,
 
 /**
  * BagCFactory::LockServer
- * 
+ *
  * http://msdn2.microsoft.com/en-us/library/ms682332.aspx
  */
 HRESULT __stdcall BagCFactory::LockServer(BOOL shouldLock) {
 	if (shouldLock) {
-		InterlockedIncrement(&g_serverLockCount); 
+		InterlockedIncrement(&g_serverLockCount);
 	} else {
 		InterlockedDecrement(&g_serverLockCount);
 	}
@@ -265,7 +265,7 @@ HRESULT Bag::ProvideBall(IBall** iball) {
 	//GUID CLSID_Ball = __uuidof(Ball);
 	//Ball* ball;
 	return CoCreateInstance(CLSID_Ball, NULL, (DWORD)CLSCTX_INPROC_SERVER, IID_IBall, (void**)iball);
-	
+
 
 }
 
@@ -273,8 +273,8 @@ HRESULT Bag::InspectBall(IBall* iball) {
 	long distance_rolled;
 	/*(dynamic_cast<Ball*> (iball))->roll(3, &distance_rolled);
 	return S_OK; */
-	
-	
+
+
 //	GUID IID_IBall = __uuidof(IBall);
 	Ball* ballinstance;
 	long hr = iball->QueryInterface(IID_IBall, (void**)&ballinstance);
@@ -283,7 +283,7 @@ HRESULT Bag::InspectBall(IBall* iball) {
 	hr = ballinstance->roll(3, &distance_rolled);
 	if (FAILED(hr))
 		return hr;
-	
+
 	return S_OK;
 }
 
@@ -293,24 +293,24 @@ HRESULT Bag::InspectBall(IBall* iball) {
 
 /**
  * Bag::QueryInterface
- * 
+ *
  * Get a specific interface to Bag according to interfaceid.
  * http://msdn2.microsoft.com/en-us/library/ms682521.aspx
- * 
+ *
  * @param interfaceid interface to Bag requested
  * @param objectInterface will receive the interface to Bag requested
  * @return S_OK on success or E_NOINTERFACE if Bag does not support the requested interface.
  */
 HRESULT __stdcall Bag::QueryInterface(const IID& interfaceid, void** objectInterface) {
 	if (IID_IUnknown == interfaceid) {
-		*objectInterface = static_cast<IBag*>(this); 
+		*objectInterface = static_cast<IBag*>(this);
 	} else if (IID_IBag == interfaceid) {
 		*objectInterface = static_cast<IBag*>(this);
 	} else {
 		*objectInterface = NULL;
 		return E_NOINTERFACE;
 	}
-	
+
 	// Increment the reference count on the interface
 	reinterpret_cast<IUnknown*>(*objectInterface)->AddRef();
 	return S_OK;
@@ -318,7 +318,7 @@ HRESULT __stdcall Bag::QueryInterface(const IID& interfaceid, void** objectInter
 
 /**
  * Bag::AddRef
- * 
+ *
  * Increment the refence count on Bag.
  */
 UINT32 __stdcall Bag::AddRef() {
@@ -327,8 +327,8 @@ UINT32 __stdcall Bag::AddRef() {
 
 /**
  * Bag::Release
- * 
- * Decrement the reference count on Bag. Bag will be destroyed if 
+ *
+ * Decrement the reference count on Bag. Bag will be destroyed if
  * the reference count drops to zero.
  */
 UINT32 __stdcall Bag::Release() {

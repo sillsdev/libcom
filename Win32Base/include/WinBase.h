@@ -1,4 +1,4 @@
-// WinBase.h Win32 Compatibility file 
+// WinBase.h Win32 Compatibility file
 //TODO REVIEW Add header
 #ifndef _WINBASE_H_
 #define _WINBASE_H_
@@ -25,7 +25,7 @@ enum Win32FileAttributes
 	FILE_ATTRIBUTE_NOT_CONTENT_INDEXED = 0x2000,
 	FILE_ATTRIBUTE_ENCRYPTED = 0x4000,
 	FILE_ATTRIBUTE_VIRTUAL = 0x10000
-	
+
 };
 
 // Emulations of WIN32 _SECURITY_ATTRIBUTES struct

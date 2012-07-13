@@ -13,15 +13,15 @@ Version 1.3 of the MDU's WinSupportLib is now on the CVS server in Calgary.
 There are three CodeWarrior projects for WinSupportLib:
 
   WinSuppLibShared.mcp	Compiles the CFM shared libraries in debug and final
-  						modes into libraries/bin; also compiles the special
-  						test version into the bundle-packaged test app
-  						(in debug and final forms).
+						modes into libraries/bin; also compiles the special
+						test version into the bundle-packaged test app
+						(in debug and final forms).
   WinSuppLibDynamic.mcp	Compiles the Mach-O libraries in debug and final
-  						modes into Frameworks in libraries/bin; also compiles
-  						the special test version into Frameworks within the
-  						bundle-packaged test app (in debug and final forms).
+						modes into Frameworks in libraries/bin; also compiles
+						the special test version into Frameworks within the
+						bundle-packaged test app (in debug and final forms).
   WinSuppLibTest.mcp	Compiles the test program in both debug and final forms
-  						into bundle-packaged form.
+						into bundle-packaged form.
 
 Bugs/Features
 =============

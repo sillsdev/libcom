@@ -7,17 +7,17 @@
  *
  * Win32More Compatibility Library
  * Copyright (C) 2008 SIL International
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
@@ -27,7 +27,7 @@
 
 // This file was built by doing the following:
 // * Copy the many lines from Util.cpp that start with "CASE_HRESULT(DB_" to a file.
-// * sed it to produce this file's list of enumerators. 
+// * sed it to produce this file's list of enumerators.
 // * Adjust values of certain enumerators to match the standard.
 // * Added 7 enumerators that weren't in Util.cpp.
 
@@ -191,7 +191,7 @@ enum OleDbErrCodes {
 	DB_S_MULTIPLECHANGES,
 	DB_S_NOTSINGLETON = (HRESULT)0x00040ed7L,
 	DB_S_NOROWSPECIFICCOLUMNS = (HRESULT)0x00040eddL,
-	
+
 	DB_E_BOGUS = (HRESULT)0x80040effL,
 	DB_E_BADID = DB_E_BADTABLEID,
 	DB_E_NOSTATISTIC  = (HRESULT)0x80040e9cL,
@@ -202,4 +202,3 @@ enum OleDbErrCodes {
 };
 
 #endif // oledberr_h_included
-

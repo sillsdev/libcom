@@ -1,17 +1,17 @@
 #ifndef AFHACKS_H_
 #define AFHACKS_H_
 
-typedef struct tagPALETTEENTRY { 
- 	BYTE peRed; 
- 	BYTE peGreen; 
- 	BYTE peBlue; 
- 	BYTE peFlags; 
-} PALETTEENTRY; 
+typedef struct tagPALETTEENTRY {
+	BYTE peRed;
+	BYTE peGreen;
+	BYTE peBlue;
+	BYTE peFlags;
+} PALETTEENTRY;
 
-typedef struct tagLOGPALETTE { 
- 	WORD         palVersion; 
- 	WORD         palNumEntries; 
- 	PALETTEENTRY palPalEntry[1]; 
+typedef struct tagLOGPALETTE {
+	WORD         palVersion;
+	WORD         palNumEntries;
+	PALETTEENTRY palPalEntry[1];
 } LOGPALETTE;
 
 int GetDeviceCaps(HDC hdc, int nIndex);
@@ -41,93 +41,93 @@ public:
 COLORREF SetBkColor(HDC hdc, COLORREF clr);
 COLORREF SetTextColor(HDC hdc, COLORREF clr);
 
-typedef struct tagLOGPEN { 
-  UINT     lopnStyle; 
-  POINT    lopnWidth; 
-  COLORREF lopnColor; 
+typedef struct tagLOGPEN {
+  UINT     lopnStyle;
+  POINT    lopnWidth;
+  COLORREF lopnColor;
 } LOGPEN, *PLOGPEN;
 
 typedef struct tagBITMAPINFOHEADER{
-  DWORD  biSize; 
-  LONG   biWidth; 
-  LONG   biHeight; 
-  WORD   biPlanes; 
-  WORD   biBitCount; 
-  DWORD  biCompression; 
-  DWORD  biSizeImage; 
-  LONG   biXPelsPerMeter; 
-  LONG   biYPelsPerMeter; 
-  DWORD  biClrUsed; 
-  DWORD  biClrImportant; 
-} BITMAPINFOHEADER, *PBITMAPINFOHEADER; 
+  DWORD  biSize;
+  LONG   biWidth;
+  LONG   biHeight;
+  WORD   biPlanes;
+  WORD   biBitCount;
+  DWORD  biCompression;
+  DWORD  biSizeImage;
+  LONG   biXPelsPerMeter;
+  LONG   biYPelsPerMeter;
+  DWORD  biClrUsed;
+  DWORD  biClrImportant;
+} BITMAPINFOHEADER, *PBITMAPINFOHEADER;
 
 typedef struct tagRGBQUAD {
-  BYTE    rgbBlue; 
-  BYTE    rgbGreen; 
-  BYTE    rgbRed; 
-  BYTE    rgbReserved; 
+  BYTE    rgbBlue;
+  BYTE    rgbGreen;
+  BYTE    rgbRed;
+  BYTE    rgbReserved;
 } RGBQUAD;
 
-typedef struct tagBITMAPINFO { 
-  BITMAPINFOHEADER bmiHeader; 
-  RGBQUAD          bmiColors[1]; 
+typedef struct tagBITMAPINFO {
+  BITMAPINFOHEADER bmiHeader;
+  RGBQUAD          bmiColors[1];
 } BITMAPINFO, *PBITMAPINFO;
 
-typedef struct tagLOGBRUSH { 
-  UINT     lbStyle; 
-  COLORREF lbColor; 
-  LONG     lbHatch; 
+typedef struct tagLOGBRUSH {
+  UINT     lbStyle;
+  COLORREF lbColor;
+  LONG     lbHatch;
 } LOGBRUSH, *PLOGBRUSH;
 
 enum fnObject
 {
 	DEFAULT_GUI_FONT,
 };
- 
+
 const int CCHDEVICENAME = 0;
 const int CCHFORMNAME = 0;
 const int ERROR = 0;
 const int HGDI_ERROR = 0;
 
-typedef struct _devicemode { 
-  BCHAR  dmDeviceName[CCHDEVICENAME]; 
-  WORD   dmSpecVersion; 
-  WORD   dmDriverVersion; 
-  WORD   dmSize; 
-  WORD   dmDriverExtra; 
-  DWORD  dmFields; 
+typedef struct _devicemode {
+  BCHAR  dmDeviceName[CCHDEVICENAME];
+  WORD   dmSpecVersion;
+  WORD   dmDriverVersion;
+  WORD   dmSize;
+  WORD   dmDriverExtra;
+  DWORD  dmFields;
   union {
     struct {
       short dmOrientation;
       short dmPaperSize;
       short dmPaperLength;
       short dmPaperWidth;
-      short dmScale; 
-      short dmCopies; 
-      short dmDefaultSource; 
-      short dmPrintQuality; 
+      short dmScale;
+      short dmCopies;
+      short dmDefaultSource;
+      short dmPrintQuality;
     };
     POINT dmPosition;
     DWORD  dmDisplayOrientation;
     DWORD  dmDisplayFixedOutput;
   };
 
-  short  dmColor; 
-  short  dmDuplex; 
-  short  dmYResolution; 
-  short  dmTTOption; 
-  short  dmCollate; 
-  BYTE  dmFormName[CCHFORMNAME]; 
-  WORD  dmLogPixels; 
-  DWORD  dmBitsPerPel; 
-  DWORD  dmPelsWidth; 
-  DWORD  dmPelsHeight; 
+  short  dmColor;
+  short  dmDuplex;
+  short  dmYResolution;
+  short  dmTTOption;
+  short  dmCollate;
+  BYTE  dmFormName[CCHFORMNAME];
+  WORD  dmLogPixels;
+  DWORD  dmBitsPerPel;
+  DWORD  dmPelsWidth;
+  DWORD  dmPelsHeight;
   union {
-    DWORD  dmDisplayFlags; 
+    DWORD  dmDisplayFlags;
     DWORD  dmNup;
   };
-  DWORD  dmDisplayFrequency; 
-#if(WINVER >= 0x0400) 
+  DWORD  dmDisplayFrequency;
+#if(WINVER >= 0x0400)
   DWORD  dmICMMethod;
   DWORD  dmICMIntent;
   DWORD  dmMediaType;
@@ -141,7 +141,7 @@ typedef struct _devicemode {
 #endif /* WINVER >= 0x0400 */
 } DEVMODE;
 
-HDC 	CreateCompatibleDC(HDC hdc);
+HDC	CreateCompatibleDC(HDC hdc);
 BOOL	DeleteDC(HDC hdc);
 inline HDC		GetDC(HWND hWnd) { return 0; }
 inline int		ReleaseDC(HWND hWnd, HDC hdc) { return 0; }
@@ -171,7 +171,7 @@ enum iUsage {
 	DIB_RGB_COLORS,
 };
 
-int 	StretchDIBits(HDC hdc, int XDest, int YDest, int nDestWidth, int nDestHeight,
+int	StretchDIBits(HDC hdc, int XDest, int YDest, int nDestWidth, int nDestHeight,
 						int XSrc, int YSrc, int nSrcWidth, int nSrcHeight,
 						CONST VOID *lpBits, CONST BITMAPINFO *lpBitsInfo,
 						UINT iUsage, DWORD dwRop);
@@ -180,11 +180,11 @@ enum fuOptions {
 	ETO_OPAQUE,
 };
 
-BOOL 	ExtTextOut(HDC hdc, int X, int Y, UINT fuOptions, CONST RECT* lprc,
+BOOL	ExtTextOut(HDC hdc, int X, int Y, UINT fuOptions, CONST RECT* lprc,
 					LPCTSTR lpString, UINT cbCount, CONST INT* lpDx);
-int 	GetSystemMetrics(int nIndex);
-BOOL 	SystemParametersInfo(UINT uiAction, UINT uiParam, PVOID pvParam, UINT fWinIni);
-HDC 	CreateDC(LPCTSTR lpszDriver, LPCTSTR lpszDevice, LPCTSTR lpszOutput, CONST DEVMODE* lpInitData);
+int	GetSystemMetrics(int nIndex);
+BOOL	SystemParametersInfo(UINT uiAction, UINT uiParam, PVOID pvParam, UINT fWinIni);
+HDC	CreateDC(LPCTSTR lpszDriver, LPCTSTR lpszDevice, LPCTSTR lpszOutput, CONST DEVMODE* lpInitData);
 HFONT	CreateFont(int nHeight, int nWidth, int nEscapement, int nOrientation, int fnWeight,
 			DWORD fdwItalic, DWORD fdwUnderline, DWORD fdwStrikeOut, DWORD fdwCharSet,
 			DWORD fdwOutputPrecision, DWORD fdwClipPrecision, DWORD fdwQuality, DWORD fdwPitchAndFamily,

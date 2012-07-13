@@ -54,21 +54,21 @@ int main()
 	Str255			dateOut, timeOut;
 	DateString(dateTimeSecs, longDate, &dateOut[0], NULL);
 	TimeString(dateTimeSecs, true, &timeOut[0], NULL);
-	
+
 	for (int j=1; j<=dateOut[0]; j++) cout << dateOut[j];
 	cout << ' ';
 	for (int j=1; j<=timeOut[0]; j++) cout << timeOut[j];
 	cout << "  UTC Greenwich Mean Time";
-	
+
 	cout << endl << "WinFILETIME:" << endl;
 	ofstream		test("WinFILETIME");
 	//	Write this in little-endian form for Windows test
 	for (int i=7; i>=0; i--) test.put(t64[i]);
 	test.close();
 	SInt64ToHex_cout(time64);
-	
+
 	cout << endl;
-	
+
 	return 0;
 }
 

@@ -66,7 +66,7 @@ SInt32 DirectoryIDFromName(	short vRef,
 							long parDirID,
 							StringPtr dName);
 
-// Wildcard matching function						
+// Wildcard matching function
 bool wildmatch(StringPtr fName, StringPtr wCard);
 
 //#include "PascalString.h"

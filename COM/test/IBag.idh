@@ -7,17 +7,17 @@
  *
  * COM Support Library Test
  * Copyright (C) 2007 SIL International
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -43,13 +43,13 @@
 	interface IBag : IUnknown
 	{
 	  [id(1), helpstring("")] HRESULT ProvideBall(
-	  	[out, retval] IBall** iball
+		[out, retval] IBall** iball
 	  );
 	  [id(2), helpstring("")] HRESULT InspectBall(
 	    [in] IBall* iball
 	  );
 	}
-	
+
 	[
 		uuid(1495a75d-018a-43ab-a9cd-1012e5636d52),
 		helpstring("Bag class")

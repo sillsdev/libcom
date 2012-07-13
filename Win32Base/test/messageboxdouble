@@ -27,4 +27,3 @@ else
 fi
 
 exit $MB_RESULT
-

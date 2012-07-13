@@ -33,18 +33,18 @@ using namespace std;
 extern "C"
 {
 	// NOTE mono-config header doesn't seem to extern c correctly on Linux
-	#include <mono/metadata/mono-config.h>		 
+	#include <mono/metadata/mono-config.h>
 }
 
 /**
  * Helper Function to return the Marshal Class
  */
 MonoClass* GetMarshalClass()
-{	
-	MonoImage *coreLib = mono_get_corlib();	
-	
+{
+	MonoImage *coreLib = mono_get_corlib();
+
 	return mono_class_from_name (
-	        coreLib, "System.Runtime.InteropServices", "Marshal");	
+	        coreLib, "System.Runtime.InteropServices", "Marshal");
 }
 
 //:>********************************************************************************************
@@ -65,14 +65,14 @@ ManagedComBridge::ManagedComBridgeFactoryMap ManagedComBridge::m_managedComBridg
 
 /**
  * @brief default constructor used for DllGetClassObject to create a new factory instance.
- * 
+ *
  * @param assemblyName - Managed assembly that this factory uses to create its COM object
  * @param classFullName - name of COM object that this factory creates.
  */
 ManagedComBridge::ManagedComBridge(const std::string& assemblyName, const std::string& classFullName) :
 	m_assemblyName(assemblyName), m_classFullName(classFullName)
 {
-	
+
 }
 
 
@@ -84,7 +84,7 @@ ManagedComBridge::~ManagedComBridge()
  * @brief main entry point for Factory
  *
  * Creates a map between clsid and (assemblyName, classFullName). A new factory instance is created
- * per clsid.   
+ * per clsid.
  *
  * @param clsid The Class ID for the factory
  * @param iid not used.
@@ -94,26 +94,26 @@ ManagedComBridge::~ManagedComBridge()
 HRESULT __attribute__ ((visibility("default"))) DllGetClassObject(REFCLSID clsid, REFIID /*iid*/, VOID ** ppv)
 {
 	// Build up a map of clsid - with its implementation factory class.
-	
+
 	// does clsid exist in map?
 	ManagedComBridge::ManagedComBridgeFactoryMap::const_iterator iter = ManagedComBridge::m_managedComBridgeFactoryMap.find(clsid);
-	
+
 	if (iter == ManagedComBridge::m_managedComBridgeFactoryMap.end())
 	{
-		std::string assemblyName; 
+		std::string assemblyName;
 		std::string classFullName;
-		
+
 		if (ComRegistry::getInstance()->getAssemblyFilename(clsid, assemblyName) != S_OK)
 			return 1; // S_ERROR/FAIL
 
 		if (ComRegistry::getInstance()->getClassName(clsid, classFullName) != S_OK)
 			return 1; // S_ERROR/FAIL
-		
+
 		ManagedComBridge::m_managedComBridgeFactoryMap[clsid] = new ManagedComBridge(assemblyName, classFullName);
 	}
-	
+
 	*ppv = ManagedComBridge::m_managedComBridgeFactoryMap[clsid];
-	return S_OK;	
+	return S_OK;
 }
 
 /**
@@ -137,19 +137,19 @@ STDMETHODIMP ManagedComBridge::QueryInterface(REFIID iid, void ** ppv)
 }
 
 /**
- * Reference counting not implemented for this factory class. 
+ * Reference counting not implemented for this factory class.
  */
 UINT32 ManagedComBridge::AddRef(void)
 {
-	return 0;	
+	return 0;
 }
 
 /**
- * Reference counting not implemented for this factory class. 
+ * Reference counting not implemented for this factory class.
  */
 UINT32 ManagedComBridge::Release(void)
 {
-	return 0;	
+	return 0;
 }
 
 /**
@@ -157,36 +157,36 @@ UINT32 ManagedComBridge::Release(void)
  */
 HRESULT ManagedComBridge::LockServer(BOOL /*fLock*/)
 {
-	return S_OK;	
+	return S_OK;
 }
 
 /**
- * @brief Uses this factory class to create an instance of a COM object that 
- * implements the specfied interface. 
+ * @brief Uses this factory class to create an instance of a COM object that
+ * implements the specfied interface.
  *
  * @param pUnkOuter - Not used
- * @param riid - id of the Interface that the COM object implements. 
- * @param ppvObject - return parameter - returns ptr instance to request interface implementation  
+ * @param riid - id of the Interface that the COM object implements.
+ * @param ppvObject - return parameter - returns ptr instance to request interface implementation
  */
 HRESULT ManagedComBridge::CreateInstance(IUnknown * /*pUnkOuter*/, REFIID riid, void ** ppvObject)
-{	
-	std::string classNamespace; 
+{
+	std::string classNamespace;
 	std::string className;
 	MonoAssembly *assembly; // ptr to the assembly that conatins the COM object.
 	MonoImage *image;
 	MonoClass *comClass; // ptr to the COM object class type.
 	MonoObject *comClassInstance; // ptr to the COM object instance.
-	
+
 	const char* const defaultMonoRuntimeVersion = "v2.0.50727";
 	const char* const environVarMonoRuntime = "MONO_RUNTIME";
 	const char*  monoRuntimeVersion = getenv(environVarMonoRuntime);
 	if (monoRuntimeVersion == NULL)
 		monoRuntimeVersion = defaultMonoRuntimeVersion;
-	
+
 	////
 	// Parse Managed COM information from COMRegistry
 	////
-		
+
 	// className should be fully qualified name and namespace, split namespace and class name;
 	string::size_type sep = m_classFullName.rfind(".", m_classFullName.length());
 	if (sep == string::npos)
@@ -200,11 +200,11 @@ HRESULT ManagedComBridge::CreateInstance(IUnknown * /*pUnkOuter*/, REFIID riid, 
 		className = m_classFullName.substr(sep +1, m_classFullName.length() - sep);
 		classNamespace = m_classFullName.substr(0, sep);
 	}
-	
+
 	////
 	// Start mono runtime
 	////
-		
+
 	if (m_domain == NULL)
 	{
 		m_domain = mono_get_root_domain();
@@ -213,27 +213,27 @@ HRESULT ManagedComBridge::CreateInstance(IUnknown * /*pUnkOuter*/, REFIID riid, 
 		if (m_domain == NULL)
 		{
 			fprintf(stderr, "Error could not init mono\n");
-			return 1;			
+			return 1;
 		}
-	
+
 		// Need to ensure mono config is read other wise certian managed library calls will fail.
-		mono_config_parse(NULL);		
+		mono_config_parse(NULL);
 	}
-				
+
 	////
 	// Open managed Assembly and create the COM object from C++
 	////
-		
-	MonoClass* marshalClass = GetMarshalClass();	
+
+	MonoClass* marshalClass = GetMarshalClass();
 
 	// Open assembly in one of 3 cases:
 	//  1. absolute path in components.map
 	//  2. relative path in components.map and COMPONENTS_MAP_PATH is not set
 	//  3. relative path in components.map and COMPONENTS_MAP_PATH is set
-	const char * componentsMapPath = getenv("COMPONENTS_MAP_PATH");	
+	const char * componentsMapPath = getenv("COMPONENTS_MAP_PATH");
 	if (m_assemblyName.c_str()[0] == '/' || componentsMapPath == NULL) // case 1 & 2
 	{
-		assembly = mono_domain_assembly_open(m_domain, m_assemblyName.c_str());	
+		assembly = mono_domain_assembly_open(m_domain, m_assemblyName.c_str());
 	}
 	else // case 3
 	{
@@ -245,7 +245,7 @@ HRESULT ManagedComBridge::CreateInstance(IUnknown * /*pUnkOuter*/, REFIID riid, 
 
 	if (assembly == NULL)
 	{
-		fprintf(stderr, "Could not open assembly %s\n", 
+		fprintf(stderr, "Could not open assembly %s\n",
 			m_assemblyName.c_str());
 
 		return 1;
@@ -255,25 +255,25 @@ HRESULT ManagedComBridge::CreateInstance(IUnknown * /*pUnkOuter*/, REFIID riid, 
 	if (image == NULL)
 	{
 		fprintf(stderr, "Failed to get MonoImage from assembly %s\n", m_assemblyName.c_str());
-		return 1;	
+		return 1;
 	}
-		
+
 	comClass = mono_class_from_name(image, classNamespace.c_str(), className.c_str());
-	
+
 	if (comClass == NULL)
 	{
 		fprintf(stderr, "Failed to extract class %s.%s from assembly %s\n", classNamespace.c_str(), className.c_str(), m_assemblyName.c_str());
-		return 1;	
+		return 1;
 	}
-	
-	comClassInstance = mono_object_new (m_domain, comClass);	
-	
+
+	comClassInstance = mono_object_new (m_domain, comClass);
+
 	if (comClassInstance == NULL)
 	{
 		fprintf(stderr, "Failed to create instance of %s.%s from assembly %s\n", classNamespace.c_str(), className.c_str(), m_assemblyName.c_str());
 		return 1;
 	}
-	
+
 	// Call c'tor
 	mono_runtime_object_init (comClassInstance);
 
@@ -285,15 +285,15 @@ HRESULT ManagedComBridge::CreateInstance(IUnknown * /*pUnkOuter*/, REFIID riid, 
 	MonoMethod* method = mono_class_get_method_from_name (marshalClass, "GetIUnknownForObjectInternal", 1);
 	typedef void* (GetIUnknownForObjectInternal)(MonoObject*);
 	GetIUnknownForObjectInternal* getIUnknownForObjectInternal  = (GetIUnknownForObjectInternal*)mono_lookup_internal_call(method);
-	
+
 	// Execute Marshal.GetIUnknownForObjectInternal
 	void *pCCW  = getIUnknownForObjectInternal(comClassInstance);
-	
+
 	// Find Marshal.QueryInterfaceInternal
 	MonoMethod* method2 = mono_class_get_method_from_name (marshalClass, "QueryInterfaceInternal", 3);
 	typedef int (QueryInterfaceInternal)(gpointer pUnk, gpointer riid, gpointer* ppv);
 	QueryInterfaceInternal* queryInterfaceInternal  = (QueryInterfaceInternal*)mono_lookup_internal_call(method2);
-	
+
 	// Execute Marshal.QueryInterfaceInternal - return its result
 	return queryInterfaceInternal(pCCW ,(guint8*)&riid, (void**)ppvObject);
 }

@@ -7,23 +7,23 @@
 //
 // Win32 Compatibility Library
 // Copyright (C) 2008 SIL International
-// 
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
 // version 2.1 of the License, or (at your option) any later version.
-// 
+//
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Lesser General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU Lesser General Public
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 //
 // http://www.gnu.org/licenses/lgpl.html
-// 
+//
 
 #include "WinBase.h"
 #include <stdio.h>
@@ -58,7 +58,7 @@ namespace
 			return false;
 
 		std::vector<char> buffer;
-		UErrorCode status;	
+		UErrorCode status;
 
 		do
 		{
@@ -75,12 +75,12 @@ namespace
 		strOut.assign(&buffer[0], buffer.size());
 		return true;
 	}
-	
+
 	inline bool fileExists(const char* name)
 	{
 		return ::access(name, R_OK) == 0;
 	}
-	
+
 	inline bool fileExists(const WCHAR* lpName)
 	{
 		std::string name;
@@ -108,10 +108,10 @@ BOOL MoveFile(const char* lpExistingFileName, const char* lpNewFileName)
 	cmd += lpNewFileName;
 	cmd += "'";
 
-	int rv = system(cmd);	
+	int rv = system(cmd);
 
 	return rv != -1;
-}	
+}
 
 // returns TRUE on success
 BOOL MoveFile(const WCHAR* lpExistingFileName, const WCHAR* lpNewFileName)
@@ -210,10 +210,10 @@ DWORD GetFileAttributes(const char *lpFileName)
 	{
 		case S_IFDIR:
 			rv |= FILE_ATTRIBUTE_DIRECTORY; break;
-		case S_IFREG: 
+		case S_IFREG:
 			rv |= FILE_ATTRIBUTE_NORMAL; break;
 		default: // The file exists but it not normal file or directoy
-			rv |= FILE_ATTRIBUTE_NORMAL; break; 
+			rv |= FILE_ATTRIBUTE_NORMAL; break;
 	}
 
 	// if owner doesn't have write permistion then we count this a readonly
@@ -221,7 +221,7 @@ DWORD GetFileAttributes(const char *lpFileName)
 		rv &= ~FILE_ATTRIBUTE_READONLY;
 	else
 		rv |= FILE_ATTRIBUTE_READONLY;
-	
+
 	return rv;
 }
 
@@ -252,25 +252,25 @@ DWORD GetFileAttributesW(const WCHAR* lpFileName)
 BOOL SetFileAttributes(const char* lpFileName, DWORD dwFileAttributes)
 {
 	BOOL rv = false;
-	
+
 	if (lpFileName == NULL)
 		return rv;
-	
+
 	if (dwFileAttributes & FILE_ATTRIBUTE_ARCHIVE)
 	{
 		rv = true;
 	}
-	
+
 	if (dwFileAttributes & FILE_ATTRIBUTE_HIDDEN)
 	{
-		rv = true;	
+		rv = true;
 	}
-	
+
 	if (dwFileAttributes & FILE_ATTRIBUTE_NORMAL)
 	{
 		rv = true;
 	}
-	
+
 	if (dwFileAttributes & FILE_ATTRIBUTE_NOT_CONTENT_INDEXED)
 	{
 		rv = true;
@@ -290,7 +290,7 @@ BOOL SetFileAttributes(const char* lpFileName, DWORD dwFileAttributes)
 	{
 		rv = true;
 	}
-	
+
 	if (dwFileAttributes & FILE_ATTRIBUTE_READONLY)
 	{
 		struct stat sb;
@@ -304,9 +304,9 @@ BOOL SetFileAttributes(const char* lpFileName, DWORD dwFileAttributes)
 			sb.st_mode = sb.st_mode & ~S_IWUSR & ~S_IWGRP & ~S_IWOTH;
 			if (chmod(lpFileName, sb.st_mode) == -1)
 			{
-				rv = false;	
+				rv = false;
 			}
-			
+
 			rv = true;
 		}
 	}
@@ -323,14 +323,14 @@ BOOL SetFileAttributes(const char* lpFileName, DWORD dwFileAttributes)
 			sb.st_mode = sb.st_mode | S_IWUSR | S_IWGRP;
 			if (chmod(lpFileName, sb.st_mode) == -1)
 			{
-				rv = false;	
+				rv = false;
 			}
-			
+
 			rv = true;
 		}
 	}
-	
-	return rv;	
+
+	return rv;
 }
 
 BOOL SetFileAttributes(const WCHAR* lpFileName, DWORD dwFileAttributes)
@@ -359,7 +359,7 @@ BOOL CreateDirectory(const char* lpPathName, LPSECURITY_ATTRIBUTES secAttrib)
 {
 // TODO-P4CL23677-Merge
 	assert("CreateDirectory");
-	return FALSE;	
+	return FALSE;
 }
 
 // return TRUE if the function succeeds
@@ -391,7 +391,7 @@ BOOL DeleteFile(const char* pFileName)
 
 // returns TRUE if the function succeeds
 BOOL DeleteFile(const WCHAR* lpFileName)
-{		
+{
 	std::string fileName;
 
 	if (!convertToUtf8(lpFileName, fileName))

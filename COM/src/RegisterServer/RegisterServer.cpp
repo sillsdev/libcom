@@ -7,17 +7,17 @@
  *
  * COM Support Library
  * Copyright (C) 2007 SIL International
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
@@ -35,7 +35,7 @@
  */
 int main(int argc, char const* argv[])
 {
-	
+
 	// For each DLL file, call DllMain and DllRegisterServer
 	for (int i = 1; i < argc; ++i)
 	{
@@ -52,7 +52,7 @@ int main(int argc, char const* argv[])
 
 		long (*DllMain)(void* hmod, unsigned long dwReason, void* pvReserved);
 		*(void **)(&DllMain) = dlsym(handle, "DllMain");
-		if (const char* error = dlerror()) 
+		if (const char* error = dlerror())
 		{
 			std::cerr << "RegisterServer: error finding symbol 'DllMain' in library '" << dllfilename << "': " << error << "\n";
 			exit(EXIT_FAILURE);
@@ -60,16 +60,15 @@ int main(int argc, char const* argv[])
 
 		long (*DllRegisterServer)();
 		*(void **)(&DllRegisterServer) = dlsym(handle, "DllRegisterServer");
-		if (const char* error = dlerror()) 
+		if (const char* error = dlerror())
 		{
 			std::cerr << "RegisterServer: error finding symbol 'DllRegisterServer' in library '" << dllfilename << "': " << error << "\n";
 			exit(EXIT_FAILURE);
 		}
-		
+
 		DllMain(0, 0, 0);
 		DllRegisterServer();
 
 		dlclose(handle);
 	}
 }
-

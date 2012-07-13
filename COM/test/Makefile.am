@@ -7,23 +7,23 @@
 #
 # COM Support Library Test
 # Copyright (C) 2007 SIL International
-# 
+#
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
 # version 2.1 of the License, or (at your option) any later version.
-# 
+#
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #
 # http://www.gnu.org/licenses/lgpl.html
-# 
+#
 
 # Ensure targets like components.map get removed if they're not generated
 # completely, otherwise a second run of make check thinks they're up to date
@@ -82,9 +82,9 @@ bag_la_SOURCES = \
 	IBag_GUIDs.cpp \
 	IBall_GUIDs.cpp
 
-#.libs/ball.o 
+#.libs/ball.o
 bag_la_LIBADD = \
-	-L../src/.libs -lcom 
+	-L../src/.libs -lcom
 if USE_FW_GENERIC_FACTORY
 bag_la_LIBADD += \
 	$(FieldWorksOutputDebugDir)/libGeneric.a \
@@ -101,7 +101,7 @@ wall_la_SOURCES = \
 	Wall.cpp \
 	IWall_GUIDs.cpp
 wall_la_LIBADD = \
-	-L../src/.libs -lcom 
+	-L../src/.libs -lcom
 if USE_FW_GENERIC_FACTORY
 wall_la_LIBADD += \
 	$(FieldWorksOutputDebugDir)/libGeneric.a \
@@ -118,7 +118,7 @@ bakery_la_SOURCES = \
 	IBakery_GUIDs.cpp \
 	Jar_GUIDs.cpp
 bakery_la_LIBADD = \
-	../src/libcom.la 
+	../src/libcom.la
 if USE_FW_GENERIC_FACTORY
 bakery_la_LIBADD += \
 	$(FieldWorksOutputDebugDir)/libGeneric.a \
@@ -133,10 +133,10 @@ bakery_la_LDFLAGS = -module $(AM_LDFLAGS)
 
 ball_la_SOURCES = \
 	Ball.cpp \
-	IBall_GUIDs.cpp 
+	IBall_GUIDs.cpp
 
 ball_la_LIBADD = \
-	../src/libcom.la 
+	../src/libcom.la
 if USE_FW_GENERIC_FACTORY
 ball_la_LIBADD += \
 	$(FieldWorksOutputDebugDir)/libGeneric.a \
@@ -179,7 +179,7 @@ EXTRA_DIST = \
 	IBagLib.idl \
 	IBag.idh \
 	IBall.idh \
-	example_components.map 
+	example_components.map
 
 CSC = gmcs
 CSC_FLAGS = -debug
@@ -190,7 +190,7 @@ ComClient_exe_REFERENCES = IBallMetadata.dll
 BakeryJarTestClient_exe_SOURCES = BakeryJarTestClient.cs
 BakeryJarTestClient_exe_REFERENCES = IBakeryMetadata.dll Jar.dll
 Jar_dll_SOURCES_NonAM = Jar.cs
-Jar_dll_REFERENCES_NonAM = 
+Jar_dll_REFERENCES_NonAM =
 Jar_dll_CSC_FLAGS_NonAM = -target:library
 
 #IWall.idl
