@@ -1,1 +1,0 @@
-/* *  Copyright © 2002 Metrowerks Corporation.  All Rights Reserved. * *  Questions and comments to: *       <mailto:support@metrowerks.com> *       <http://www.metrowerks.com/> */#include <Sound.h>#pragma export onint BeepTwice ( void );#pragma export offint BeepTwice (void){	SysBeep(2);			SysBeep(2);		return 0;}

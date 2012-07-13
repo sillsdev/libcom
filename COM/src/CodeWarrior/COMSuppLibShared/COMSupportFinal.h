@@ -1,1 +1,0 @@
-//	COMSupportFinal.h////	Prefix file for final Carbon target of COMSupport library////	Removed _assert #define for CW 8//		2002-12-12, GDLC//	Written, Graeme Costin, 2001-08-21#include <MacHeadersCarbon.h>
