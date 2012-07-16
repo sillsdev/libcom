@@ -39,19 +39,18 @@ void AssertMessageBox(UINT type, UINT nRetExpected, const char* expectedStr,
 	const wchar_t* captionStr = L"caption", const wchar_t* textStr = L"text")
 {
 
-	std::ostringstream filename;
-	filename << "/tmp/testMessageBox_" << getpid();
+	std::string filename(tmpnam(0));
 	std::ostringstream expectedRetValue;
 	expectedRetValue << nRetExpected;
 
 	setenv("XMESSAGE", "./messageboxdouble", true);
-	setenv("MB_RESULTFILE", filename.str().c_str(), true);
+	setenv("MB_RESULTFILE", filename.c_str(), true);
 	setenv("MB_EXPECTED", expectedStr, true);
 	setenv("MB_RESULT", expectedRetValue.str().c_str(), true);
 
 	UINT nRet = MessageBox(NULL, textStr, captionStr, type);
 
-	std::ifstream resultFile(filename.str().c_str());
+	std::ifstream resultFile(filename.c_str());
 	if (resultFile.is_open())
 	{
 		std::string line;
@@ -66,7 +65,7 @@ void AssertMessageBox(UINT type, UINT nRetExpected, const char* expectedStr,
 
 	Assert_eq(nRetExpected, nRet, "MessageBox returned wrong value");
 
-	remove(filename.str().c_str());
+	remove(filename.c_str());
 }
 
 int main(int argc, char** argv)
