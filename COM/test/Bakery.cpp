@@ -272,11 +272,11 @@ HRESULT Bakery::bakeCookies(long amount, IUnknown * jar) {
 	GUID IID_IJar = __uuidof(Jar::IJar);
 	Jar::IJar * jarinstance;
 	long hr = jar->QueryInterface(IID_IJar, (void**)&jarinstance);
-	printf("Bakery::bakeCookies calling Jar QI returns HRESULT of %d.\n", hr);
+	printf("Bakery::bakeCookies calling Jar QI returns HRESULT of %ld.\n", hr);
 	if (FAILED(hr))
 		return hr;
 	hr = jarinstance->AddCookies(amount);
-	printf("Bakery::bakeCookies calling Jar AddCookies returns HRESULT of %d.\n", hr);
+	printf("Bakery::bakeCookies calling Jar AddCookies returns HRESULT of %ld.\n", hr);
 	if (FAILED(hr))
 		return hr;
 	cookiesBaked += amount;

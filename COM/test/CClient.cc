@@ -91,7 +91,7 @@ int main() {
 		long dist;
 		reinterpret_cast<IBall*>(objectInterface)->roll(20, &dist);
 
-	  printf("dist is %d\n",dist);
+	  printf("dist is %ld\n",dist);
 
 		fprintf(stderr, "Success!\n");
 		success = true;
