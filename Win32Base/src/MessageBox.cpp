@@ -30,8 +30,10 @@
 #include <string>
 #include <sstream>
 #include <algorithm>
-#include <stdlib.h>
 #include <iostream>
+#include <cstring>
+#include <cstdlib>
+#include <cwchar>
 
 #include "Hacks.h"
 #include "MessageBox.h"
@@ -39,14 +41,14 @@
 // Temporary hacks
 static std::string convert(const wchar_t* text)
 {
-	std::vector<char> chars(text ? wcslen(text) : 0);
+	std::vector<char> chars(text ? std::wcslen(text) : 0);
 	std::copy(text, text + chars.size(), &chars[0]);
 	return std::string(&chars[0], &chars[chars.size()]);
 }
 #ifdef INCLUDE_MAIN
 static std::wstring convert(const char* text)
 {
-	std::vector<wchar_t> chars(text ? strlen(text) : 0);
+	std::vector<wchar_t> chars(text ? std::strlen(text) : 0);
 	std::copy(text, text + chars.size(), &chars[0]);
 	return std::wstring(&chars[0], &chars[chars.size()]);
 }
@@ -79,7 +81,7 @@ static std::string quote(std::string text)
 
 int MessageBoxA(HWND /*hWnd*/, LPCSTR lpText, LPCSTR lpCaption, UINT uType)
 {
-	const char* xmessage = getenv("XMESSAGE");
+	const char* xmessage = std::getenv("XMESSAGE");
 
 	if (!xmessage)
 		xmessage = "xmessage";
@@ -118,7 +120,7 @@ int MessageBoxA(HWND /*hWnd*/, LPCSTR lpText, LPCSTR lpCaption, UINT uType)
 		<< "-title " << quote(lpCaption) << " "
 		<< quote(lpText);
 
-	int result = system(command.str().c_str());
+	int result = std::system(command.str().c_str());
 
 	// Shell returns 0x7f if the command can't be executed
 	if (result == -1 || !WIFEXITED(result) || WEXITSTATUS(result) == 0x7f)
