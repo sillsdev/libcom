@@ -50,24 +50,24 @@ int main(int argc, char const* argv[])
 
 		dlerror();	/* Clear any existing error */
 
-		long (*DllMain)(void* hmod, unsigned long dwReason, void* pvReserved);
-		*(void **)(&DllMain) = dlsym(handle, "DllMain");
+		typedef long (*DllMain)(void* hmod, unsigned long dwReason, void* pvReserved);
+		DllMain dllMain = reinterpret_cast<DllMain>(dlsym(handle, "DllMain"));
 		if (const char* error = dlerror())
 		{
 			std::cerr << "RegisterServer: error finding symbol 'DllMain' in library '" << dllfilename << "': " << error << "\n";
 			exit(EXIT_FAILURE);
 		}
 
-		long (*DllRegisterServer)();
-		*(void **)(&DllRegisterServer) = dlsym(handle, "DllRegisterServer");
+		typedef long (*DllRegisterServer)();
+		DllRegisterServer dllRegisterServer = reinterpret_cast<DllRegisterServer>(dlsym(handle, "DllRegisterServer"));
 		if (const char* error = dlerror())
 		{
 			std::cerr << "RegisterServer: error finding symbol 'DllRegisterServer' in library '" << dllfilename << "': " << error << "\n";
 			exit(EXIT_FAILURE);
 		}
 
-		DllMain(0, 0, 0);
-		DllRegisterServer();
+		dllMain(0, 0, 0);
+		dllRegisterServer();
 
 		dlclose(handle);
 	}
