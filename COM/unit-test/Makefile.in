@@ -37,23 +37,23 @@ CPPFLAGS += -I$(top_srcdir)/include -I$(top_srcdir)/src
 LDLIBS += -L../src/.libs -lcom -lboost_unit_test_framework
 
 PROGS = TestCOM
+LOGS  = $(PROGS:%=%-log.xml)
 
 all: $(PROGS)
 
 %: %.cpp
 	$(LINK.cpp) $< $(LDLIBS) -o $@
 
-GDB ?= # Use make check GDB="gdb --args" to debug tests
-TESTFLAGS ?= --report_level=short
+check: $(LOGS)
 
-check: all
-	@for P in $(PROGS); do \
-		echo $(GDB) "$$P" $(TESTFLAGS); \
-		$(GDB) "$$P" $(TESTFLAGS); \
-	done
+GDB ?= # Use make check GDB="gdb --args" TESTFLAGS= to debug tests
+TESTFLAGS ?= --report_level=short --result_code=no --log_level=all --log_format=XML >$@
+
+%-log.xml: %
+	$(GDB) $< $(TESTFLAGS)
 
 clean:
-	$(RM) *.o *.d $(PROGS)
+	$(RM) *.o *.d $(PROGS) $(LOGS)
 
 distclean: clean
 	$(RM) Makefile
