@@ -44,7 +44,7 @@ all: $(PROGS)
 %: %.cpp
 	$(LINK.cpp) $< $(LDLIBS) -o $@
 
-check: $(LOGS)
+check: all $(LOGS)
 
 GDB ?= # Use make check GDB="gdb --args" TESTFLAGS= to debug tests
 TESTFLAGS ?= --report_level=short --result_code=no --log_level=all --log_format=XML >$@
