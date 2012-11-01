@@ -47,6 +47,7 @@ $(BUILD_DIR)/%: %.cpp $(WIN32BASELIB)
 	$(LINK.cc) -o $@ $< $(WIN32BASELIB) $(LDLIBS)
 
 $(BUILD_DIR)/%: %
+	@mkdir -p $(@D)
 	cp -p $< $@
 
 $(WIN32BASELIB)::
