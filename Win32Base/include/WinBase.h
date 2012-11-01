@@ -6,7 +6,6 @@
 #include <sys/types.h>
 #include "BasicTypes.h"
 
-// needs to be included above WinSupport
 enum Win32FileAttributes
 {
 	INVALID_FILE_ATTRIBUTES = 0x00,

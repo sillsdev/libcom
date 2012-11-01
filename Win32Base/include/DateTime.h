@@ -68,4 +68,6 @@ enum
 };
 int GetDateFormat(LCID, DWORD, PSYSTEMTIME, LPCTSTR, LPTSTR, int);
 
+DWORD GetTickCount();
+
 #endif //_DATETIME_H_

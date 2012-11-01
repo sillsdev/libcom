@@ -1,6 +1,0 @@
-TestWinSupportLib
-GetSystemTimeAsFileTime()
-MacOS UTCDateTime:
-0000 B92F 8716 8707 - Friday, 14 June 2002 11:42:14 AM  UTC Greenwich Mean Time
-WinFILETIME:
-01C2 1398 8746 2A89
