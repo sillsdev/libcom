@@ -23,36 +23,37 @@
 # http://www.gnu.org/licenses/lgpl.html
 #
 
+top_srcdir = @top_srcdir@
+srcdir     = @srcdir@
+VPATH      = @srcdir@
+
 PACKAGES = mono-2 uuid glib-2.0
 
-CPPFLAGS = -MMD \
-	-I../include -I../src \
-	$(shell pkg-config --cflags $(PACKAGES))
+CPPFLAGS = $(shell pkg-config --cflags $(PACKAGES)) -MMD
+LDLIBS   = $(shell pkg-config --libs   $(PACKAGES))
 
-CXXFLAGS = -g -O0 -Werror -Wall -Wextra -fPIC -fvisibility=hidden
+CXXFLAGS ?= -g -O0
+CXXFLAGS += -Werror -Wall -Wextra -fPIC -fvisibility=hidden
 
-LDLIBS = \
-	-L../build$(ARCH)/src/.libs -lcom \
-	$(shell pkg-config --libs $(PACKAGES))
+CPPFLAGS += -I$(top_srcdir)/include -I$(top_srcdir)/src
+LDLIBS   += -L../src/.libs -lcom
 
-ARCH = $(shell uname -m)
-BUILD_DIR = build$(ARCH)
+all: libManagedComBridge.so
 
-MODS = ManagedComBridge.o
-OBJS = $(MODS:%=$(BUILD_DIR)/%)
-DEPS = $(OBJS:%.o=%.d)
-
-all: $(BUILD_DIR)/libManagedComBridge.so
-
-$(BUILD_DIR)/libManagedComBridge.so: $(OBJS)
-	@mkdir -p $(@D)
+libManagedComBridge.so: ManagedComBridge.o
 	$(LINK.cc) -shared -o $@ $^ $(LDLIBS)
 
-$(BUILD_DIR)/%.o: %.cpp
-	@mkdir -p $(@D)
-	$(COMPILE.cc) -o $@ $<
-
 clean:
-	-$(RM) -rf $(BUILD_DIR)
+	$(RM) *.o *.d libManagedComBridge.so
 
--include $(DEPS)
+distclean: clean
+	$(RM) Makefile
+
+distdir:
+	cp -p $(srcdir)/ManagedComBridge.* $(distdir)
+
+check:
+
+install uninstall installcheck dvi:
+
+-include *.d

@@ -60,4 +60,11 @@ AC_ARG_WITH([remote-midl],
 
 AM_CONDITIONAL([USE_REMOTE_MIDL], [test "x$with_remote_midl" = xyes])
 
-AC_OUTPUT(Makefile src/Makefile src/RegisterServer/Makefile test/Makefile unit-test/Makefile)
+AC_OUTPUT(
+  Makefile
+  src/Makefile
+  src/RegisterServer/Makefile
+  unit-test/Makefile
+  test/Makefile
+  ManagedComBridge/Makefile
+)
