@@ -48,7 +48,7 @@ AC_ARG_VAR(FWROOT, [The root of the FieldWorks source tree @<:@default=$top_srcd
 AC_ARG_VAR(FWARCH, [The architecture of the FieldWorks source tree @<:@default=$(uname -m)@:>@])
 
 AM_CONDITIONAL([USE_FW_GENERIC_FACTORY], [test "x$with_fieldworks" = xyes])
-test "${FWROOT+set}" = set || FWROOT='$(top_srcdir)'/../FieldWorks
+test "${FWROOT+set}" = set || FWROOT='$(top_srcdir)'/../../fw
 test "${FWARCH+set}" = set || FWARCH=$(uname -m)
 
 AC_ARG_WITH([remote-midl],
