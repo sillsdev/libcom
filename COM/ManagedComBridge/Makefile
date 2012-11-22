@@ -25,20 +25,14 @@
 
 PACKAGES = mono-2 uuid glib-2.0
 
-LIBRARIES = ../..
-
 CPPFLAGS = -MMD \
 	-I../include -I../src \
-	-I$(LIBRARIES)/Win32Base/include \
-	-I$(LIBRARIES)/Win32More/include \
 	$(shell pkg-config --cflags $(PACKAGES))
 
 CXXFLAGS = -g -O0 -Werror -Wall -Wextra -fPIC -fvisibility=hidden
 
 LDLIBS = \
 	-L../build$(ARCH)/src/.libs -lcom \
-	-L$(LIBRARIES)/Win32Base/src/build$(ARCH) -lWin32Base \
-	-L$(LIBRARIES)/Win32More/src/build$(ARCH) -lWin32More \
 	$(shell pkg-config --libs $(PACKAGES))
 
 ARCH = $(shell uname -m)

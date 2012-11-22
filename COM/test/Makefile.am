@@ -58,8 +58,6 @@ lib_LTLIBRARIES = ball.la bakery.la wall.la bag.la
 INCLUDES = \
 	$(all_includes) \
 	-I$(top_srcdir)/include \
-	-I$(Win32BaseInc) \
-	-I$(Win32MoreInc) \
 	$$($(IcuConfig) --cppflags)
 
 AM_LDFLAGS = \
@@ -69,6 +67,8 @@ AM_LDFLAGS = \
 
 if USE_FW_GENERIC_FACTORY
 INCLUDES += \
+	-I$(Win32BaseInc) \
+	-I$(Win32MoreInc) \
 	-I$(FieldWorksRootDir)/Include \
 	-I$(FieldWorksRootDir)/Src/Generic
 endif

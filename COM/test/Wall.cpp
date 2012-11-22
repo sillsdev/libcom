@@ -45,7 +45,6 @@ typedef UINT32 UCOMINT32;
 #include "GenericFactory.h"
 #endif // !USE_FW_GENERIC_FACTORY
 
-#include <ExtendedTypes.h>
 #include <WinError.h>
 #include <unicode/ustring.h>
 
@@ -129,6 +128,8 @@ void Wall::CreateCom(IUnknown* outerAggregateIUnknown, REFIID interfaceid, void*
 }
 
 #else /* !USE_FW_GENERIC_FACTORY */
+
+typedef void* HMODULE;
 
 EXTERN_C BOOL WINAPI DllMain(HMODULE /*hmod*/, DWORD /*dwReason*/, PVOID /*pvReserved*/)
 {

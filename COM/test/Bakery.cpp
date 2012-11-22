@@ -46,8 +46,6 @@ typedef UINT32 UCOMINT32;
 #include "GenericFactory.h"
 #endif // USE_FW_GENERIC_FACTORY
 
-#include <ExtendedTypes.h>
-
 // Begin copied code from Wine's winbase.h, modified 2007-02-01 by Neil Mayhew
 
 /* Copyright (C) the Wine project */
@@ -118,6 +116,8 @@ void Bakery::CreateCom(IUnknown *outerAggregateIUnknown, REFIID interfaceid, voi
 }
 
 #else /* !USE_FW_GENERIC_FACTORY */
+
+typedef void* HMODULE;
 
 EXTERN_C BOOL WINAPI DllMain(HMODULE /*hmod*/, DWORD /*dwReason*/, PVOID /*pvReserved*/)
 {

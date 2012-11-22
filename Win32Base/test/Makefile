@@ -29,7 +29,7 @@ ARCH = $(shell uname -m)
 BUILD_DIR = build$(ARCH)
 
 CXXFLAGS = -g -Wall
-CPPFLAGS = $(shell icu-config --cppflags) -MMD -I.. -I../include
+CPPFLAGS = $(shell icu-config --cppflags) -MMD -I../include
 LDLIBS   = $(shell icu-config --ldflags)
 
 PROGNAMES   = TestOutputDebugString TestHacks TestMessageBox
