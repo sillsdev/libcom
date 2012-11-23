@@ -32,6 +32,33 @@
 #include <ExtendedTypes.h>
 #include <COMInterfaces.h>
 
+// Miscellaneous stubs
+
+typedef UINT32 OLE_HANDLE;
+
+class IDispatch : public IUnknown {};
+#define IID_IDispatch __uuidof(IDispatch)
+class IRecordInfo;
+#define IID_IRecordInfo __uuidof(IRecordInfo)
+
+class IEnumFORMATETC : public IUnknown {};
+#define IID_IEnumFORMATETC __uuidof(IEnumFORMATETC)
+class IDataObject : public IUnknown {};
+#define IID_IDataObject __uuidof(IDataObject)
+class IEnumSTATDATA;
+#define IID_IEnumSTATDATA __uuidof(IEnumSTATDATA)
+class IAdviseSink;
+#define IID_IAdviseSink __uuidof(IAdviseSink)
+
+class IRpcStubBuffer;
+#define IID_IRpcStubBuffer __uuidof(IRpcStubBuffer)
+class IRpcChannelBuffer;
+#define IID_IRpcChannelBuffer __uuidof(IRpcChannelBuffer)
+
+HRESULT GetActiveObject(REFCLSID rclsid, void* pvReserved, IUnknown** ppunk);
+
+// ErrorInfo
+
 interface IErrorInfo : public IUnknown
 {
 public:
@@ -89,6 +116,8 @@ public:
 STDAPI SetErrorInfo(UINT32 dwReserved, IErrorInfo* perrinfo);
 STDAPI GetErrorInfo(UINT32 dwReserved, IErrorInfo** pperrinfo);
 STDAPI CreateErrorInfo(ICreateErrorInfo** pperrinfo);
+
+// IStream
 
 enum STREAM_SEEK
 {
@@ -156,6 +185,10 @@ enum
 	STGM_SHARE_EXCLUSIVE  = STGM_SHARE_DENY_READ | STGM_SHARE_DENY_WRITE,
 };
 
+class IEnumSTATSTG : public IUnknown {};
+
+#define IID_IEnumSTATSTG __uuidof(IEnumSTATSTG)
+
 class ISequentialStream : public IUnknown
 {
 public:
@@ -218,13 +251,35 @@ public:
 
 typedef IStream* LPSTREAM;
 
+// IStorage
+
+class IStorage : public IUnknown {};
+
+#define IID_IStorage __uuidof(IStorage)
+
+struct STGMEDIUM
+{
+	DWORD tymed;
+	union
+	{
+		HBITMAP hBitmap;
+		HMETAFILEPICT hMetaFilePict;
+		HENHMETAFILE hEnhMetaFile;
+		HGLOBAL hGlobal;
+		LPOLESTR lpszFileName;
+		IStream* pstm;
+		IStorage* pstg;
+	};
+	IUnknown *pUnkForRelease;
+};
+
+// IPicture
+
 enum PICTUREATTRIBUTES
 {
 	PICTURE_SCALABLE	= 0x1,
 	PICTURE_TRANSPARENT	= 0x2
 };
-
-typedef UINT32 OLE_HANDLE;
 
 typedef INT32 OLE_XPOS_HIMETRIC;
 typedef INT32 OLE_YPOS_HIMETRIC;
@@ -297,6 +352,8 @@ public:
 
 typedef IPicture *LPPICTURE;
 
+// IAccessible
+
 enum
 {
 	ROLE_SYSTEM_CLIENT,
@@ -311,33 +368,20 @@ enum
 	STATE_SYSTEM_INVISIBLE,
 };
 
-class IAccessible : public IUnknown
-{
-};
+class IAccessible : public IUnknown {};
 
 #define IID_IAccessible __uuidof(IAccessible)
 
-class IServiceProvider : public IUnknown
-{
-};
+// IServiceProvider
+
+class IServiceProvider : public IUnknown {};
 
 #define IID_IServiceProvider __uuidof(IServiceProvider)
-
-class IEnumVARIANT : public IUnknown
-{
-};
-
-#define IID_IEnumVARIANT __uuidof(IEnumVARIANT)
-
-class ITypeInfo : public IUnknown
-{
-};
-
-#define IID_ITypeInfo __uuidof(ITypeInfo)
 
 // Variants
 
 typedef short VARIANT_BOOL;
+
 enum { VARIANT_FALSE = 0, VARIANT_TRUE = -1};
 
 typedef unsigned short VARTYPE;
@@ -464,22 +508,20 @@ enum VARENUM
 HRESULT VariantClear(VARIANT*);
 HRESULT VariantCopy(VARIANT* to, const VARIANT* from);
 
-struct STGMEDIUM
-{
-    DWORD tymed;
-    union
-	{
-        HBITMAP hBitmap;
-        HMETAFILEPICT hMetaFilePict;
-        HENHMETAFILE hEnhMetaFile;
-        HGLOBAL hGlobal;
-        LPOLESTR lpszFileName;
-        IStream* pstm;
-        IStorage* pstg;
-	};
-    IUnknown *pUnkForRelease;
-};
+class IEnumVARIANT : public IUnknown {};
 
-HRESULT GetActiveObject(REFCLSID rclsid, void* pvReserved, IUnknown** ppunk);
+#define IID_IEnumVARIANT __uuidof(IEnumVARIANT)
+
+// ITypeInfo
+
+class ITypeInfo : public IUnknown {};
+
+#define IID_ITypeInfo __uuidof(ITypeInfo)
+
+// IShellFolder
+
+class IShellFolder : public IUnknown {};
+
+#define IID_IShellFolder __uuidof(IShellFolder)
 
 #endif // COMInterfacesMore_h

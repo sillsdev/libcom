@@ -41,12 +41,5 @@ EXTRA_DIST = \
 	include/COMPointers.h \
 	include/BasicTypes.h \
 	include/COMError.h \
-	include/oaidl.h \
-	include/ocidl.h \
-	include/Ole2.h \
-	include/Oleacc.h \
-	include/rpc.h \
-	include/rpcndr.h \
-	include/comdef.h \
 	remote-midl/midl \
 	remote-midl/tlbimp

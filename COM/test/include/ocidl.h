@@ -1,7 +1,7 @@
 /*
  *	$Id$
  *
- *	This file is for compatibility with the naming and use of Windows header files.
+ *	This file is for compatibility with the naming of Windows header files.
  *
  *	MarkS - 2007-02-05
  *
@@ -20,23 +20,12 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  *
  * http://www.gnu.org/licenses/lgpl.html
  */
 
-#ifndef rpc_h_included
-#define rpc_h_included
+#ifndef ocidl_h_included
+#define ocidl_h_included
 
-#include "COMInterfaces.h"
-#ifndef NO_FW
-#include <COMInterfacesMore.h>
-#endif
-
-#define __RPC_USER
-#define __RPC_STUB
-#define __RPC_FAR
-typedef int PRPC_MESSAGE;
-typedef void* RPC_IF_HANDLE;
-
-#endif //rpc_h_included
+#endif // ocidl_h_included

@@ -1,9 +1,9 @@
 /*
  *	$Id$
  *
- *	Smart pointers for standard COM classes
+ *	This file is for compatibility with the naming and use of Windows header files.
  *
- *	Neil Mayhew - 2006-08-22
+ *	MarkS - 2007-02-05
  *
  * COM Support Library
  * Copyright (C) 2007 SIL International
@@ -20,23 +20,17 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * http://www.gnu.org/licenses/lgpl.html
  */
 
-#ifndef _COMPOINTERS_H_
-#define _COMPOINTERS_H_
+#ifndef rpc_h_included
+#define rpc_h_included
 
 #include "COMInterfaces.h"
-
-#ifdef _COM_SMARTPTR_TYPEDEF	// Smart-pointer classes must define this
-	#define _DEFINE_PTR(I) _COM_SMARTPTR_TYPEDEF(I, IID_##I)
-#else
-	#define _DEFINE_PTR(I) typedef I* I##Ptr
+#ifndef NO_FW
+#include <COMInterfacesMore.h>
 #endif
 
-_DEFINE_PTR(IUnknown);
-_DEFINE_PTR(IClassFactory);
-
-#endif //_COMPOINTERS_H_
+#endif //rpc_h_included

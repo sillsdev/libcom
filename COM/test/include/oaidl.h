@@ -1,11 +1,11 @@
 /*
  *	$Id$
  *
- *	More smart pointers for standard COM classes
+ *	This file is for compatibility with the naming of Windows header files.
  *
- *	Neil Mayhew - 2006-08-22
+ *	MarkS - 2007-02-05
  *
- * Win32More Compatibility Library
+ * COM Support Library
  * Copyright (C) 2007 SIL International
  *
  * This library is free software; you can redistribute it and/or
@@ -25,42 +25,7 @@
  * http://www.gnu.org/licenses/lgpl.html
  */
 
-#ifndef COMPointersMore_h
-#define COMPointersMore_h
+#ifndef oaidl_h_included
+#define oaidl_h_included
 
-#include <COMPointers.h>
-#include "COMInterfacesMore.h"
-
-_DEFINE_PTR(IDispatch);
-_DEFINE_PTR(IRecordInfo);
-
-_DEFINE_PTR(IEnumFORMATETC);
-_DEFINE_PTR(IDataObject);
-_DEFINE_PTR(IEnumSTATDATA);
-_DEFINE_PTR(IAdviseSink);
-
-_DEFINE_PTR(IRpcStubBuffer);
-_DEFINE_PTR(IRpcChannelBuffer);
-
-_DEFINE_PTR(IErrorInfo);
-_DEFINE_PTR(ICreateErrorInfo);
-_DEFINE_PTR(ISupportErrorInfo);
-
-_DEFINE_PTR(IEnumSTATSTG);
-_DEFINE_PTR(ISequentialStream);
-_DEFINE_PTR(IStream);
-_DEFINE_PTR(IStorage);
-
-_DEFINE_PTR(IPicture);
-
-_DEFINE_PTR(IAccessible);
-
-_DEFINE_PTR(IServiceProvider);
-
-_DEFINE_PTR(IEnumVARIANT);
-
-_DEFINE_PTR(ITypeInfo);
-
-_DEFINE_PTR(IShellFolder);
-
-#endif // COMPointersMore_h
+#endif // oaidl_h_included

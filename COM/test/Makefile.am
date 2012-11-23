@@ -57,6 +57,7 @@ lib_LTLIBRARIES = ball.la bakery.la wall.la bag.la
 
 INCLUDES = \
 	$(all_includes) \
+	-I$(srcdir)/include \
 	-I$(top_srcdir)/include \
 	$$($(IcuConfig) --cppflags)
 
@@ -163,6 +164,11 @@ EXTRA_DIST = \
 	jar.tli \
 	Ball.h \
 	tools.h \
+	include/comdef.h \
+	include/oaidl.h \
+	include/ocidl.h \
+	include/rpc.h \
+	include/rpcndr.h \
 	raw-midl/IBag.h \
 	raw-midl/IBagInterop.dll \
 	raw-midl/IBakery.h \
