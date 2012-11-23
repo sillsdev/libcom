@@ -29,9 +29,8 @@
 #include <algorithm>
 #include <stdlib.h>
 #include <iostream>
-#include "Hacks.h"
+#include "MessageBox.h"
 #include "TestUtils.h"
-#include "winuser.h"
 
 int nErr;
 

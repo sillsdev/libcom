@@ -35,7 +35,6 @@
 #include <cstdlib>
 #include <cwchar>
 
-#include "Hacks.h"
 #include "MessageBox.h"
 
 // Temporary hacks

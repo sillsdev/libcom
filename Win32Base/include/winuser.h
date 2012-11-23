@@ -28,21 +28,6 @@
 #ifndef win32base_winuser_h
 #define win32base_winuser_h
 
-// Standard dialog button IDs
-enum {
-	// Windows defines IDOK as 1, but we can't do that with xmessage since that indicates
-	// an error
-	IDOK = 0,
-	IDCANCEL = 2,
-	IDABORT = 3,
-	IDRETRY = 4,
-	IDIGNORE = 5,
-	IDYES = 6,
-	IDNO = 7,
-	IDCLOSE = 8,
-	IDHELP = 9,
-	IDTRYAGAIN = 10,
-	IDCONTINUE = 11
-};
+#include <MessageBox.h>
 
 #endif // !win32base_winuser_h
