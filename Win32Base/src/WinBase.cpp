@@ -355,7 +355,7 @@ BOOL SetFileAttributesW(const WCHAR* lpFileName, DWORD dwFileAttributes)
 
 // return TRUE if the function succeeds
 // TODO-P4CL23677-Merge
-BOOL CreateDirectory(const char* lpPathName, LPSECURITY_ATTRIBUTES secAttrib)
+BOOL CreateDirectory(const char* lpPathName, SECURITY_ATTRIBUTES* secAttrib)
 {
 // TODO-P4CL23677-Merge
 	assert("CreateDirectory");
@@ -363,7 +363,7 @@ BOOL CreateDirectory(const char* lpPathName, LPSECURITY_ATTRIBUTES secAttrib)
 }
 
 // return TRUE if the function succeeds
-BOOL CreateDirectory(const WCHAR* lpPathName, LPSECURITY_ATTRIBUTES secAttrib)
+BOOL CreateDirectory(const WCHAR* lpPathName, SECURITY_ATTRIBUTES* secAttrib)
 {
 	std::string pathName;
 
@@ -373,12 +373,12 @@ BOOL CreateDirectory(const WCHAR* lpPathName, LPSECURITY_ATTRIBUTES secAttrib)
 	return CreateDirectory(pathName.c_str(), secAttrib);
 }
 
-BOOL CreateDirectoryA(const char* lpPathName, LPSECURITY_ATTRIBUTES secAttrib)
+BOOL CreateDirectoryA(const char* lpPathName, SECURITY_ATTRIBUTES* secAttrib)
 {
 	return CreateDirectory(lpPathName, secAttrib);
 }
 
-BOOL CreateDirectoryW(const WCHAR* lpPathName, LPSECURITY_ATTRIBUTES secAttrib)
+BOOL CreateDirectoryW(const WCHAR* lpPathName, SECURITY_ATTRIBUTES* secAttrib)
 {
 	return CreateDirectory(lpPathName, secAttrib);
 }

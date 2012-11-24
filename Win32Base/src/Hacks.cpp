@@ -304,23 +304,3 @@ int wcsncpy_s(OLECHAR* dst, const size_t dsize,
 	dst[nToCopy] = 0;
 	return 0;
 }
-
-void InitializeCriticalSection(CRITICAL_SECTION*)
-{
-	// TODO-Linux
-}
-
-void DeleteCriticalSection(CRITICAL_SECTION*)
-{
-	// TODO-Linux
-}
-
-void EnterCriticalSection(CRITICAL_SECTION*)
-{
-	// TODO-Linux
-}
-
-void LeaveCriticalSection(CRITICAL_SECTION*)
-{
-	// TODO-Linux
-}

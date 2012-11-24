@@ -138,7 +138,6 @@ typedef HINSTANCE		HMODULE;
 typedef HMETAFILEPICT	HMF;
 typedef HENHMETAFILE	HEMF;
 
-typedef WORD	CLIPFORMAT;
 typedef DWORD	COLORREF;
 
 typedef char	CCHAR;

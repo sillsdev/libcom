@@ -24,15 +24,10 @@ enum Win32FileAttributes
 	FILE_ATTRIBUTE_NOT_CONTENT_INDEXED = 0x2000,
 	FILE_ATTRIBUTE_ENCRYPTED = 0x4000,
 	FILE_ATTRIBUTE_VIRTUAL = 0x10000
-
 };
 
 // Emulations of WIN32 _SECURITY_ATTRIBUTES struct
-typedef struct _SECURITY_ATTRIBUTES {
-	DWORD nLength;
-	void* lpSecurityDescriptor;
-	BOOL bInheritHandle;
-} SECURITY_ATTRIBUTES, *PSECURITY_ATTRIBUTES, *LPSECURITY_ATTRIBUTES;
+struct SECURITY_ATTRIBUTES;
 
 // returns TRUE if the function succeeds
 BOOL MoveFile(const char*  lpExistingFileName, const char*  lpNewFileName);
@@ -59,10 +54,10 @@ BOOL SetFileAttributesA(const char*  lpFileName, DWORD dwFileAttributes);
 BOOL SetFileAttributesW(const WCHAR* lpFileName, DWORD dwFileAttributes);
 
 // return TRUE if the function succeeds
-BOOL CreateDirectory(const char*  lpPathName, LPSECURITY_ATTRIBUTES secAttrib);
-BOOL CreateDirectory(const WCHAR* lpPathName, LPSECURITY_ATTRIBUTES secAttrib);
-BOOL CreateDirectoryA(const char*  lpPathName, LPSECURITY_ATTRIBUTES secAttrib);
-BOOL CreateDirectoryW(const WCHAR* lpPathName, LPSECURITY_ATTRIBUTES secAttrib);
+BOOL CreateDirectory(const char*  lpPathName, SECURITY_ATTRIBUTES* secAttrib);
+BOOL CreateDirectory(const WCHAR* lpPathName, SECURITY_ATTRIBUTES* secAttrib);
+BOOL CreateDirectoryA(const char*  lpPathName, SECURITY_ATTRIBUTES* secAttrib);
+BOOL CreateDirectoryW(const WCHAR* lpPathName, SECURITY_ATTRIBUTES* secAttrib);
 
 // returns TRUE if the function succeeds
 BOOL DeleteFile(const char*  lpFileName);
