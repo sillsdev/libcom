@@ -33,7 +33,7 @@ ARFLAGS = -crs
 ARCH = $(shell uname -m)
 BUILD_DIR = build$(ARCH)
 
-MODS = TextServices.o COMInterfacesMore.o ErrorObjects.o
+MODS = COMInterfacesMore.o ErrorObjects.o
 OBJS = $(MODS:%=$(BUILD_DIR)/%)
 DEPS = $(OBJS:%.o=%.d)
 
