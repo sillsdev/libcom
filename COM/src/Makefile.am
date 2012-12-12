@@ -31,7 +31,6 @@ AM_CXXFLAGS = -Werror -Wall -Wextra -Wno-unused-parameter
 
 lib_LTLIBRARIES = libcom.la
 
-# TODO Don't compile Util.cpp into libcom
 libcom_la_SOURCES = \
 	COM.cpp \
 	COMInterfaces.cpp \
@@ -39,8 +38,7 @@ libcom_la_SOURCES = \
 	Registry.cpp \
 	GUID.cpp \
 	Memory.cpp \
-	ComRegistry.cpp \
-	Util.cpp
+	ComRegistry.cpp
 
 EXTRA_DIST = \
 	ComRegistry.h \

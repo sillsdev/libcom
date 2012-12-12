@@ -42,7 +42,7 @@ ARFLAGS = -crs
 ARCH = $(shell uname -m)
 BUILD_DIR = build$(ARCH)
 
-MODS = Hacks.o WinBase.o MessageBox.o
+MODS = Hacks.o WinBase.o MessageBox.o Util.o
 OBJS = $(MODS:%=$(BUILD_DIR)/%)
 DEPS = $(OBJS:%.o=%.d)
 

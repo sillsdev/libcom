@@ -1,7 +1,5 @@
 /*
- *	$Id$
- *
- *	COM utilities
+ *	Win32 utilities
  *
  *	MarkS - 2008-03-20
  *
