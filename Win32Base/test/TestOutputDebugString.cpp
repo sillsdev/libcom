@@ -35,6 +35,7 @@
 #include <cstdio>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <errno.h>
 
 bool equal(std::string name, FILE* f, std::string expected);
 

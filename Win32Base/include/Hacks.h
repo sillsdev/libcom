@@ -11,21 +11,12 @@
 
 #include "BasicTypes.h"
 #include "ExtendedTypes.h"
-#include "DateTime.h"
-#include "WinError.h"
-#include "winuser.h"
-#include <errno.h>
 
-#include <stdio.h>
-#include <stddef.h>
-#include <ctype.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 #include <alloca.h>
-#include <algorithm>
 
 #include <unicode/ustring.h>
-
-#include "MessageBox.h"
 
 enum { CP_ACP, CP_UTF8 };
 
