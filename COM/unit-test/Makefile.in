@@ -47,7 +47,8 @@ all: $(PROGS)
 check: all $(LOGS)
 
 GDB ?= # Use make check GDB="gdb --args" TESTFLAGS= to debug tests
-TESTFLAGS ?= --report_level=short --result_code=no --log_level=all --log_format=XML >$@
+TESTFLAGS ?= --report_level=short --log_level=all --log_format=XML >$@
+TESTFLAGS += $(if $(BOOST_UNIT_RESULT_CODE),--result_code=$(BOOST_UNIT_RESULT_CODE))
 
 %-log.xml: %
 	$(GDB) $< $(TESTFLAGS)
