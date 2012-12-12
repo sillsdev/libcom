@@ -40,7 +40,7 @@ EXTRA_DIST = \
 	include/COMLibrary.h \
 	include/COMPointers.h \
 	include/BasicTypes.h \
-	include/WinError.h \
+	include/COMError.h \
 	include/oaidl.h \
 	include/ocidl.h \
 	include/Ole2.h \

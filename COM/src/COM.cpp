@@ -26,7 +26,7 @@
  */
 
 #include "COM.h"
-#include "WinError.h"
+#include "COMError.h"
 #include "COMSupportInternals.h"
 
 #include <uuid/uuid.h>

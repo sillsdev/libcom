@@ -31,5 +31,6 @@
 #include "Ole2.h"
 #include "BasicTypes.h"
 #include "COMInterfaces.h"
+#include "COMError.h"
 
 #endif // comdef_h_included

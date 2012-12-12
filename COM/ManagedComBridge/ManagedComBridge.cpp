@@ -23,7 +23,7 @@ Description: Implementation of ManagedComBridge
 #include "ManagedComBridge.h"
 
 #include <ComRegistry.h>
-#include <WinError.h>
+#include <COMError.h>
 #include <stdlib.h>
 #include <glib.h>
 

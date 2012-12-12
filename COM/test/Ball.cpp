@@ -45,7 +45,7 @@ typedef UINT32 UCOMINT32;
 #include "GenericFactory.h"
 #endif
 
-#include <WinError.h>
+#include <COMError.h>
 
 // Begin copied code from Wine's winbase.h, modified 2007-02-01 by Neil Mayhew
 

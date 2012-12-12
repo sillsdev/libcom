@@ -45,7 +45,7 @@ typedef UINT32 UCOMINT32;
 #include "GenericFactory.h"
 #endif // !USE_FW_GENERIC_FACTORY
 
-#include <WinError.h>
+#include <COMError.h>
 #include <unicode/ustring.h>
 
 // Write a UnicodeString (UTF-16) to an ostream (UTF-8)

@@ -28,7 +28,7 @@
 #include "ComRegistry.h"
 #include <fstream>
 #include <vector>
-#include "WinError.h"
+#include "COMError.h"
 #include <dlfcn.h>
 #include "COMLibrary.h"
 #include <iostream>

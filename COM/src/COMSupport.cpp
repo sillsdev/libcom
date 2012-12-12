@@ -26,7 +26,7 @@
  */
 
 #include "BasicTypes.h"
-#include "WinError.h"
+#include "COMError.h"
 #include "COMInterfaces.h"
 
 #include <assert.h>

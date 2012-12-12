@@ -26,7 +26,7 @@
  */
 
 #include "BasicTypes.h"
-#include "WinError.h"
+#include "COMError.h"
 #include "COM.h"
 #include "COMPointers.h"
 #include "COMSupportInternals.h"

@@ -34,7 +34,7 @@
 #include "IBall.h"
 #include "Ball.h"
 
-#include <WinError.h>
+#include <COMError.h>
 
 int main() {
 
