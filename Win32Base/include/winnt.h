@@ -30,15 +30,12 @@
 
 // Language defines
 
+const int LANG_ENGLISH = 9;
 
-// Lanuange defines
-#define LANG_ENGLISH 0x9
-
-#define SUBLANG_DEFAULT 0x01
-#define SUBLANG_ENGLISH_US 0x01
-#define SUBLANG_ENGLISH_UK 0x02
-#define SUBLANG_ENGLISH_AUS 0x03
-#define SUBLANG_ENGLISH_CAN 0x04
-
+const int SUBLANG_DEFAULT     = 1;
+const int SUBLANG_ENGLISH_US  = 1;
+const int SUBLANG_ENGLISH_UK  = 2;
+const int SUBLANG_ENGLISH_AUS = 3;
+const int SUBLANG_ENGLISH_CAN = 4;
 
 #endif // !win32base_winnt_h

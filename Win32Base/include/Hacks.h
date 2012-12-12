@@ -16,6 +16,7 @@
 #include "winuser.h"
 #include <errno.h>
 
+#include <stdio.h>
 #include <stddef.h>
 #include <ctype.h>
 #include <string.h>
@@ -48,20 +49,23 @@ T InterlockedDecrement(T* p)
 	return __sync_sub_and_fetch(p, 1);
 }
 
-#define MAX_PATH 260
-#define MAX_COMPUTERNAME_LENGTH 15
-
-#define RGB(r,g,b)          ((COLORREF)(((BYTE)(r)|((WORD)((BYTE)(g))<<8))|(((DWORD)(BYTE)(b))<<16)))
-#define PALETTERGB(r,g,b)   (0x02000000 | RGB(r,g,b))
-#define GetRValue(rgb)      ((BYTE)(rgb))
-#define GetGValue(rgb)      ((BYTE)(((WORD)(rgb)) >> 8))
-#define GetBValue(rgb)      ((BYTE)((rgb)>>16))
+const int MAX_PATH = 260;
+const int MAX_COMPUTERNAME_LENGTH = 15;
 
 bool SetRect(RECT*, int, int, int, int);
 bool OffsetRect(RECT*, int,int);
 
 short ClientToScreen(HWND, POINT*);
 short ScreenToClient(HWND, POINT*);
+
+inline COLORREF RGB(BYTE r, BYTE g, BYTE b)
+{
+	return DWORD(r) | DWORD(g) << 8 | DWORD(b) << 16;
+}
+
+inline BYTE GetRValue(COLORREF rgb) { return rgb; }
+inline BYTE GetGValue(COLORREF rgb) { return rgb >> 8; }
+inline BYTE GetBValue(COLORREF rgb) { return rgb >> 16; }
 
 enum
 {
@@ -93,7 +97,7 @@ enum
 	VK_F8       = 0x77,
 };
 
-#define LANGIDFROMLCID(localeIdentifier) ((WORD)localeIdentifier)
+inline WORD LANGIDFROMLCID(LCID localeIdentifier) { return localeIdentifier; }
 
 DWORD GetModuleFileName(HMODULE, OLECHAR* buf, DWORD length);
 DWORD GetModuleFileName(HMODULE, TCHAR*   buf, DWORD length);
@@ -104,8 +108,10 @@ char*    _itoa_s(int value, char*    buffer, size_t sizeInCharacters, int radix)
 wchar_t* _itow_s(int value, wchar_t* buffer, size_t sizeInCharacters, int radix);
 OLECHAR* _itow_s(int value, OLECHAR* buffer, size_t sizeInCharacters, int radix);
 
-#define	_itoa(V, B, R) _itoa_s((V), (B), ~0, (R))	// Unchecked version, don't use in new code
-#define	_itow(V, B, R) _itow_s((V), (B), ~0, (R))	// Unchecked version, don't use in new code
+// Unchecked versions, don't use in new code
+inline char*    _itoa(int v, char*    b, int r) { return _itoa_s(v, b, ~0, r); }
+inline wchar_t* _itow(int v, wchar_t* b, int r) { return _itow_s(v, b, ~0, r); }
+inline OLECHAR* _itow(int v, OLECHAR* b, int r) { return _itow_s(v, b, ~0, r); }
 
 void OutputDebugString(const char* str);
 void OutputDebugString(const wchar_t* str);
@@ -127,11 +133,24 @@ inline void OutputDebugStr(const OLECHAR* str)
 
 // TODO-P4CL23677-Merge
 // These functions defines don't account for specified length
-// TODO Replace these macros with multiple functions
-#define strcpy_s(DST, NUM, SRC) strcpy(DST, SRC)
-#define strncpy_s(DST, NUM, SRC, CNT) strncpy(DST, SRC, CNT)
-#define strcat_s(DST, NUM, SRC) strcat(DST, SRC)
-#define strncat_s(DST, NUM, SRC, CNT) strncat(DST, SRC, CNT)
+// TODO Replace these implementations with real ones
+
+inline int strcpy_s(char* dst, size_t dstCount, const char* src)
+{
+	return strcpy(dst, src) ? 0 : 1;
+}
+inline int strcat_s(char* dst, size_t dstCount, const char* src)
+{
+	return strcat(dst, src) ? 0 : 1;
+}
+inline int strncpy_s(char* dst, size_t dstCount, const char* src, size_t srcCount)
+{
+	return strncpy(dst, src, srcCount) ? 0 : 1;
+}
+inline int strncat_s(char* dst, size_t dstCount, const char* src, size_t srcCount)
+{
+	return strncat(dst, src, srcCount) ? 0 : 1;
+}
 
 inline int wcscmp(const OLECHAR* s1, const OLECHAR* s2)
 {
@@ -143,12 +162,22 @@ inline int wcsncmp(const OLECHAR* s1, const OLECHAR* s2, size_t n)
 	return u_strncmp(s1, s2, n);
 }
 
-#define wcsncmp_s(LEFT, RIGHT, NUM) u_strncmp(LEFT, RIGHT, NUM)
-#define _wcsicmp(LEFT, RIGHT) u_strcasecmp(LEFT, RIGHT, 0)
+inline int wcsncmp_s(const OLECHAR* left, const OLECHAR* right, size_t num)
+{
+	return u_strncmp(left, right, num);
+}
 
-#define fopen_s(FH, FILE, MODE) ((*FH = fopen(FILE, MODE)) == NULL)
+inline int _wcsicmp(const OLECHAR* left, const OLECHAR* right)
+{
+	return u_strcasecmp(left, right, 0);
+}
 
-#define _TRUNCATE	-1
+inline int fopen_s(FILE** pFile, const char* filename, const char* mode)
+{
+	return (*pFile = fopen(filename, mode)) == NULL;
+}
+
+const size_t _TRUNCATE = (size_t)-1;
 
 inline int wcslen(const OLECHAR *str)
 {
