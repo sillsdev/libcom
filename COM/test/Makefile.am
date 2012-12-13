@@ -163,15 +163,14 @@ EXTRA_DIST = \
 	jar.tli \
 	Ball.h \
 	tools.h \
+	raw-midl/IBag.h \
+	raw-midl/IBagInterop.dll \
 	raw-midl/IBakery.h \
 	raw-midl/IBakeryMetadata.dll \
 	raw-midl/IBall.h \
-	raw-midl/IBall_iid.h \
 	raw-midl/IBallMetadata.dll \
 	raw-midl/IWall.h \
 	raw-midl/IWallInterop.dll \
-	raw-midl/IBag.h \
-	raw-midl/IBagInterop.dll \
 	raw-midl/jar.tlh \
 	raw-midl/jar.tli \
 	raw-midl/README \
@@ -278,10 +277,14 @@ IBallMetadata.dll:
 IBakeryMetadata.dll:
 	ln -sf $(srcdir)/raw-midl/$@
 
+components_map_SOURCES =
+
 components.map: bakery.la ball.la wall.la bag.la
 	LD_LIBRARY_PATH=$(FieldWorksRootDir)/Lib/src/icu/install$(FWARCH)/lib:$(abs_top_builddir)/src/.libs:$(LD_LIBRARY_PATH) \
 	PATH=$(abs_top_builddir)/src/RegisterServer:$(abs_top_srcdir)/src/RegisterServer:$(PATH) \
 	make-map.sh .libs/bakery.so .libs/ball.so .libs/wall.so .libs/bag.so
+
+ole32_dll_SOURCES =
 
 ole32.dll:
 	ln -sf ../src/.libs/libcom.so $@

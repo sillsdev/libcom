@@ -59,6 +59,6 @@ $(BUILD_DIR)/%.o: %.cpp
 clean:
 	$(RM) -rf $(BUILD_DIR)
 
-check:
+check: all
 
 -include $(DEPS)

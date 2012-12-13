@@ -37,6 +37,7 @@ CPPFLAGS += -I$(top_srcdir)/include -I$(top_srcdir)/src
 LDLIBS += -L../src/.libs -lcom -lboost_unit_test_framework
 
 PROGS = TestCOM
+SRCS  = $(PROGS:%=$(srcdir)/%.cpp)
 LOGS  = $(PROGS:%=%-log.xml)
 
 all: $(PROGS)
@@ -59,6 +60,9 @@ clean:
 distclean: clean
 	$(RM) Makefile
 
-install uninstall:
+distdir:
+	cp -p $(SRCS) $(distdir)
+
+install uninstall installcheck dvi:
 
 -include *.d
