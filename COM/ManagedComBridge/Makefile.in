@@ -23,9 +23,14 @@
 # http://www.gnu.org/licenses/lgpl.html
 #
 
-top_srcdir = @top_srcdir@
-srcdir     = @srcdir@
-VPATH      = @srcdir@
+top_srcdir  = @top_srcdir@
+srcdir      = @srcdir@
+
+prefix      = @prefix@
+exec_prefix = @exec_prefix@
+libdir      = @libdir@
+
+VPATH       = $(srcdir)
 
 PACKAGES = mono-2 uuid glib-2.0
 
@@ -52,8 +57,15 @@ distclean: clean
 distdir:
 	cp -p $(srcdir)/ManagedComBridge.* $(distdir)
 
-check:
+check: all
 
-install uninstall installcheck dvi:
+install: all
+	install -d $(DESTDIR)$(libdir)
+	install -m 644 libManagedComBridge.so $(DESTDIR)$(libdir)
+
+uninstall:
+	$(RM) $(DESTDIR)$(libdir)/libManagedComBridge.so
+
+installcheck dvi:
 
 -include *.d
