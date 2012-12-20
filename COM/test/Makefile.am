@@ -52,8 +52,7 @@ endif
 AUTOMAKE_OPTIONS = color-tests parallel-tests
 
 noinst_PROGRAMS = comtest ComClient.exe BakeryJarTestClient.exe Tester.exe
-# TODO: ball.so shouldn't be installed, just built.
-lib_LTLIBRARIES = ball.la bakery.la wall.la bag.la
+noinst_LTLIBRARIES = ball.la bakery.la wall.la bag.la
 
 INCLUDES = \
 	$(all_includes) \
@@ -95,7 +94,7 @@ bag_la_LIBADD += \
 	-L$(Win32MoreLib) -lWin32More \
 	-lpthread
 endif
-bag_la_LDFLAGS = -module $(AM_LDFLAGS)
+bag_la_LDFLAGS = -module -rpath /nowhere $(AM_LDFLAGS)
 
 
 wall_la_SOURCES = \
@@ -112,7 +111,7 @@ wall_la_LIBADD += \
 	-L$(Win32MoreLib) -lWin32More \
 	-lpthread
 endif
-wall_la_LDFLAGS = -module $(AM_LDFLAGS)
+wall_la_LDFLAGS = -module -rpath /nowhere $(AM_LDFLAGS)
 
 bakery_la_SOURCES = \
 	Bakery.cpp \
@@ -129,7 +128,7 @@ bakery_la_LIBADD += \
 	-L$(Win32MoreLib) -lWin32More \
 	-lpthread
 endif
-bakery_la_LDFLAGS = -module $(AM_LDFLAGS)
+bakery_la_LDFLAGS = -module -rpath /nowhere $(AM_LDFLAGS)
 
 
 ball_la_SOURCES = \
@@ -147,7 +146,7 @@ ball_la_LIBADD += \
 	-L$(Win32MoreLib) -lWin32More \
 	-lpthread
 endif
-ball_la_LDFLAGS = -module $(AM_LDFLAGS)
+ball_la_LDFLAGS = -module -rpath /nowhere $(AM_LDFLAGS)
 
 comtest_SOURCES = CClient.cc
 comtest_LDADD = IBall_GUIDs.o ../src/libcom.la -ldl
@@ -272,6 +271,7 @@ IBagInterop.dll: raw-midl/IBagInterop.dll
 #Jar_GUIDs.cpp: jar.tlh extract_iids.sh
 #	$(srcdir)/extract_iids.sh $< >$@
 
+CClient.o: IBall.h
 Ball.lo: IBall.h
 Bakery.lo: IBakery.h
 Wall.lo: IWall.h
