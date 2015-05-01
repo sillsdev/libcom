@@ -28,8 +28,8 @@
 # GCC46 is 1 if running GCC >= 4.6, otherwise 0
 GCC46 := $(shell expr `gcc -dumpversion | cut -f1-2 -d.` \>= 4.6)
 
-CPPFLAGS = $(shell icu-config --cppflags) -MMD -I../include
-LDLIBS   = $(shell icu-config --ldflags)
+CPPFLAGS = $(shell icu-config --detect-prefix --cppflags) -MMD -I../include
+LDLIBS   = $(shell icu-config --detect-prefix --ldflags)
 
 CXXFLAGS := -Wall -g -O0 -fPIC -fvisibility=hidden -Werror
 
