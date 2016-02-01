@@ -498,7 +498,8 @@ void ComRegistry::populateFromComponentsMapFile(const string mapfilename)
  * colon-delimited list of directories, such as:
  *   dir/dir:../dir:dir:/dir
  *
- * If COMPONENTS_MAP_PATH is NULL or empty, it will not be processed.
+ * If COMPONENTS_MAP_PATH is NULL or empty, the component map will be loaded from the current
+ * directory.
  */
 void ComRegistry::populateComponentMap()
 {
@@ -506,9 +507,12 @@ void ComRegistry::populateComponentMap()
 	const char* value_tmp = getenv(componentsMapPathEnvironmentKey.c_str());
 	string paths = value_tmp ? value_tmp : "";
 
-	// If the environment value was NULL or empty string, don't try to use it
+	// If the environment value was NULL or empty string, try to use the current directory
 	if (paths.empty())
+	{
+		populateFromComponentsMapFile(componentsMapFilename);
 		return;
+	}
 
 	// Process each path in the environment value.
 	string::size_type location = 0;
