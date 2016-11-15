@@ -21,3 +21,5 @@ installerx86_64/
 /missing
 /src/Makefile.in
 /test/Makefile.in
+compile
+test-driver

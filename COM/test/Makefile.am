@@ -185,7 +185,7 @@ EXTRA_DIST = \
 	IBall.idh \
 	example_components.map
 
-CSC = gmcs
+CSC = mcs
 CSC_FLAGS = -debug
 Tester_exe_SOURCES = Tester.cs
 Tester_exe_REFERENCES = IWallInterop.dll IBagInterop.dll
