@@ -58,10 +58,10 @@ INCLUDES = \
 	$(all_includes) \
 	-I$(srcdir)/include \
 	-I$(top_srcdir)/include \
-	$$($(IcuConfig) --detect-prefix --cppflags)
+	$$($(IcuConfig) --cppflags)
 
 AM_LDFLAGS = \
-	$$($(IcuConfig) --detect-prefix --ldflags) \
+	$$($(IcuConfig) --ldflags) \
 	$(all_libraries) \
 	-luuid
 
@@ -298,7 +298,7 @@ ole32.dll:
 check_PROGRAMS = components.map ole32.dll
 
 TESTS = .libs/comtest ComClient.exe BakeryJarTestClient.exe Tester.exe
-TESTS_ENVIRONMENT = COMPONENTS_MAP_PATH=. LD_LIBRARY_PATH=:.libs:../src/.libs:$$($(IcuConfig) --detect-prefix --libdir)
+TESTS_ENVIRONMENT = COMPONENTS_MAP_PATH=. LD_LIBRARY_PATH=:.libs:../src/.libs:$$($(IcuConfig) --libdir)
 TEST_EXTENSIONS = .exe
 EXE_LOG_COMPILER = cli
 
