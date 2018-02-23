@@ -91,7 +91,7 @@ struct PlainGUID
 
 	PlainGUID& clear();
 	PlainGUID& create();
-	PlainGUID& initialize(const char*) throw (std::runtime_error);
+	PlainGUID& initialize(const char*);
 
 	// Allow easier use of libuuid functions
 
@@ -112,7 +112,7 @@ struct PlainGUID
 struct SmartGUID : public PlainGUID
 {
 	explicit SmartGUID(bool create = false);
-	explicit SmartGUID(const char*) throw (std::runtime_error);
+	explicit SmartGUID(const char*);
 
 	SmartGUID(const PlainGUID& p) : PlainGUID(p)
 	{

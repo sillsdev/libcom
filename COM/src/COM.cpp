@@ -91,7 +91,6 @@ PlainGUID& PlainGUID::create()
  * @throw std::runtime_error if text could not be parsed
  */
 PlainGUID& PlainGUID::initialize(const char* text)
-	throw (std::runtime_error)
 {
 	if (uuid_parse(text, buf()))
 	{
@@ -128,7 +127,6 @@ SmartGUID::SmartGUID(bool creating)
  * @throw std::runtime_error if text could not be parsed
  */
 SmartGUID::SmartGUID(const char* text)
-	throw (std::runtime_error)
 {
 	initialize(text);
 }
