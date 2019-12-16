@@ -101,7 +101,7 @@ int WideCharToMultiByte(int codePage, int flags,
 	int32_t spaceRequiredForData;
 
 	// if dstLen is 0, pre-flight.
-	u_strToUTF8(dst, dstLen, &spaceRequiredForData, src, srcLen, &status);
+	u_strToUTF8(dst, dstLen, &spaceRequiredForData, (UChar*)src, srcLen, &status);
 
 	if (U_FAILURE(status) && status != U_BUFFER_OVERFLOW_ERROR)
 		throw std::runtime_error("Unable to convert from UTF-16 to UTF-8");
@@ -119,7 +119,7 @@ int MultiByteToWideChar(int codePage, int flags,
 	int32_t spaceRequiredForData;
 
 	// if dstLen is 0, pre-flight.
-	u_strFromUTF8(dst, dstLen, &spaceRequiredForData, src, srcLen, &status);
+	u_strFromUTF8((UChar*)dst, dstLen, &spaceRequiredForData, src, srcLen, &status);
 
 	if (U_FAILURE(status) && status != U_BUFFER_OVERFLOW_ERROR)
 		throw std::runtime_error("Unable to convert from UTF-8 to UTF-16");
@@ -209,7 +209,7 @@ OLECHAR* _itow_s(int value, OLECHAR* buffer, size_t sizeInCharacters, int radix)
 	_itow_s(value, tmp, sizeof(tmp) / sizeof(wchar_t), radix);
 
 	UErrorCode status = U_ZERO_ERROR;
-	u_strFromWCS(buffer, sizeInCharacters, 0, tmp, -1, &status);
+	u_strFromWCS((UChar*)buffer, sizeInCharacters, 0, tmp, -1, &status);
 
 	// Ensure null-termination, but only for genuine buffer sizes
 	if (status == U_STRING_NOT_TERMINATED_WARNING ||
@@ -231,7 +231,7 @@ void OutputDebugString(const wchar_t* str)
 	std::vector<OLECHAR> buf(len*2 + 1); // Max required (surrogates == 2)
 
 	UErrorCode status = U_ZERO_ERROR;
-	u_strFromWCS(&buf[0], buf.size(), &len, str, len, &status);
+	u_strFromWCS((UChar*)&buf[0], buf.size(), &len, str, len, &status);
 
 	if (U_SUCCESS(status))
 		OutputDebugString(&buf[0]);
@@ -244,11 +244,11 @@ void OutputDebugString(const wchar_t* str)
 
 void OutputDebugString(const OLECHAR* str)
 {
-	int32_t len = u_strlen(str);
+	int32_t len = u_strlen((UChar*)str);
 	std::vector<char> buf(len*3 + 1); // Max required (BMP <= 3, surrogates <= 6)
 
 	UErrorCode status = U_ZERO_ERROR;
-	u_strToUTF8(&buf[0], buf.size(), &len, str, len, &status);
+	u_strToUTF8(&buf[0], buf.size(), &len, (UChar*)str, len, &status);
 
 	if (U_SUCCESS(status))
 		std::cerr.write(&buf[0], len);
@@ -282,7 +282,7 @@ int _snprintf_s(char *buffer, size_t sizeOfBuffer, size_t count, const char *for
 // return 0 on success
 int wcscpy_s(OLECHAR *dst, const int size, const OLECHAR *src)
 {
-	u_strcpy(dst, src);
+	u_strcpy((UChar*)dst, (UChar*)src);
 	return 0;
 }
 
@@ -298,11 +298,11 @@ int wcsncpy_s(OLECHAR* dst, const size_t dsize,
 
 	int nToCopy = size;
 	if (size == (size_t)_TRUNCATE)
-		nToCopy = std::min(u_strlen(src), (int)dsize - 1);
+		nToCopy = std::min(u_strlen((UChar*)src), (int)dsize - 1);
 	else if (dsize <= size)
 		return EINVAL;
 
-	u_strncpy(dst, src, nToCopy);
+	u_strncpy((UChar*)dst, (UChar*)src, nToCopy);
 	dst[nToCopy] = 0;
 	return 0;
 }

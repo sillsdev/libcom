@@ -164,22 +164,22 @@ inline int strncat_s(char* dst, size_t dstCount, const char* src, size_t srcCoun
 
 inline int wcscmp(const OLECHAR* s1, const OLECHAR* s2)
 {
-	return u_strcmp(s1, s2);
+	return u_strcmp((UChar*)s1, (UChar*)s2);
 }
 
 inline int wcsncmp(const OLECHAR* s1, const OLECHAR* s2, size_t n)
 {
-	return u_strncmp(s1, s2, n);
+	return u_strncmp((UChar*)s1, (UChar*)s2, n);
 }
 
 inline int wcsncmp_s(const OLECHAR* left, const OLECHAR* right, size_t num)
 {
-	return u_strncmp(left, right, num);
+	return u_strncmp((UChar*)left, (UChar*)right, num);
 }
 
 inline int _wcsicmp(const OLECHAR* left, const OLECHAR* right)
 {
-	return u_strcasecmp(left, right, 0);
+	return u_strcasecmp((UChar*)left, (UChar*)right, 0);
 }
 
 inline int fopen_s(FILE** pFile, const char* filename, const char* mode)
@@ -191,23 +191,23 @@ const size_t _TRUNCATE = (size_t)-1;
 
 inline int wcslen(const OLECHAR *str)
 {
-	return u_strlen(str);
+	return u_strlen((UChar*)str);
 }
 
 inline int wcslen_s(const OLECHAR *str, const int size)
 {
-	return u_strlen(str);
+	return u_strlen((UChar*)str);
 }
 
 inline int wcscat_s(OLECHAR *dst, const int size, const OLECHAR *src)
 {
-	u_strcat(dst, src);
+	u_strcat((UChar*)dst, (UChar*)src);
 	return 0;
 }
 
 inline OLECHAR* wcscpy(OLECHAR *dst, const OLECHAR *src)
 {
-	return u_strcpy(dst, src);
+	return (OLECHAR*)u_strcpy((UChar*)dst, (UChar*)src);
 }
 
 int wcscpy_s(OLECHAR *dst, const int size, const OLECHAR *src);
@@ -215,7 +215,7 @@ int wcscpy_s(OLECHAR *dst, const int size, const OLECHAR *src);
 
 inline OLECHAR* wcsncpy(OLECHAR* dst, const OLECHAR* src, const int size)
 {
-	return u_strncpy(dst, src, size);
+	return (OLECHAR*)u_strncpy((UChar*)dst, (UChar*)src, size);
 }
 
 int wcsncpy_s(OLECHAR* dst, const size_t dsize, const OLECHAR* src, const size_t size);
@@ -230,7 +230,7 @@ inline int _strnicmp(const char *string1, const char *string2, size_t count)
 }
 inline int _wcsnicmp(const OLECHAR* string1, const OLECHAR* string2, size_t count)
 {
-	return 	u_strncasecmp(string1, string2, count, 0);
+	return 	u_strncasecmp((UChar*)string1, (UChar*)string2, count, 0);
 }
 
 // Not done as a macro because use of elipsis..

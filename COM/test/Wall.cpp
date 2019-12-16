@@ -275,7 +275,7 @@ HRESULT Wall::readWallBSTR(BSTR* text) {
 	std::cout << "readWallBSTR(). We will return the contents of wall, which are basically (length of "<<contents.length()<<"): '"<<contents<<"'" << std::endl;
 
 
-	*text = SysAllocString(contents.getTerminatedBuffer());
+	*text = SysAllocString((OLECHAR*)contents.getTerminatedBuffer());
 	(*text)[contents.length()] = 0;
 
 

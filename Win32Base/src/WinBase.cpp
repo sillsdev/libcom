@@ -64,7 +64,7 @@ namespace
 		{
 			status = U_ZERO_ERROR;
 			int32_t requiredLen = buffer.size();
-			u_strToUTF8(&buffer[0], buffer.size(), &requiredLen, strIn, -1, &status);
+			u_strToUTF8(&buffer[0], buffer.size(), &requiredLen, (UChar*)strIn, -1, &status);
 			buffer.resize(requiredLen);
 		}
 		while (status == U_BUFFER_OVERFLOW_ERROR);
