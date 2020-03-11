@@ -426,7 +426,7 @@ void ComRegistry::populateFromComponentsMapFile(const string mapfilename)
 		try {
 			clsid.initialize(classIdString.c_str());
 		}
-		catch (std::runtime_error) {
+		catch (std::runtime_error&) {
 			fprintf(stderr, "libcom: Warning: malformed GUID string at %s:%d\n",
 				mapfilename.c_str(), linenum);
 			continue;
