@@ -66,12 +66,12 @@
  */
 bool OffsetRect( LPRECT rect, INT x, INT y )
 {
-    if (!rect) return FALSE;
-    rect->left   += x;
-    rect->right  += x;
-    rect->top    += y;
-    rect->bottom += y;
-    return TRUE;
+	if (!rect) return false;
+	rect->left   += x;
+	rect->right  += x;
+	rect->top    += y;
+	rect->bottom += y;
+	return true;
 }
 
 /***********************************************************************
@@ -79,12 +79,12 @@ bool OffsetRect( LPRECT rect, INT x, INT y )
  */
 bool SetRect( LPRECT rect, INT left, INT top, INT right, INT bottom )
 {
-    if (!rect) return FALSE;
-    rect->left   = left;
-    rect->right  = right;
-    rect->top    = top;
-    rect->bottom = bottom;
-    return TRUE;
+	if (!rect) return false;
+	rect->left   = left;
+	rect->right  = right;
+	rect->top    = top;
+	rect->bottom = bottom;
+	return true;
 }
 
 

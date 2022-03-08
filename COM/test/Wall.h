@@ -59,7 +59,7 @@ public:
 
 private:
 	/** The writing on the wall */
-	UnicodeString contents;
+	icu::UnicodeString contents;
 	/** Wall reference count */
 	volatile LONG m_referenceCount;
 };

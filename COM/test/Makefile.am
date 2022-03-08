@@ -41,7 +41,7 @@ AM_CPPFLAGS = -DUSE_FW_GENERIC_FACTORY -DUSE_FW_MODULE_ENTRY -DCOM_NO_WINDOWS_H
 FieldWorksRootDir = $(FWROOT)
 FieldWorksOutputDebugDir = $(FieldWorksRootDir)/Output_$(FWARCH)/Debug
 FieldWorksObjDebugDir = $(FieldWorksRootDir)/Obj_$(FWARCH)/Debug
-IcuConfig = $(FieldWorksRootDir)/Lib/src/icu/install$(FWARCH)/bin/icu-config
+IcuConfig = icu-config
 BUILD_ROOT = $(FieldWorksRootDir)
 -include $(BUILD_ROOT)/Bld/_user.mak.lnx
 else

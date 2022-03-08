@@ -49,7 +49,7 @@ typedef UINT32 UCOMINT32;
 #include <unicode/ustring.h>
 
 // Write a UnicodeString (UTF-16) to an ostream (UTF-8)
-std::ostream& operator << (std::ostream& o, const UnicodeString& s)
+std::ostream& operator << (std::ostream& o, const icu::UnicodeString& s)
 {
 	std::vector<char> buffer(s.length()*4+1); // 4 bytes is the maximum UTF-8 sequence
 	UErrorCode error = U_ZERO_ERROR;

@@ -90,15 +90,15 @@ namespace
 	}
 }
 
-// returns TRUE on success
+// returns true on success
 // REVIEW Possible implement this propertly without using system calls
 BOOL MoveFile(const char* lpExistingFileName, const char* lpNewFileName)
 {
 	if (lpExistingFileName == NULL || lpNewFileName == NULL)
-		return FALSE;
+		return false;
 
 	if (!fileExists(lpExistingFileName))
-		return FALSE;
+		return false;
 
 	std::string cmd("mv ");
 
@@ -113,16 +113,16 @@ BOOL MoveFile(const char* lpExistingFileName, const char* lpNewFileName)
 	return rv != -1;
 }
 
-// returns TRUE on success
+// returns true on success
 BOOL MoveFile(const WCHAR* lpExistingFileName, const WCHAR* lpNewFileName)
 {
 	std::string existingFileName;
 	std::string newFileName;
 
 	if (!convertToUtf8(lpExistingFileName, existingFileName))
-		return FALSE;
+		return false;
 	if (!convertToUtf8(lpNewFileName, newFileName))
-		return FALSE;
+		return false;
 
 	return MoveFile(existingFileName.c_str(), newFileName.c_str());
 }
@@ -137,15 +137,15 @@ BOOL MoveFileW(const WCHAR* lpExistingFileName, const WCHAR* lpNewFileName)
 	return MoveFile(lpExistingFileName, lpNewFileName);
 }
 
-// returns TRUE if the function succeeds
+// returns true if the function succeeds
 // REVIEW Possible implement this propertly without using system calls
 BOOL CopyFile(const char* lpExistingFileName, const char* lpNewFileName, BOOL bFailIfExists)
 {
 	if (lpExistingFileName == NULL || lpNewFileName == NULL)
-		return FALSE;
+		return false;
 
 	if (!fileExists(lpExistingFileName))
-		return FALSE;
+		return false;
 
 	mode_t uMaskNew = 0;
 	mode_t uMaskOld = umask(uMaskNew); // set the new umask so file copies duplicate permissions
@@ -167,16 +167,16 @@ BOOL CopyFile(const char* lpExistingFileName, const char* lpNewFileName, BOOL bF
 	return rv != -1;
 }
 
-// returns TRUE on success
+// returns true on success
 BOOL CopyFile(const WCHAR* lpExistingFileName, const WCHAR* lpNewFileName, BOOL bFailIfExists)
 {
 	std::string existingFileName;
 	std::string newFileName;
 
 	if (!convertToUtf8(lpExistingFileName, existingFileName))
-		return FALSE;
+		return false;
 	if (!convertToUtf8(lpNewFileName, newFileName))
-		return FALSE;
+		return false;
 
 	return CopyFile(existingFileName.c_str(), newFileName.c_str(), bFailIfExists);
 }
@@ -247,7 +247,7 @@ DWORD GetFileAttributesW(const WCHAR* lpFileName)
 	return GetFileAttributes(lpFileName);
 }
 
-// returns TRUE if the function succeeds
+// returns true if the function succeeds
 // Only actually does anything for the readonly or lack of readonly attribute
 BOOL SetFileAttributes(const char* lpFileName, DWORD dwFileAttributes)
 {
@@ -338,7 +338,7 @@ BOOL SetFileAttributes(const WCHAR* lpFileName, DWORD dwFileAttributes)
 	std::string fileName;
 
 	if (!convertToUtf8(lpFileName, fileName))
-		return FALSE;
+		return false;
 
 	return SetFileAttributes(fileName.c_str(), dwFileAttributes);
 }
@@ -353,22 +353,22 @@ BOOL SetFileAttributesW(const WCHAR* lpFileName, DWORD dwFileAttributes)
 	return SetFileAttributes(lpFileName, dwFileAttributes);
 }
 
-// return TRUE if the function succeeds
+// return true if the function succeeds
 // TODO-P4CL23677-Merge
 BOOL CreateDirectory(const char* lpPathName, SECURITY_ATTRIBUTES* secAttrib)
 {
 // TODO-P4CL23677-Merge
 	assert("CreateDirectory");
-	return FALSE;
+	return false;
 }
 
-// return TRUE if the function succeeds
+// return true if the function succeeds
 BOOL CreateDirectory(const WCHAR* lpPathName, SECURITY_ATTRIBUTES* secAttrib)
 {
 	std::string pathName;
 
 	if (!convertToUtf8(lpPathName, pathName))
-		return FALSE;
+		return false;
 
 	return CreateDirectory(pathName.c_str(), secAttrib);
 }
@@ -383,19 +383,19 @@ BOOL CreateDirectoryW(const WCHAR* lpPathName, SECURITY_ATTRIBUTES* secAttrib)
 	return CreateDirectory(lpPathName, secAttrib);
 }
 
-// returns TRUE if the function succeeds
+// returns true if the function succeeds
 BOOL DeleteFile(const char* pFileName)
 {
 	return (0 == remove(pFileName));
 }
 
-// returns TRUE if the function succeeds
+// returns true if the function succeeds
 BOOL DeleteFile(const WCHAR* lpFileName)
 {
 	std::string fileName;
 
 	if (!convertToUtf8(lpFileName, fileName))
-		return FALSE;
+		return false;
 
 	return DeleteFile(fileName.c_str());
 }
