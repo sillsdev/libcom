@@ -1,0 +1,27 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+	// First run gdbserver with a command like the following.
+	//   gdbserver 127.0.0.1:9999 my-program
+	// This may require vscode extension "webfreak.debug".
+	{
+	  "name": "Attach to gdbserver",
+	  "type": "gdb",
+	  "request": "attach",
+	  "executable": "",
+	  "target": "127.0.0.1:9999",
+	  "remote": true,
+	  "cwd": "${workspaceRoot}",
+	  "gdbpath": "/usr/bin/gdb",
+	},
+	{
+	  "name": "Launch RegisterServer",
+	  "type": "gdb",
+	  "request": "launch",
+	  "target": "COM/src/RegisterServer/RegisterServer",
+	  "arguments": "COM/test/.libs/bakery.so",
+	  "cwd": "${workspaceRoot}",
+	  "valuesFormatting": "parseText"
+	},
+  ]
+}
