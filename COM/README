@@ -4,6 +4,23 @@ libcom implements a subset of Microsoft COM.
 
 Version 0.4.0, 2008-03-27
 
+Build:
+
+```bash
+autoreconf -i
+./configure
+make
+make check
+
+cd ../Win32Base
+make
+make check
+
+cd ../win32More
+make
+make check
+```
+
 Release Notes:
 
 In many ways, libcom functions well. But it isn't necessarily finished yet. This is the first release.
