@@ -30,7 +30,7 @@ ARCH=$(uname -m)
 BUILD_DIR=build$ARCH
 
 # Location of ICU so files
-LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$(icu-config --libdir)
+LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$(pkg-config icu-i18n --variable=libdir)
 # Location of libcom
 LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../../COM/$BUILD_DIR/src/.libs
 export LD_LIBRARY_PATH

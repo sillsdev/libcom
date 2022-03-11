@@ -25,7 +25,7 @@
 # http://www.gnu.org/licenses/lgpl.html
 #
 
-CPPFLAGS = -MMD $(shell icu-config --cppflags) -I../include -I../../COM/include -I../../Win32Base/include
+CPPFLAGS = -MMD $(shell pkg-config icu-i18n --cflags) -I../include -I../../COM/include -I../../Win32Base/include
 CXXFLAGS = -Wall -g -O0 -fPIC -fvisibility=hidden -Werror -ftls-model=global-dynamic
 
 ARFLAGS = -crs

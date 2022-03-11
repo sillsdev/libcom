@@ -41,12 +41,10 @@ AM_CPPFLAGS = -DUSE_FW_GENERIC_FACTORY -DUSE_FW_MODULE_ENTRY -DCOM_NO_WINDOWS_H
 FieldWorksRootDir = $(FWROOT)
 FieldWorksOutputDebugDir = $(FieldWorksRootDir)/Output_$(FWARCH)/Debug
 FieldWorksObjDebugDir = $(FieldWorksRootDir)/Obj_$(FWARCH)/Debug
-IcuConfig = icu-config
 BUILD_ROOT = $(FieldWorksRootDir)
 -include $(BUILD_ROOT)/Bld/_user.mak.lnx
 else
 AM_CPPFLAGS = -DNO_FW
-IcuConfig = icu-config
 endif
 
 AUTOMAKE_OPTIONS = color-tests parallel-tests
@@ -58,10 +56,10 @@ INCLUDES = \
 	$(all_includes) \
 	-I$(srcdir)/include \
 	-I$(top_srcdir)/include \
-	$$($(IcuConfig) --cppflags)
+	$$(pkg-config icu-i18n --cflags)
 
 AM_LDFLAGS = \
-	$$($(IcuConfig) --ldflags) \
+	$$(pkg-config icu-i18n --libs) \
 	$(all_libraries) \
 	-luuid
 
@@ -298,7 +296,7 @@ ole32.dll:
 check_PROGRAMS = components.map ole32.dll
 
 TESTS = .libs/comtest ComClient.exe BakeryJarTestClient.exe Tester.exe
-TESTS_ENVIRONMENT = COMPONENTS_MAP_PATH=. LD_LIBRARY_PATH=:.libs:../src/.libs:$$($(IcuConfig) --libdir)
+TESTS_ENVIRONMENT = COMPONENTS_MAP_PATH=. LD_LIBRARY_PATH=:.libs:../src/.libs:$$(pkg-config icu-i18n --variable=libdir)
 TEST_EXTENSIONS = .exe
 EXE_LOG_COMPILER = cli
 

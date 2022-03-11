@@ -1,1 +1,2 @@
 .vscode/* -whitespace
+*.cproj -whitespace

@@ -22,10 +22,10 @@
 `pkg-config --libs mono`
 -L../../COM/lib/libcom.so
 -luuid
-`icu-config --ldflags'
+`pkg-config icu-i18n --libs'
 -L../Win32More/src
 -lWin32More</ExtraLinkerArguments>
-    <ExtraCompilerArguments>`../../FieldWorks/Lib/src/icu/install/bin//icu-config --cppflags`
+	<ExtraCompilerArguments>`pkg-config icu-i18n --cflags`
 `pkg-config --cflags mono`</ExtraCompilerArguments>
     <SourceDirectory>.</SourceDirectory>
     <DefineSymbols>DEBUG MONODEVELOP</DefineSymbols>

@@ -29,8 +29,8 @@ ARCH = $(shell uname -m)
 BUILD_DIR = build$(ARCH)
 
 CXXFLAGS = -g -Wall
-CPPFLAGS = $(shell icu-config --cppflags) -MMD -I../include
-LDLIBS   = $(shell icu-config --ldflags)
+CPPFLAGS = $(shell pkg-config icu-i18n --cflags) -MMD -I../include
+LDLIBS   = $(shell pkg-config icu-i18n --libs)
 
 PROGNAMES   = TestOutputDebugString TestHacks TestMessageBox
 SCRIPTNAMES = messageboxdouble
