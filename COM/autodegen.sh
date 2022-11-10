@@ -38,3 +38,5 @@ rm -f Makefile.in depcomp install-sh missing src/Makefile.in test/Makefile.in
 rm -f configure
 # configure
 rm -f Makefile config.log config.status
+
+rm -f test-driver compile src/RegisterServer/Makefile.in config.h.in~
