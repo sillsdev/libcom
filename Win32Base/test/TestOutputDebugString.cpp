@@ -100,7 +100,7 @@ int main(int argc, char** argv)
 
 inline void throw_syserr(std::string call)
 {
-	throw std::runtime_error(call + std::string(" failed: ") + sys_errlist[errno]);
+	throw std::runtime_error(call + std::string(" failed: ") + std::to_string(errno));
 }
 
 std::string read_all(FILE* f)
